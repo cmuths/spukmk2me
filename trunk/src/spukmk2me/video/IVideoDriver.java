@@ -143,16 +143,16 @@ public interface IVideoDriver
      *  Setup the clipping area.
      *  @param x1
      *  @param y1
-     *  @param x2
-     *  @param y2
+     *  @param width
+     *  @param height
      */
-    public void SetClipping( short x1, short y1, short x2, short y2 );
+    public void SetClipping( short x, short y, short width, short height );
 
     /**
      *  Get the clipping area.
-     *  x1, y1, x2, y2 (as the parameters of SetClipping()) will be put in
+     *  x, y, width, height (as the parameters of SetClipping()) will be put in
      * a long. Counting from the MSB to the LSB, each two bytes contain one
-     * element: x1, y1, x2, y2, respectively.
+     * element: x, y, width, height, respectively.
      */
     public long GetClipping();
 

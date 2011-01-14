@@ -43,8 +43,7 @@ public final class GameThread extends Thread
     {
         if ( m_firstActivatedTime )
         {
-            m_gameProcessor.Init( m_configData );
-            m_device    = m_gameProcessor.GetDevice();
+            m_device    = m_gameProcessor.Init( m_configData );
             m_vdriver   = m_device.GetVideoDriver();
             m_smonitor  = m_device.GetSoundMonitor();
             m_scene     = m_device.GetSceneManager();

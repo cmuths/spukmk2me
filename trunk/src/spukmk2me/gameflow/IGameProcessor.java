@@ -26,24 +26,17 @@ import spukmk2me.Device;
 public interface IGameProcessor
 {
     /**
-     *  Your game processor do every initialization here, not in constructors.
+     *  Your game processor do every initialisation here, not in constructors.
      *  \details This function will be called once by GameThread.\n
      * Most of construction code should be placed here, you shouldn't place
      * them in your constructor since game processor must be initialized from
      * the very beginning of application's lifetime, and J2ME creators advised
      * us not to do so many thing in application startup period, so you should
-     * delay your initialization to this function.
+     * delay your initialization to this function.\n
+     *  After initialisation, this function must return the SPUKMK2me Device
+     * which will be used later by the game.
      */
-    public void Init( ConfigData configData );
-
-    /**
-     *  This function will be called by GameThread to get the Device.
-     *  \details Your game processor must construct its own device. Because
-     * creating device is sometimes complicated, and I don't want to bloat code
-     * in GameThread, creating the device by your own may be the best decision.
-     *  @return The device you <b>created</b>.
-     */
-    public Device GetDevice();
+    public Device Init( ConfigData configData );
 
     /**
      *  Process the games periodically.

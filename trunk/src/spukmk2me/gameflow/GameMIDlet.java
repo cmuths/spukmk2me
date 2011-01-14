@@ -29,7 +29,7 @@ public abstract class GameMIDlet extends MIDlet
         m_gameProcessor = gameProcessor;
     }
     
-    protected void startApp()
+    protected final void startApp()
     {
         if ( m_gameThread == null )
         {
@@ -41,17 +41,17 @@ public abstract class GameMIDlet extends MIDlet
         m_gameThread.Resume();
     }
     
-    protected void pauseApp()
+    protected final void pauseApp()
     {
         m_gameThread.Pause();
     }
     
-    protected void destroyApp( boolean forceToQuit )
+    protected final void destroyApp( boolean forceToQuit )
     {
         QuitApplication();
     }
     
-    public void QuitApplication()
+    public final void QuitApplication()
     {
         m_gameThread.Quit();
         m_gameThread = null;

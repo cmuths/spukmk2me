@@ -32,7 +32,10 @@ import spukmk2me.video.RenderTool;
  * scene manager. So just one call of IVideoDriver.RenderSceneNode() to the
  * root can make all the tree visible to the screen.\n\n
  *  Below are some specifications of scene nodes that you should notice:\n
- *  If a node is enabled, video driver will go deeper from this node to render
+ *  Position of the node: c_x and c_y should be the most top-left point of your
+ * scene node. E.g. if you create a node called CircleSceneNode, c_x and c_y
+ * must be the most top-left point, not the center of the circle.
+ *  If a node is enabled, renderer will go deeper from this node to render
  * its children. If not, this node and its children won't be rendered.\n
  *  Visibility of a node only affect the node only and don't affect visibility
  * of its children.\n
@@ -46,8 +49,8 @@ import spukmk2me.video.RenderTool;
  * except for the root level, where there is only exactly one node. You can add
  * faked first node to that level, through, it doesn't matter.\n
  *  The last thing is: rendering sequences of a node is processed by
- * IVideoDriver.RenderSceneNode(), so please take a look to ensure what you are
- * video driver is doing, and may be you can fix some bugs.
+ * SceneManager.RenderSceneNode(), so please take a look if you feel strange
+ * about rendering sequence, and may be you can fix some bugs.
  *  @see spukmk2me.scene.SceneManager  
  *  @see spukmk2me.video.IVideoDriver
  */

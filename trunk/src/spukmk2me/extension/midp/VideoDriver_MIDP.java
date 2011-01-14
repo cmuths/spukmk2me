@@ -133,10 +133,9 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             m_fpsString[ 9 ] = (char)(fpsDeltaTime % 10 + 0x30);
         }
         
-        m_fontRenderer.PresetSettings( m_debugFont,
-            IFontRenderer.STYLE_PLAIN );
-        m_fontRenderer.RenderString( m_fpsString, 0, 10, 0xFF7F7F7F,
-            (short)0, (short)0 );
+        ((Graphics)m_renderTool.c_rAPI).setColor( 0xFF7F7F7F );
+        ((Graphics)m_renderTool.c_rAPI).drawChars( m_fpsString, 0, 10, 0, 0,
+            Graphics.TOP | Graphics.LEFT );
         //#endif
 
         this.flushGraphics();        
@@ -191,11 +190,6 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         m_fpsLastTime   = 0;
         m_fpsString     = new char[]{
             'F', 'P', 'S', ':', ' ', '-', '-', '.', '-', '-' };
-
-        try
-        {
-            m_debugFont     = new BitmapFont( "/sfont.bmf" );
-        } catch ( IOException e ) { e.printStackTrace(); }
         //#endif
 
         SetClipping( (short)0, (short)0,
@@ -226,6 +220,5 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     //#ifdef __SPUKMK2ME_DEBUG
     private char[]      m_fpsString;
     private long        m_fpsLastTime;
-    private BitmapFont  m_debugFont;
     //#endif
 }

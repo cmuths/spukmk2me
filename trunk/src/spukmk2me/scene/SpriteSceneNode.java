@@ -70,17 +70,20 @@ public final class SpriteSceneNode extends ISceneNode
                 m_remainingFrames -= deltaFrame;
 
                 if ( m_remainingFrames <= 0 )
-                    m_animating = false;
+                {
+                    m_animating     = false;
+                    m_currentFrame  = m_finishFrame << 16;
+                }
             }
+
+            int length_fp = m_lastIndex - m_firstIndex + 1 << 16;
+
+            while ( Util.FPRound( m_currentFrame ) < m_firstIndex )
+                m_currentFrame += length_fp;
+
+            while ( Util.FPRound( m_currentFrame ) > m_lastIndex )
+                m_currentFrame -= length_fp;
         }
-
-        int length_fp = m_lastIndex - m_firstIndex + 1 << 16;
-
-        while ( Util.FPRound( m_currentFrame ) < m_firstIndex )
-            m_currentFrame += length_fp;
-
-        while ( Util.FPRound( m_currentFrame ) > m_lastIndex )
-            m_currentFrame -= length_fp;
 
         m_images[ Util.FPRound( m_currentFrame ) ].Render( renderTool );
     }
