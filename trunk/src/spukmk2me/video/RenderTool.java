@@ -57,6 +57,7 @@ public final class RenderTool
                     c_rasterY,      //!< Current raster Y, relative to screen.                    
                     c_scrWidth,     //!< Current screen width.
                     c_scrHeight;    //!< Current screen height.
+    public byte     c_vdriverID;    //!< ID of current video driver.
 
     private IVideoDriver m_vdriver;
 }

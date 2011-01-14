@@ -58,22 +58,21 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         return ( m_x0 << 16 ) | m_y0;
     }
 
-    public void SetClipping( short x1, short y1, short x2, short y2 )
+    public void SetClipping( short x, short y, short width, short height )
     {
-        m_clipX1 = x1;
-        m_clipY1 = y1;
-        m_clipX2 = x2;
-        m_clipY2 = y2;
-        ((Graphics)m_renderTool.c_rAPI).
-            setClip( x1, y1, x2 - x1 + 1, y2 - y1 + 1 );
+        m_clipX         = x;
+        m_clipY         = y;
+        m_clipWidth     = width;
+        m_clipHeight    = height;
+        ((Graphics)m_renderTool.c_rAPI).setClip( x, y, width, height );
     }
 
     public long GetClipping()
     {
-        return ((long)m_clipX1 << 48) |
-            ((long)(m_clipX1 & 0x0000FFFF) << 32) |
-            ((long)(m_clipX2 & 0x0000FFFF) << 16) |
-            (long)(m_clipY2 & 0x0000FFFF);
+        return ((long)m_clipX << 48) |
+            ((long)(m_clipY & 0x0000FFFF) << 32) |
+            ((long)(m_clipWidth & 0x0000FFFF) << 16) |
+            (long)(m_clipHeight & 0x0000FFFF);
     }
 
     public void StartInternalClock()
@@ -180,10 +179,11 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         m_renderTool = new RenderTool( this );
         m_renderTool.c_rAPI         = this.getGraphics();
         m_renderTool.c_fontRenderer = m_fontRenderer;
+        m_renderTool.c_vdriverID    = VIDEODRIVER_MIDP;
 
         m_fontRenderer.SetRenderTool( m_renderTool );
 
-        m_x0            = m_y0 = 0;
+        m_x0 = m_y0 = 0;
         this.setFullScreenMode( true );
 
         //#ifdef __SPUKMK2ME_DEBUG
@@ -215,7 +215,8 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     private IFontRenderer   m_fontRenderer;
     private RenderTool      m_renderTool;
     private long            m_lastTime;
-    private short           m_x0, m_y0, m_clipX1, m_clipY1, m_clipX2, m_clipY2;
+    private short           m_x0, m_y0, m_clipX, m_clipY, m_clipWidth,
+                            m_clipHeight;
 
     //#ifdef __SPUKMK2ME_DEBUG
     private char[]      m_fpsString;
