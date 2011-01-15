@@ -202,10 +202,13 @@ public final class StringSceneNode extends ISceneNode
                     if ( m_width < nextWidth )
                     {
                         //m_renderedString += "\n";
-                        m_renderedString[ m_renderedLength++ ] = '\n';
-                        ++m_nLine;
-                        remainedWidth = m_width;
-                        hasAmbiguousSeparator = false;
+                        if ( nextIndex != m_str.length )
+                        {
+                            m_renderedString[ m_renderedLength++ ] = '\n';
+                            ++m_nLine;
+                            remainedWidth = m_width;
+                            hasAmbiguousSeparator = false;
+                        }
                     }
                     else
                     {
