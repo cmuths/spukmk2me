@@ -53,7 +53,12 @@ public interface IVideoDriver
     /**
      *  For initialization.
      *  \details Some API require drawing and initializing must be in the same
-     *  thread, such as OpenGL. This function is used for later initialization.
+     * thread, such as OpenGL. This function is used for later
+     * initialization.\n
+     *  Notice that this function <b>should</b> be called after the driver has
+     * somehow acquired the "visible" rendering surface, especially that
+     * applies for MIDP driver. If you're using class from spukmk2me.gameflow,
+     * you need not to worry about this.
      */
     public void PrepareRenderingContext();
 

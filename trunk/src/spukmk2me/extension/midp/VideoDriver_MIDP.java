@@ -22,7 +22,6 @@ import java.io.IOException;
 import javax.microedition.lcdui.*;
 
 import spukmk2me.video.IVideoDriver;
-import spukmk2me.video.BitmapFont;
 import spukmk2me.video.IFontRenderer;
 import spukmk2me.video.RenderTool;
 import spukmk2me.video.IImage;
@@ -37,6 +36,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 {
     public VideoDriver_MIDP()
     {
+        this.setFullScreenMode( true );
     }
 
     public void paint( Graphics g ) {}
@@ -172,6 +172,11 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 
     public void PrepareRenderingContext()
     {
+        // Small hack to wait for the canvas to go to fullscreen mode.
+        // See the constructor.
+        while ( !this.isShown() )
+            Thread.yield();
+
         // Initialise
         m_lastTime  = 0;
 
@@ -184,7 +189,6 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         m_fontRenderer.SetRenderTool( m_renderTool );
 
         m_x0 = m_y0 = 0;
-        this.setFullScreenMode( true );
 
         //#ifdef __SPUKMK2ME_DEBUG
         m_fpsLastTime   = 0;
