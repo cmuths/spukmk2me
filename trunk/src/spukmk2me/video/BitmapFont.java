@@ -26,7 +26,6 @@ import java.io.IOException;
  *  Storage for bitmap fonts.
  *  \details This is only a storage place, all members are public so feel free
  * to access.\n
- *  The font layout still heavily depends on the mapping table.\n
  *  One more thing, "bitmap font" here means each pixel is represented by
  * a bit. This could save the memory, but obviously creates a moderate overhead
  * of rendering sequence.

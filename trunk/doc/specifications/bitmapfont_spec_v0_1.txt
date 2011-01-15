@@ -1,7 +1,7 @@
  
     BitmapFont file format version 0.1 specification
     
-    This file is provided along with SPUKMK2me library since the 0.1 version as
+    This file is provided along with SPUKMK2me library since version 0.1 as
 a resource for user to create their own font data. This document may contain
 some ambiguos data, please send email to us if you find any.
  

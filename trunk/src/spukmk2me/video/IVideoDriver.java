@@ -189,11 +189,6 @@ public interface IVideoDriver
     public IImage[] LoadImages( String filename, short width, short height )
         throws IOException;
 
-    //#ifdef __SPUKMK2ME_MIDP
-//#     public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
-    //#endif
-
-    //#ifdef __SPUKMK2ME_GLES
-//#     public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.
-    //#endif
+    public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
+    public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.
 }
