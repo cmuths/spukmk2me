@@ -24,25 +24,10 @@ import spukmk2me.video.IImage;
 
 public final class SpriteSceneNode extends ISceneNode
 {
-    /**
-     *  A constructor
-     *  \details The sprite will be duplicated by this node.
-     *  @param sprite The sprite that will be used by this node.
-     */
     public SpriteSceneNode( IImage[] images )
     {
         m_images        = images;
     }    
-
-    /**
-     *  Copy constructor.
-     *  \details The sprite from source node will be duplicated.
-     *  @param node The source node.
-     */
-    public SpriteSceneNode( SpriteSceneNode node )
-    {
-        m_images        = node.GetImages();
-    }
 
     public final void Render( RenderTool renderTool )
     {
@@ -115,6 +100,10 @@ public final class SpriteSceneNode extends ISceneNode
         m_currentFrame = frameIndex << 16;
     }
 
+    /**
+     *  Get the images referenced by this scene node.
+     *  @return An array contains images used by the node.
+     */
     public IImage[] GetImages()
     {
         return m_images;
@@ -161,6 +150,15 @@ public final class SpriteSceneNode extends ISceneNode
                     (lastIndex - firstIndex + 1));
             }
         }
+    }
+
+    /**
+     *  Set images for this scene node.
+     *  @param images An array of IImage that this scene node will display.
+     */
+    public void SetImages( IImage[] images )
+    {
+        m_images = images;
     }
 
     //! If the enabled bit of MODE_BACKWARD is zero, the sprite won't animate.

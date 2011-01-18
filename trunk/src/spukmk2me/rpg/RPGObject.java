@@ -53,10 +53,6 @@ public abstract class RPGObject
     public abstract boolean AffectableBy( RPGObject object );
     public abstract boolean ReadyForRemoval();
 
-    // Just kidding, this function will be called right before the object is
-    // removed.
-    public abstract void LastWish();
-
     public final void SyncPhysicWithRendering()
     {
         c_sceneNode.c_x = Util.FPRound( c_x );

@@ -79,7 +79,6 @@ public final class RPGWorld
                 //#ifdef __SPUKMK2ME_DEBUG
                 System.out.print( "Collecting " + buffer.toString() );
                 //#endif
-                buffer.LastWish();
                 buffer.Drop();
                 //#ifdef __SPUKMK2ME_DEBUG
                 System.out.println( ". Collected" );
@@ -151,7 +150,6 @@ public final class RPGWorld
         {
             buffer      = iterator;
             iterator    = iterator.c_next;
-            buffer.LastWish();
             buffer.Drop();
         }
     }
