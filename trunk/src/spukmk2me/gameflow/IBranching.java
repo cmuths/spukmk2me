@@ -18,23 +18,12 @@
 
 package spukmk2me.gameflow;
 
-public abstract class IBranching
+public interface IBranching
 {    
-    protected IBranching( BranchingManager manager )
-    {
-        m_manager = manager;
-    }
+    public void DoWork();
+    public void Chained();
+    public byte GetSignal();
 
-    protected final void ChainWorkID( int id )
-    {
-        m_manager.ChainWork( id );
-    }
-
-    public abstract void InitialiseWork();
-    public abstract void DoWork();
-    public abstract void DowngradeWork();
-    public abstract boolean IsWorking();
-    public abstract IBranching Clone();
-
-    private BranchingManager m_manager;
+    public static final byte SIGNAL_FINISH  = -1;
+    public static final byte SIGNAL_WORKING = -2;
 }

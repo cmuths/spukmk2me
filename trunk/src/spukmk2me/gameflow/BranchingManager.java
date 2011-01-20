@@ -35,30 +35,27 @@ public final class BranchingManager
 
     public void BranchWork()
     {
-        if ( m_nStack != 0 )
+        if ( m_nStack == 0 )
+            return;
+
+        m_workers[ m_stack[ m_nStack - 1 ] ].DoWork();
+
+        while ( m_workers[ m_stack[ m_nStack - 1 ] ].GetSignal() ==
+            IBranching.SIGNAL_FINISH )
         {
-            IBranching worker = m_workers[ m_stack[ m_nStack - 1 ] ];
-
-            if ( m_downgrade )
-            {
-                m_workers[ m_stack[ m_nStack - 1 ] ].DowngradeWork();
-                m_downgrade = false;
-            }
-
-            if ( !worker.IsWorking() )
-            {
-                if ( --m_nStack != 0 )
-                    m_downgrade = true;
-            }
-            else
-                worker.DoWork();
+            if ( --m_nStack == 0 )
+                break;
         }
+
+        if ( m_workers[ m_stack[ m_nStack - 1 ] ].GetSignal() !=
+            IBranching.SIGNAL_WORKING )
+            ChainWork( m_workers[ m_stack[ m_nStack - 1 ] ].GetSignal() );
     }
 
     public void ChainWork( int workIndex )
     {
         m_stack[ m_nStack++ ] = workIndex;
-        m_workers[ workIndex ].InitialiseWork();
+        m_workers[ workIndex ].Chained();
     }
 
     private IBranching[]    m_workers;

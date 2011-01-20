@@ -1,15 +1,4 @@
 /*
- *  SPUKMK2ME Engine - SPUKMK2 Engine for J2ME platform
- *  Copyright 2010 - 2011  HNYD Team
- *
- *  Original filename   : InputMonitor_MIDP.java
- *  Original package    : spukmk2me.video.midp
- *  Author              : Tuan Nguyen Quoc
- *  Note                :
- *  Classification      : MIDP extension
- *  Thread safety       : Undetermined
- *  Since               : 0.1
- *//*
  *  SPUKMK2me - SPUKMK2 Engine for J2ME platform
  *  Copyright 2010 - 2011  HNYD Team
  *
@@ -40,6 +29,7 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     protected InputMonitor_MIDP()
     {
         super( false );
+        DetectExternalKeyCodes();
         m_actionBitPattern  = IInputMonitor.ACT_NONE;
         m_pointerPosition   = 0xFFFFFFFF;
     }
@@ -146,7 +136,9 @@ public abstract class InputMonitor_MIDP extends GameCanvas
                 return;
         }
 
-        if ( keyCode == KeyCodeAdapter.SOFTKEY_RIGHT )
+        if ( keyCode == m_softleftKeyCode )
+            m_actionBitPattern |= ACT_LSOFT;
+        else if(keyCode == m_softrightKeyCode)
             m_actionBitPattern |= ACT_RSOFT;
     }
 
@@ -201,7 +193,9 @@ public abstract class InputMonitor_MIDP extends GameCanvas
                 return;
         }
 
-        if ( keyCode == KeyCodeAdapter.SOFTKEY_RIGHT )
+        if ( keyCode == m_softleftKeyCode )
+            m_actionBitPattern &= ~ACT_LSOFT;
+        else if(keyCode == m_softrightKeyCode)
             m_actionBitPattern &= ~ACT_RSOFT;
     }
 
@@ -223,8 +217,217 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         m_pointerPosition   = 0xFFFFFFFF;
     }
 
+    // This function detect key codes for keys which aren't standardised in
+    // MIDP specification.
+    // I wrote this function based on some information on the Internet. So I
+    // can't guarantee that it can function properly.
+    private void DetectExternalKeyCodes()
+    {
+        DetectPlatform();
+        DetectSoftLeftKeyCode();
+        DetectSoftRightKeyCode();
+    }
+
+    private void DetectPlatform()
+    {
+        String platformHint =
+            System.getProperty( "microedition.platform" );
+
+        ///////////////////////////////
+        // Nokia detection
+        if ( platformHint.indexOf( "Nokia" ) != -1 )
+        {
+            m_platform = PLATFORM_NOKIA;
+            return;
+        }
+
+        try
+        {
+            Class.forName( "com.nokia.mid.ui.FullCanvas" );
+            m_platform = PLATFORM_NOKIA;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        
+        ///////////////////////////////
+        // Sony Ericsson detection
+        if ( platformHint.indexOf( "SonyEricsson" ) != -1 )
+        {
+            m_platform = PLATFORM_SE;
+            return;
+        }
+
+        
+        ///////////////////////////////
+        // LG detection
+        try
+        {
+            Class.forName( "mmpp.media.MediaPlayer" );
+            m_platform = PLATFORM_LG;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        try
+        {
+            Class.forName( "mmpp.phone.Phone" );
+            m_platform = PLATFORM_LG;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        try
+        {
+            Class.forName( "mmpp.lang.MathFP" );
+            m_platform = PLATFORM_LG;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        try
+        {
+            Class.forName( "mmpp.media.BackLight" );
+            m_platform = PLATFORM_LG;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        
+        ///////////////////////////////
+        // Motorola detection
+        try
+        {
+            Class.forName( "com.motorola.multimedia.Vibrator" );
+            m_platform = PLATFORM_MOTOROLA;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        try
+        {
+            Class.forName( "com.motorola.multimedia.Lighting" );
+            m_platform = PLATFORM_MOTOROLA;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        try
+        {
+            Class.forName( "com.motorola.multimedia.FunLight" );
+            m_platform = PLATFORM_MOTOROLA;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        try
+        {
+            Class.forName( "com.motorola.graphics.j3d.Effect3D" );
+            m_platform = PLATFORM_MOTOROLA;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        
+        ///////////////////////////////
+        // Samsung detection
+        try
+        {
+            Class.forName( "com.samsung.util.Vibration" );
+            m_platform = PLATFORM_SAMSUNG;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        
+        ///////////////////////////////
+        // Siemens detection
+        try
+        {
+            Class.forName( "com.siemens.mp.io.File" );
+            m_platform = PLATFORM_SIEMENS;
+            return;
+        } catch ( ClassNotFoundException e ) {}
+
+        m_platform = PLATFORM_UNKNOWN;
+    }
+
+    private void DetectSoftLeftKeyCode()
+    {
+        if ( m_platform != PLATFORM_UNKNOWN )
+        {
+            String keyWord = "SOFT";
+            int i;
+
+            for ( i = 0; i != SOFTLEFT_KEYCODES[ m_platform ].length; ++i )
+            {
+                try
+                {
+                    if ( this.getKeyName(
+                        SOFTLEFT_KEYCODES[ m_platform ][ i ] ).toUpperCase().
+                        indexOf( keyWord ) != -1 )
+                    {
+                        m_softleftKeyCode =
+                            SOFTLEFT_KEYCODES[ m_platform ][ i ];
+                        return;
+                    }
+                } catch ( IllegalArgumentException e ) {}
+            }
+        }
+
+        m_softleftKeyCode = KEY_DEFAULT_SOFTLEFT;
+    }
+
+    private void DetectSoftRightKeyCode()
+    {
+        if ( m_platform != PLATFORM_UNKNOWN )
+        {
+            String keyWord = "SOFT";
+            int i;
+
+            for ( i = 0; i != SOFTRIGHT_KEYCODES[ m_platform ].length; ++i )
+            {
+                try
+                {
+                    if ( this.getKeyName(
+                        SOFTRIGHT_KEYCODES[ m_platform ][ i ] ).toUpperCase().
+                        indexOf( keyWord ) != -1 )
+                    {
+                        m_softrightKeyCode =
+                            SOFTRIGHT_KEYCODES[ m_platform ][ i ];
+                        return;
+                    }
+                } catch ( IllegalArgumentException e ) {}
+            }
+        }
+
+        m_softrightKeyCode = KEY_DEFAULT_SOFTRIGHT;
+    }
+
+    private static final byte PLATFORM_UNKNOWN  = -1;
+    private static final byte PLATFORM_NOKIA    = 0;
+    private static final byte PLATFORM_MOTOROLA = 1;
+    private static final byte PLATFORM_SAMSUNG  = 2;
+    private static final byte PLATFORM_SE       = 3;
+    private static final byte PLATFORM_SIEMENS  = 4;
+    private static final byte PLATFORM_LG       = 5;
+
+    private static final int[][] SOFTLEFT_KEYCODES = {
+        { -6 },             // Nokia
+        { -21, 21, -20 },   // Motorola
+        { -6 },             // Samsung
+        { -6 },             // Sony Ericsson
+        { -1, 105 },        // Siemens
+        { -6, -202 }        // LG
+    };
+
+    private static final int[][] SOFTRIGHT_KEYCODES = {
+        { -7 },             // Nokia
+        { -22, 22 },        // Motorola
+        { -7 },             // Samsung
+        { -7 },             // Sony Ericsson
+        { -4, 106 },        // Siemens
+        { -7, -203 }        // LG
+    };
+
+    // Default key codes below are usually used by "unusual" devices and
+    // emulators (I'm not sure, let's assume that it's right).
+    private static final int KEY_DEFAULT_SOFTLEFT   = -6;
+    private static final int KEY_DEFAULT_SOFTRIGHT  = -7;
+
     private long    m_keyCooldown, m_keyLatency, m_keyLastTime;
-    private int     m_actionBitPattern;
-    private int     m_pointerPosition;
+    private int     m_actionBitPattern, m_pointerPosition;
+    private int     m_softleftKeyCode, m_softrightKeyCode;
     private byte    m_inputMode;
+    private byte    m_platform;
 }

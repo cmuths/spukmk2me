@@ -198,7 +198,6 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 
         SetClipping( (short)0, (short)0,
             (short)this.getWidth(), (short)this.getHeight() );
-        KeyCodeAdapter.StartFilteringKeyCodes( this );
     }
     
     public void CleanupRenderingContext() {}

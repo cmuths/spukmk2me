@@ -67,8 +67,7 @@ public final class ClippingSceneNode extends ISceneNode
         renderTool.SetClipping(
             (short)(renderTool.c_rasterX),
             (short)(renderTool.c_rasterY),
-            (short)(renderTool.c_rasterX + m_width - 1),
-            (short)(renderTool.c_rasterY + m_height - 1) );
+            m_width, m_height );
         m_unclippingNode.SetClipping(
             (short)(clippingArea >> 48),
             (short)(clippingArea >> 32 & 0x000000000000FFFFL),

@@ -148,7 +148,7 @@ public final class Util
      */
     public static int FPMul( int fnumber1, int fnumber2 )
     {
-        boolean positive = ((fnumber1 ^ fnumber2) & 0x80000000) == 0 ;
+        /*boolean positive = ((fnumber1 ^ fnumber2) & 0x80000000) == 0 ;
 
         fnumber1 = Math.abs( fnumber1 );
         fnumber2 = Math.abs( fnumber2 );
@@ -167,7 +167,8 @@ public final class Util
             ++i;
         }
 
-        return ( positive )? product : -product;
+        return ( positive )? product : -product;*/
+        return (int)(((long)fnumber1 * (long)fnumber2) >> 16);
     }
 
     /**
