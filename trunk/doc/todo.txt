@@ -1,5 +1,5 @@
 SPUKMK2me TODO list
 
 - Use microlog library for logging.
-- Complete the "invisible dimension culling" feature.
+- Complete the "hierarchical culling" feature.
 - Complete the RPGObject system.

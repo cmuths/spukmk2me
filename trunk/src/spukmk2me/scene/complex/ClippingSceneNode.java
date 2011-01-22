@@ -16,9 +16,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package spukmk2me.scene;
+package spukmk2me.scene.complex;
 
 import spukmk2me.video.RenderTool;
+import spukmk2me.scene.ISceneNode;
+import spukmk2me.scene.NullSceneNode;
 
 public final class ClippingSceneNode extends ISceneNode
 {
@@ -28,28 +30,28 @@ public final class ClippingSceneNode extends ISceneNode
 
         public void Render( RenderTool renderTool )
         {
-            renderTool.SetClipping( m_x1, m_y1, m_x2, m_y2 );
+            renderTool.SetClipping( m_x, m_y, m_width, m_height );
         }
 
         public short GetWidth()
         {
-            return (short)(m_x2 - m_x1 + 1);
+            return m_width;
         }
 
         public short GetHeight()
         {
-            return (short)(m_y2 - m_y1 + 1);
+            return m_height;
         }
 
-        public void SetClipping( short x1, short y1, short x2, short y2 )
+        public void SetClipping( short x, short y, short width, short height )
         {
-            m_x1 = x1;
-            m_y1 = y1;
-            m_x2 = x2;
-            m_y2 = y2;
+            m_x         = x;
+            m_y         = y;
+            m_width     = width;
+            m_height    = height;
         }
 
-        private short m_x1, m_y1, m_x2, m_y2;
+        private short m_x, m_y, m_width, m_height;
     }
 
     public ClippingSceneNode()
@@ -100,5 +102,5 @@ public final class ClippingSceneNode extends ISceneNode
 
     private SubClippingSceneNode    m_unclippingNode;
     private NullSceneNode           m_entryNode;
-    private short m_x, m_y, m_width, m_height;
+    private short m_width, m_height;
 }

@@ -40,16 +40,15 @@ public final class BranchingManager
 
         m_workers[ m_stack[ m_nStack - 1 ] ].DoWork();
 
-        while ( m_workers[ m_stack[ m_nStack - 1 ] ].GetSignal() ==
-            IBranching.SIGNAL_FINISH )
+        if ( m_workers[ m_stack[ m_nStack - 1 ] ].GetChainedWork() !=
+            IBranching.CHAIN_NOTHING )
+            ChainWork( m_workers[ m_stack[ m_nStack - 1 ] ].GetChainedWork() );
+
+        while ( m_workers[ m_stack[ m_nStack - 1 ] ].IsFinished() )
         {
             if ( --m_nStack == 0 )
                 break;
         }
-
-        if ( m_workers[ m_stack[ m_nStack - 1 ] ].GetSignal() !=
-            IBranching.SIGNAL_WORKING )
-            ChainWork( m_workers[ m_stack[ m_nStack - 1 ] ].GetSignal() );
     }
 
     public void ChainWork( int workIndex )

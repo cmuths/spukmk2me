@@ -259,7 +259,7 @@ public final class StringSceneNode extends ISceneNode
         m_lineStartIndexes[ m_nLine ] = m_renderedLength;
         widthOfLines[ m_nLine - 1 ] = m_font.GetStringWidth(
             m_str, m_lineStartIndexes[ m_nLine - 1 ],
-            m_renderedLength - m_lineStartIndexes[ m_nLine - 1 ] - 1,
+            m_renderedLength - m_lineStartIndexes[ m_nLine - 1 ],
             m_style );
 
         

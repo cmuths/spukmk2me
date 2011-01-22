@@ -41,8 +41,6 @@ import spukmk2me.video.IImage;
  */
 final class MIDPImage extends IImage
 {
-    private MIDPImage() {}
-
     /**
      *  Regular constructor.
      *  \details Load an image from file
@@ -54,33 +52,30 @@ final class MIDPImage extends IImage
         //#ifdef __SPUKMK2ME_DEBUG
         System.out.print( "Loading image: " + filename );
         //#endif
-        c_image = Image.createImage( filename );
+        m_image = Image.createImage( filename );
         //#ifdef __SPUKMK2ME_DEBUG
         System.out.println( " Loaded." );
         //#endif
         
-        c_width     = (short)c_image.getWidth();
-        c_height    = (short)c_image.getHeight();
-        c_useAlpha  = false;        
+        m_x = m_y   = 0;
+        c_width     = (short)m_image.getWidth();
+        c_height    = (short)m_image.getHeight();
     }
 
-    /**
-     *  Not very regular constructor.
-     *  \details Create an image with specific width and height.
-     *  @param width The width of new image.
-     *  @param height The height of new image.
-     */
-    public MIDPImage( short width, short height )
+    protected MIDPImage( Image image, short x, short y,
+        short width, short height )
     {
+        m_image     = image;
+        m_x         = x;
+        m_y         = y;
         c_width     = width;
         c_height    = height;
-        c_useAlpha  = false;
-        c_image     = Image.createImage( width, height );
     }
 
     public void Render( RenderTool renderTool )
     {
-        ((Graphics)renderTool.c_rAPI).drawImage( c_image,
+        ((Graphics)renderTool.c_rAPI).drawRegion( m_image,
+            m_x, m_y, c_width, c_height, 0,
             renderTool.c_rasterX, renderTool.c_rasterY,
             Graphics.TOP | Graphics.LEFT );
     }
@@ -117,17 +112,13 @@ final class MIDPImage extends IImage
             return null;
 
         MIDPImage[] images = new MIDPImage[ nImage ];
-        int[] rgbData = new int[ width * height ];
 
         for ( int i = nImageH; i != 0; --i )
         {
             for ( int j = nImageW; j != 0; --j )
             {
-                images[ imgIterator ] = new MIDPImage( width, height );
-                img.getRGB( rgbData, 0, width, _x, _y, width, height );
-                images[ imgIterator ].c_image =
-                    Image.createRGBImage( rgbData, width, height, true );
-                
+                images[ imgIterator ] =
+                    new MIDPImage( img, (short)_x, (short)_y, width, height );
                 ++imgIterator;
                 _x += width;
             }
@@ -143,5 +134,6 @@ final class MIDPImage extends IImage
         return images;
     }
 
-    public Image c_image; //!< Like I said, this class wrap the MIDP Image.
+    private Image   m_image;
+    private short   m_x, m_y;
 }

@@ -16,14 +16,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package spukmk2me.gameflow;
+package spukmk2me.scene;
 
-public interface IBranching
-{    
-    public void Chained();
-    public void DoWork();
-    public boolean IsFinished();
-    public byte GetChainedWork();
+import spukmk2me.video.IVideoDriver;
 
-    public static final byte CHAIN_NOTHING = -1;
+/**
+ *  Interface for scene manager.
+ */
+public interface ISceneManager
+{
+    public void AddSceneNode( ISceneNode node, ISceneNode parent );
+    public void DropSceneNode( ISceneNode node );
+    public void AddAnimator( IAnimator animator );
+    public void DropAnimator( IAnimator animator );
+    public void SetVideoDriver( IVideoDriver vdriver );
+    public void RenderAll();
 }
