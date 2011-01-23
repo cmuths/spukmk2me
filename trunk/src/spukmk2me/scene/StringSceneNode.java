@@ -46,8 +46,16 @@ public final class StringSceneNode extends ISceneNode
     public void SetupString( BitmapFont font, char[] s, int color,
         int style, int alignment, short width, short height, boolean truncate )
     {
-        SetString( s );
-        Initialise( font, color, style, alignment, width, height, truncate );
+        int advanced_alignment = IFontRenderer.ALIGN_BOTTOM |
+            IFontRenderer.ALIGN_CENTERY | IFontRenderer.ALIGN_RIGHT |
+            IFontRenderer.ALIGN_CENTERX;
+
+        boolean duplicate =
+            truncate || ((alignment & advanced_alignment) != 0);
+
+        SetString( s, duplicate );
+        Initialise( font, color, style, alignment, width, height,
+            truncate, duplicate );
     }
 
     /**
@@ -56,33 +64,39 @@ public final class StringSceneNode extends ISceneNode
     public void SetupString( BitmapFont font, String s, int color,
         int style, int alignment, short width, short height, boolean truncate )
     {
-        SetString( s );
-        Initialise( font, color, style, alignment, width, height, truncate );
+        int advanced_alignment = IFontRenderer.ALIGN_BOTTOM |
+            IFontRenderer.ALIGN_CENTERY | IFontRenderer.ALIGN_RIGHT |
+            IFontRenderer.ALIGN_CENTERX;
+
+        boolean duplicate =
+            truncate || ((alignment & advanced_alignment) != 0);
+        
+        SetString( s, duplicate );
+        Initialise( font, color, style, alignment, width, height,
+            truncate, duplicate );
     }
     
     /**
      *  Set the string.
      *  @param s The new string to display.
      */
-    private void SetString( char[] s )
+    private void SetString( char[] s, boolean duplicate )
     {
-        if ( s == null )
-        {
-            m_str = m_renderedString = null;
-            return;
-        }
-
         m_str = s;
-        m_renderedString = new char[ s.length ];
+        
+        if ( duplicate )
+            m_renderedString = new char[ s.length ];
+        else
+            m_renderedString = null;
     }
 
     /**
      *  Alternative version of SetString() which takes String as input.
      *  @param s The new string to display.
      */
-    private void SetString( String s )
+    private void SetString( String s, boolean duplicate )
     {
-        SetString( (s == null)? (char[])null : s.toCharArray() );
+        SetString( (s == null)? (char[])null : s.toCharArray(), duplicate );
     }
 
     /**
@@ -111,14 +125,23 @@ public final class StringSceneNode extends ISceneNode
         IFontRenderer fr = renderTool.c_fontRenderer;
         fr.PresetSettings( m_font, m_style );
 
-        short y = (short)(renderTool.c_rasterY + m_startY);
-
-        for ( int i = 0; i != m_nLine; ++i )
+        if ( m_renderedString == null ) // Unprocessed string
         {
-            fr.RenderString( m_renderedString, m_lineStartIndexes[ i ],
-                m_lineStartIndexes[ i + 1 ] - m_lineStartIndexes[ i ], m_color,
-                (short)(renderTool.c_rasterX + m_lineStartX[ i ]), y );
-            y += m_font.c_height;
+            fr.RenderString( m_str, 0, m_str.length, m_color,
+                renderTool.c_rasterX, renderTool.c_rasterY );
+        }
+        else
+        {
+            short y = (short)(renderTool.c_rasterY + m_startY);
+
+            for ( int i = 0; i != m_nLine; ++i )
+            {
+                fr.RenderString( m_renderedString, m_lineStartIndexes[ i ],
+                    m_lineStartIndexes[ i + 1 ] - m_lineStartIndexes[ i ],
+                    m_color, (short)(renderTool.c_rasterX + m_lineStartX[ i ]),
+                    y );
+                y += m_font.c_height;
+            }
         }
     }
 
@@ -127,10 +150,9 @@ public final class StringSceneNode extends ISceneNode
         return m_width;
     }
 
-    // Unimplemented
     public short GetHeight()
     {
-        return 0;
+        return m_height;
     }
     
     private void PreprocessString()
@@ -265,12 +287,7 @@ public final class StringSceneNode extends ISceneNode
         
         m_lineStartX = new int[ m_nLine ];
         
-        if ( (m_alignment & IFontRenderer.ALIGN_LEFT) != 0 )
-        {
-            for ( int i = 0; i != m_nLine; ++i )
-                m_lineStartX[ i ] = 0;
-        }
-        else if ( (m_alignment & IFontRenderer.ALIGN_CENTERX) != 0 )
+        if ( (m_alignment & IFontRenderer.ALIGN_CENTERX) != 0 )
         {
             for ( int i = 0; i != m_nLine; ++i )
                 m_lineStartX[ i ] = (m_width - widthOfLines[ i ]) / 2;
@@ -280,17 +297,23 @@ public final class StringSceneNode extends ISceneNode
             for ( int i = 0; i != m_nLine; ++i )
                 m_lineStartX[ i ] = m_width - widthOfLines[ i ];
         }
+        else
+        {
+            for ( int i = 0; i != m_nLine; ++i )
+                m_lineStartX[ i ] = 0;
+        }
 
-        if ( (m_alignment & IFontRenderer.ALIGN_TOP) != 0 )
-            m_startY = 0;
-        else if ( (m_alignment & IFontRenderer.ALIGN_CENTERY) != 0 )
+        if ( (m_alignment & IFontRenderer.ALIGN_CENTERY) != 0 )
             m_startY = (m_height - m_nLine * m_font.c_height) / 2;
         else if ( (m_alignment & IFontRenderer.ALIGN_BOTTOM) != 0 )
             m_startY = m_height - m_nLine * m_font.c_height;
+        else
+            m_startY = 0;
     }
 
     private void Initialise( BitmapFont font, int color, int style,
-        int alignment, short width, short height, boolean truncate )
+        int alignment, short width, short height, boolean truncate,
+        boolean duplicate )
     {
         m_color         = color;
         m_font          = font;
@@ -299,10 +322,13 @@ public final class StringSceneNode extends ISceneNode
         m_width         = width;
         m_height        = height;
         m_truncate      = truncate;
-        PreprocessString();
+
+        if ( duplicate )
+            PreprocessString();
     }
 
     private BitmapFont m_font;
+
     private char[]  m_str, m_renderedString;
     private int[]   m_lineStartIndexes, m_lineStartX;
     private int     m_color, m_renderedLength, m_nLine, m_startY;

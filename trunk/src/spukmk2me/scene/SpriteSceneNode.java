@@ -82,6 +82,11 @@ public final class SpriteSceneNode extends ISceneNode
     {
         return ( m_images == null )? 0 : m_images[ 0 ].c_height;
     }
+
+    public final int GetFrameIndex()
+    {
+        return Util.FPRound( m_currentFrame );
+    }
     
     /**
      *  Set the frame index of this sprite.
