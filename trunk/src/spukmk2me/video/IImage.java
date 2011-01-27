@@ -21,15 +21,23 @@ package spukmk2me.video;
 /**
  *  A abstract way to describe the image type used by SPUKMK2ME.
  */
-public abstract class IImage
+public interface IImage
 {
     /**
      *  Return the implemented image type, used by video drivers.
      *  @see spukmk2me.video.IVideoDriver
      */
-    public abstract void Render( RenderTool renderTool );
+    public void Render( RenderTool renderTool );
 
-    public short    c_width;    //!< The width of image.
-    public short    c_height;   //!< The height of image.
-    public boolean  c_useAlpha; //!< This image uses alpha channel or not.
+    /**
+     *  Get the width of image.
+     *  @return The width of image.
+     */
+    public short GetWidth();
+
+    /**
+     *  Get the height of image.
+     *  @return The height of image.
+     */
+    public short GetHeight();
 }

@@ -51,27 +51,27 @@ public final class ImageSceneNode extends ISceneNode
             m_image = null;
     }
 
-    public final void Render( RenderTool renderTool )
+    public void Render( RenderTool renderTool )
     {
         // I'm searching for a way to elminate this type of callings
         m_image.Render( renderTool );
     }
 
-    public final short GetWidth()
+    public short GetWidth()
     {
-        return m_image.c_width;
+        return m_image.GetWidth();
     }
 
-    public final short GetHeight()
+    public short GetHeight()
     {
-        return m_image.c_height;
+        return m_image.GetHeight();
     }
 
     /**
      *  Get the image which is held by this node.
      *  @return The current image of this node.
      */
-    public final IImage GetImage()
+    public IImage GetImage()
     {
         return m_image;
     }

@@ -29,7 +29,7 @@ public final class SpriteSceneNode extends ISceneNode
         m_images        = images;
     }    
 
-    public final void Render( RenderTool renderTool )
+    public void Render( RenderTool renderTool )
     {
         if ( m_autoDrop && !m_animating )
         {
@@ -41,51 +41,64 @@ public final class SpriteSceneNode extends ISceneNode
             return;
 
         if ( m_animating )
-        {
-            int deltaFrame =
-                Util.FPDiv( renderTool.c_timePassed, m_secPerFrame );
-
-            if ( m_direction )
-                m_currentFrame += deltaFrame;
-            else
-                m_currentFrame -= deltaFrame;
-
-            if ( m_frameStop )
-            {
-                m_remainingFrames -= deltaFrame;
-
-                if ( m_remainingFrames <= 0 )
-                {
-                    m_animating     = false;
-                    m_currentFrame  = m_finishFrame << 16;
-                }
-            }
-
-            int length_fp = m_lastIndex - m_firstIndex + 1 << 16;
-
-            while ( Util.FPRound( m_currentFrame ) < m_firstIndex )
-                m_currentFrame += length_fp;
-
-            while ( Util.FPRound( m_currentFrame ) > m_lastIndex )
-                m_currentFrame -= length_fp;
-        }
+            UpdateAnimation( renderTool.c_timePassed );
 
         m_images[ Util.FPRound( m_currentFrame ) ].Render( renderTool );
     }
 
-    public final short GetWidth()
+    public short GetWidth()
     {
-        return ( m_images == null )? 0 : m_images[ 0 ].c_width;
+        return ( m_images == null )? 0 : m_images[ 0 ].GetWidth();
     }
 
-    public final short GetHeight()
+    public short GetHeight()
     {
-        return ( m_images == null )? 0 : m_images[ 0 ].c_height;
+        return ( m_images == null )? 0 : m_images[ 0 ].GetHeight();
     }
 
-    public final int GetFrameIndex()
+    /**
+     *  @return The current frame index.
+     */
+    public int GetFrameIndex()
     {
         return Util.FPRound( m_currentFrame );
+    }
+
+    /**
+     *  When you don't want to use automatic mode and you want to advance
+     * the frame index manually, this function is an option. Setting animating
+     * mode to automatic mode will invoke UpdateAnimation() each time the
+     * sprite is rendered.
+     *  @param deltaTime The time used in frame index calculation, measured in
+     * seconds. This parameter is a fixed-point number.
+     */
+    public void UpdateAnimation( int deltaTime )
+    {
+        int deltaFrame = Util.FPDiv( deltaTime, m_secPerFrame );
+
+        if ( m_direction )
+            m_currentFrame += deltaFrame;
+        else
+            m_currentFrame -= deltaFrame;
+
+        if ( m_frameStop )
+        {
+            m_remainingFrames -= deltaFrame;
+
+            if ( m_remainingFrames <= 0 )
+            {
+                m_animating     = false;
+                m_currentFrame  = m_finishFrame << 16;
+            }
+        }
+
+        int length_fp = m_lastIndex - m_firstIndex + 1 << 16;
+
+        while ( Util.FPRound( m_currentFrame ) < m_firstIndex )
+            m_currentFrame += length_fp;
+
+        while ( Util.FPRound( m_currentFrame ) > m_lastIndex )
+            m_currentFrame -= length_fp;
     }
     
     /**

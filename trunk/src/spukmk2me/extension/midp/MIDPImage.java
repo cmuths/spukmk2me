@@ -39,7 +39,7 @@ import spukmk2me.video.IImage;
  * platforms, so we won't try to invent a new wheel for this
  * MIDP rendering API.
  */
-final class MIDPImage extends IImage
+final class MIDPImage implements IImage
 {
     /**
      *  Regular constructor.
@@ -58,8 +58,8 @@ final class MIDPImage extends IImage
         //#endif
         
         m_x = m_y   = 0;
-        c_width     = (short)m_image.getWidth();
-        c_height    = (short)m_image.getHeight();
+        m_width     = (short)m_image.getWidth();
+        m_height    = (short)m_image.getHeight();
     }
 
     protected MIDPImage( Image image, short x, short y,
@@ -68,16 +68,26 @@ final class MIDPImage extends IImage
         m_image     = image;
         m_x         = x;
         m_y         = y;
-        c_width     = width;
-        c_height    = height;
+        m_width     = width;
+        m_height    = height;
     }
 
     public void Render( RenderTool renderTool )
     {
         ((Graphics)renderTool.c_rAPI).drawRegion( m_image,
-            m_x, m_y, c_width, c_height, 0,
+            m_x, m_y, m_width, m_height, 0,
             renderTool.c_rasterX, renderTool.c_rasterY,
             Graphics.TOP | Graphics.LEFT );
+    }
+
+    public short GetWidth()
+    {
+        return m_width;
+    }
+
+    public short GetHeight()
+    {
+        return m_height;
     }
 
     /**
@@ -135,5 +145,5 @@ final class MIDPImage extends IImage
     }
 
     private Image   m_image;
-    private short   m_x, m_y;
+    private short   m_x, m_y, m_width, m_height;
 }

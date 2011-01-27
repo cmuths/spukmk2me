@@ -196,6 +196,7 @@ public final class Util
         }
 
         return ( positive )? quotient : -quotient;
+        //return (int)(((long)fnumber1 << 32) / fnumber2 >> 32);
     }
 
     /**
@@ -219,6 +220,87 @@ public final class Util
         }
         
         return (short)(( positive )? result : -result);
+    }
+
+    /**
+     *  Calculate the sine of angle. Unimplemented
+     *  @param angle Measured in radius, it's a fixed-point number.
+     *  @return Sine of angle.
+     */
+    public static int FPSin( int angle )
+    {
+        return 0;
+    }
+
+    /**
+     *  Calculate the cosine of angle. Unimplemented
+     *  @param angle Measured in radius, it's a fixed-point number.
+     *  @return Cosine of angle.
+     */
+    public static int FPCos( int angle )
+    {
+        return 0;
+    }
+
+    /**
+     *  Calculate the tangent of angle. Unimplemented
+     *  @param angle Measured in radius, it's a fixed-point number.
+     *  @return Tangent of angle.
+     */
+    public static int FPTan( int angle )
+    {
+        return 0;
+    }
+
+    /**
+     *  Calculate the arcsine of angle. Unimplemented
+     *  @param angle Measured in radius, it's a fixed-point number.
+     *  @return Arcsine of angle.
+     */
+    public static int FPArcsin( int angle )
+    {
+        return 0;
+    }
+
+    /**
+     *  Calculate the arccosine of angle. Unimplemented
+     *  @param angle Measured in radius, it's a fixed-point number.
+     *  @return Arccosine of angle.
+     */
+    public static int FPArccos( int angle )
+    {
+        return 0;
+    }
+
+    /**
+     *  Calculate the arctan of angle. Unimplemented
+     *  @param angle Measured in radius, it's a fixed-point number.
+     *  @return Arctan of angle.
+     */
+    public static int FPArctan( int angle )
+    {
+        return 0;
+    }
+
+    /**
+     *  Calculate the natural logarithm of x. Unimplemented.
+     *  @param x A fixed-point number.
+     *  @return Natural logarithm of x.
+     */
+    public static int FPLog( int x )
+    {
+        return 0;
+    }
+
+    /**
+     *  Calculate n power of x. Unimplemented
+     *  @param x Base number.
+     *  @param n The power.
+     *  @return n power of x.
+     */
+    public static int FPPow( int x, int n )
+    {
+        return 0;
     }
 
     private static long m_randSeed;

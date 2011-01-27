@@ -206,10 +206,14 @@ public abstract class ISceneNode
         return ( x << 16 ) | (y & 0x0000FFFF);
     }
 
+    // These variables are managed by the engine, DO NOT change it manually
+    // if you don't understand them fully.
     public ISceneNode   c_prev;     //!< Previous node.
     public ISceneNode   c_next;     //!< Next node.
     public ISceneNode   c_children; //!< The fake node of direct children.
     public ISceneNode   c_parent;   //!< The direct father of this node.
+
+    // You can (of course) change the variables below.
     public short        c_x;        //!< X coordinate of this node.
     public short        c_y;        //!< Y coordinate of this node.
     public boolean      c_visible,  //!< Visibility of this node.
