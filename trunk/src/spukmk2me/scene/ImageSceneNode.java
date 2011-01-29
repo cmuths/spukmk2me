@@ -34,21 +34,7 @@ public final class ImageSceneNode extends ISceneNode
      */
     public ImageSceneNode( IImage image )
     {        
-        m_image         = image;
-    }
-
-    /**
-     *  You can say it's a copy constructor.
-     *  \details The displayed image will be "referenced" from the source node,
-     * not duplicated to save the memory.
-     *  @param node The source node.
-     */
-    public ImageSceneNode( ImageSceneNode node )
-    {
-        if ( node != null )
-            m_image = node.GetImage();
-        else
-            m_image = null;
+        m_image = image;
     }
 
     public void Render( RenderTool renderTool )

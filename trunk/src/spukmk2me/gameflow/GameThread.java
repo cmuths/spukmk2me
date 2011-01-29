@@ -110,8 +110,8 @@ public final class GameThread extends Thread
                     {
                         Thread.sleep( waitTime );
                     } catch ( InterruptedException e ) {
-                        //#ifdef __HNYD_DEBUG
-//#                         e.printStackTrace();
+                        //#ifdef __SPUKMK2ME_DEBUG
+                        e.printStackTrace();
                         //#endif
                     }
                 }

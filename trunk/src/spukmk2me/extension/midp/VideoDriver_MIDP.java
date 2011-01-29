@@ -211,7 +211,25 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         throws IOException
     {
         return MIDPImage.LoadImagesFromFile( filename, width, height );
-    }    
+    }
+
+    public IImage CreateRegionalImage( IImage src,
+        short x, short y, short width, short height )
+    {
+        //#ifdef __SPUKMK2ME_DEBUG
+        try
+        {
+        //#endif
+            return new MIDPImage( (MIDPImage)src, x, y, width, height );
+        //#ifdef __SPUKMK2ME_DEBUG
+        } catch ( ClassCastException e ) {
+            System.out.println( "You are creating a regional image from an " +
+                "image that wasn't created by this driver." );
+        }
+
+        return null;
+        //#endif
+    }
     
     private static final long   MAX_TIME_PER_STEP = 100;
 

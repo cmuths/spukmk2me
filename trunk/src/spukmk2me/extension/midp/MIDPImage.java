@@ -62,6 +62,12 @@ final class MIDPImage implements IImage
         m_height    = (short)m_image.getHeight();
     }
 
+    public MIDPImage( MIDPImage image, short x, short y,
+        short width, short height )
+    {
+        this( image.GetImage(), x, y, width, height );
+    }
+
     protected MIDPImage( Image image, short x, short y,
         short width, short height )
     {
@@ -88,6 +94,11 @@ final class MIDPImage implements IImage
     public short GetHeight()
     {
         return m_height;
+    }
+
+    public Image GetImage()
+    {
+        return m_image;
     }
 
     /**

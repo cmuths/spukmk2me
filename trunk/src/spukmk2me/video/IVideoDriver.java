@@ -194,6 +194,22 @@ public interface IVideoDriver
     public IImage[] LoadImages( String filename, short width, short height )
         throws IOException;
 
+    /**
+     *  Create a sub-image from a source image.
+     *  \details If the desired sub-image is not valid or can't be created,
+     * e.g user wants to create a image width negative size, this function will
+     * return a null value.
+     *  @param source The source image.
+     *  @param x The X coordinate of sub-image.
+     *  @param y The Y coordinate of sub-image.
+     *  @param width The width of sub-image.
+     *  @param height The height of sub-image.
+     *  @return The desired sub-image, or null if the sub-image cannot be
+     * created.
+     */
+    public IImage CreateRegionalImage( IImage source,
+        short x, short y, short width, short height );
+
     public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
     public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.
 }

@@ -34,6 +34,10 @@ public final class StringSceneNode extends ISceneNode
 
     /**
      *  Setup the string.
+     *  \details If no truncating and special alignment are used,
+     * StringSceneNode will recalculate the width and the height of this node
+     * according to the visible width and visible height of the rendered
+     * string.
      *  @param s The string you want to associate with.
      *  @param color The text color, in ARGB 8888 format.
      *  @param width The width of the text, used in truncating & aligning.
@@ -325,6 +329,21 @@ public final class StringSceneNode extends ISceneNode
 
         if ( duplicate )
             PreprocessString();
+        else
+        {
+            m_width = (short)m_font.GetStringWidth( m_str, 0, m_str.length,
+                m_style );
+
+            int nLine = 1;
+
+            for ( int i = 0; i != m_str.length; ++i )
+            {
+                if ( m_str[ i ] == '\n' )
+                    ++nLine;
+            }
+
+            m_height = (short)(nLine * m_font.c_height);
+        }
     }
 
     private BitmapFont m_font;
