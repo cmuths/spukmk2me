@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me;
@@ -220,7 +220,7 @@ public final class Device
     /**
      *  Stop the device and release all resource associated with it.
      *  \details Since the resource are managed by Java Virtual Machine,
-     * all the things this function can do is nullify all references.
+     * all this function can do is nullify all references.
      */
     public void StopDevice()
     {

@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me.gameflow;
@@ -39,7 +39,7 @@ public final class GameThread extends Thread
         m_working               = false;
     }
 
-    public final synchronized void Resume()
+    public void Resume()
     {
         if ( m_firstActivatedTime )
         {
@@ -57,17 +57,17 @@ public final class GameThread extends Thread
         m_working = true;
     }
 
-    public final synchronized void Pause()
+    public void Pause()
     {
         m_working = false;
     }
 
-    public final synchronized void Quit()
+    public void Quit()
     {
         m_alive = false;
     }
 
-    public final void run()
+    public void run()
     {
         long waitTime, lastWakeupTime, lastProcessTime, timeToProcess;
 
@@ -79,16 +79,16 @@ public final class GameThread extends Thread
         {
             if ( m_working )
             {
-                synchronized( this )
+                //synchronized( this )
                 {
                     waitTime = System.currentTimeMillis() - lastProcessTime;
                     lastProcessTime += waitTime;
-                    m_configData.INPUT_ACTION =
-                        m_imonitor.GetActionBitPattern();
-
                     timeToProcess =
                         ( waitTime > m_configData.MAX_MS_PER_FRAME )?
-                    m_configData.MAX_MS_PER_FRAME : waitTime;
+                        m_configData.MAX_MS_PER_FRAME : waitTime;
+                    
+                    m_configData.INPUT_ACTION =
+                        m_imonitor.GetActionBitPattern();
 
                     m_gameProcessor.ProcessGame( timeToProcess );
 

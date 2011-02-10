@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me;
@@ -207,7 +207,7 @@ public final class Util
      */
     public static short FPRound( int fnumber )
     {
-        boolean positive = (fnumber & 0x80000000) == 0;
+        /*boolean positive = (fnumber & 0x80000000) == 0;
 
         if ( !positive )
             fnumber = -fnumber;
@@ -220,7 +220,11 @@ public final class Util
                 ++result;
         }
         
-        return (short)(( positive )? result : -result);
+        return (short)(( positive )? result : -result);*/
+        if ( (fnumber & 0x00008000) != 0 )
+            return (short)((fnumber >> 16) + 1);
+
+        return (short)(fnumber >> 16);
     }
 
     /**

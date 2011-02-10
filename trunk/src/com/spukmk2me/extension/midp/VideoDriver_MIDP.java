@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me.extension.midp;
@@ -83,6 +83,24 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     public void StartRendering( boolean clearScreen, int clearColor,
         long deltaMilliseconds )
     {
+        //#ifdef __SPUKMK2ME_DEBUG
+        long fpsDeltaTime = System.currentTimeMillis() - m_fpsLastTime;
+
+        m_fpsLastTime = System.currentTimeMillis();
+
+        if ( fpsDeltaTime <= 0 )
+            m_fpsString[ 5 ] = m_fpsString[ 6 ] =
+                m_fpsString[ 8 ] = m_fpsString[ 9 ] = '-';
+        else
+        {
+            fpsDeltaTime = 100000 / fpsDeltaTime;
+            m_fpsString[ 5 ] = (char)(fpsDeltaTime / 1000 + 0x30);
+            m_fpsString[ 6 ] = (char)(fpsDeltaTime % 1000 / 100 + 0x30);
+            fpsDeltaTime %= 100;
+            m_fpsString[ 8 ] = (char)(fpsDeltaTime / 10 + 0x30);
+            m_fpsString[ 9 ] = (char)(fpsDeltaTime % 10 + 0x30);
+        }
+        //#endif
         m_renderTool.c_scrWidth     = (short)this.getWidth();
         m_renderTool.c_scrHeight    = (short)this.getHeight();
 
@@ -115,23 +133,6 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     public void FinishRendering()
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        long fpsDeltaTime = System.currentTimeMillis() - m_fpsLastTime;
-
-        m_fpsLastTime = System.currentTimeMillis();
-
-        if ( fpsDeltaTime <= 0 )
-            m_fpsString[ 5 ] = m_fpsString[ 6 ] =
-                m_fpsString[ 8 ] = m_fpsString[ 9 ] = '-';
-        else
-        {
-            fpsDeltaTime = 100000 / fpsDeltaTime;            
-            m_fpsString[ 5 ] = (char)(fpsDeltaTime / 1000 + 0x30);
-            m_fpsString[ 6 ] = (char)(fpsDeltaTime % 1000 / 100 + 0x30);
-            fpsDeltaTime %= 100;
-            m_fpsString[ 8 ] = (char)(fpsDeltaTime / 10 + 0x30);
-            m_fpsString[ 9 ] = (char)(fpsDeltaTime % 10 + 0x30);
-        }
-        
         ((Graphics)m_renderTool.c_rAPI).setColor( 0xFF7F7F7F );
         ((Graphics)m_renderTool.c_rAPI).drawChars( m_fpsString, 0, 10, 0, 0,
             Graphics.TOP | Graphics.LEFT );
@@ -225,6 +226,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         } catch ( ClassCastException e ) {
             System.out.println( "You are creating a regional image from an " +
                 "image that wasn't created by this driver." );
+            e.printStackTrace();
         }
 
         return null;

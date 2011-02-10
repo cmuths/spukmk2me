@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me.optional.font;
@@ -29,7 +29,9 @@ import java.io.IOException;
  *  \details Properties of bitmap font consist of five bytes: the first four
  * bytes is the alpha, red, green, blue channel of text's color,
  * respectively. The fifth byte is the "style" of the text. See the constants
- * for more information.
+ * for more information.\n
+ *  @note Current implement only allow fonts with the maximum sum of character
+ * width and italic stride value is 32 pixels.
  */
 public final class BitmapFont extends ICFont
 {
@@ -86,28 +88,12 @@ public final class BitmapFont extends ICFont
 
     public Object GetBitmapData( char ch )
     {
-        int argbIndex, argbFirst, currentInt, i, j, width;
-
-        argbFirst   = 0;
-        i           = 0;
-        width       = m_charWidth[ GetIndex( ch ) ];
-
         PreprocessCharacterData( GetIndex( ch ) );
 
-        while ( i != m_height )
-        {
-            currentInt  = m_preprocessedData[ i++ ];
-            argbIndex   = argbFirst;
-
-            for ( j = width; j != 0; --j )
-            {
-                m_buffer[ argbIndex++ ] = ((currentInt & 0x80000000) == 0)?
-                    0x00000000 : m_color;
-                currentInt <<= 1;
-            }
-
-            argbFirst += m_bufferWidth;
-        }
+        if ( (m_style & STYLE_BOLD) == 0 )
+            ExportPlainCharacterData( GetIndex( ch ) );
+        else
+            ExportBoldCharacterData( GetIndex( ch ) );
 
         if ( (m_style & STYLE_UNDERLINE) != 0 )
             DrawUnderline( GetCharWidth( ch ) );
@@ -150,10 +136,28 @@ public final class BitmapFont extends ICFont
             m_buffer[ index++ ] = m_color;
     }
 
+    // Convert bytes to int, perform italic stride.
     private void PreprocessCharacterData( int charIndex )
     {
         int shiftRange, j, fetchedData;
+        int italicStride, italicCountdown, italicStep;
 
+        if ( (m_style & STYLE_ITALIC) == 0 )
+        {
+            italicStride    = 0;
+            italicStep      = m_height;
+        }
+        else
+        {
+            if ( (m_height % (m_italicStride + 1)) == 0 )
+                italicStep = m_height / (m_italicStride + 1);
+            else
+                italicStep = m_height / (m_italicStride + 1) + 1;
+
+            italicStride = m_italicStride;
+        }
+
+        italicCountdown = italicStep;
         charIndex *= m_bytesPerChar;
 
         for ( int i = 0; i != m_height; )
@@ -169,7 +173,73 @@ public final class BitmapFont extends ICFont
                 shiftRange  -= 8;
             }
 
-            m_preprocessedData[ i++ ] = fetchedData;
+            m_preprocessedData[ i++ ] = fetchedData >> italicStride;
+
+            if ( --italicCountdown == 0 )
+            {
+                --italicStride;
+                italicCountdown = italicStep;
+            }
+        }
+    }
+
+    private void ExportPlainCharacterData( int charIndex )
+    {
+        int argbIndex, argbFirst, currentInt, i, j, width;
+
+        argbFirst   = 0;
+        i           = 0;
+        width       = m_charWidth[ charIndex ];
+
+        while ( i != m_height )
+        {
+            currentInt  = m_preprocessedData[ i++ ];
+            argbIndex   = argbFirst;
+
+            for ( j = width; j != 0; --j )
+            {
+                m_buffer[ argbIndex++ ] = ((currentInt & 0x80000000) == 0)?
+                    0x00000000 : m_color;
+                currentInt <<= 1;
+            }
+
+            argbFirst += m_bufferWidth;
+        }
+    }
+
+    private void ExportBoldCharacterData( int charIndex )
+    {
+        int argbIndex, argbFirst, currentInt, i, j, width;
+        int color;
+        boolean isPrevBold;
+
+        argbFirst   = 0;
+        i           = 0;
+        width       = m_charWidth[ charIndex ];
+
+        while ( i != m_height )
+        {
+            currentInt  = m_preprocessedData[ i++ ];
+            argbIndex   = argbFirst;
+            isPrevBold  = false;
+
+            for ( j = width; j != 0; --j )
+            {
+                color = ((currentInt & 0x80000000) == 0)? 0x00000000 : m_color;
+                
+                if ( isPrevBold )
+                    m_buffer[ ++argbIndex ] = color;
+                else
+                {
+                    m_buffer[ argbIndex++ ] = color;
+                    m_buffer[ argbIndex ]   = color;
+                }
+                    
+                isPrevBold = color != 0;
+                currentInt <<= 1;
+            }
+
+            argbFirst += m_bufferWidth;
         }
     }
 

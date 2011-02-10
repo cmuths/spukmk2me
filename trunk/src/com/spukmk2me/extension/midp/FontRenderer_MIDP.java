@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me.extension.midp;
@@ -39,7 +39,8 @@ public final class FontRenderer_MIDP implements ICFontRenderer
 
     public void SetRenderTool( RenderTool renderTool )
     {
-        m_g = (Graphics)renderTool.c_rAPI;
+        m_g             = (Graphics)renderTool.c_rAPI;
+        m_renderTool    = renderTool;
     }
 
     public void RenderString( char[] s, ICFont font, int offset, int length,
@@ -57,9 +58,20 @@ public final class FontRenderer_MIDP implements ICFontRenderer
             return;
 
         int rasterX = x;
-
+        int charHeight = font.GetLineHeight();
+        int charWidth;
+        int clipX, clipY, clipW, clipH;
         char character;
 
+        {
+            long clipping = m_renderTool.GetClipping();
+            
+            clipX = (int)(clipping >> 48);
+            clipY = (int)((clipping >> 32) & 0x0000FFFF);
+            clipW = (int)((clipping >> 16) & 0x0000FFFF);
+            clipH = (int)(clipping & 0x0000FFFF);
+        }
+        
         while ( offset != border )
         {
             character = s[ offset ];
@@ -67,17 +79,22 @@ public final class FontRenderer_MIDP implements ICFontRenderer
             if ( character == '\n' )
             {
                 rasterX = x;
-                y      += font.GetLineHeight();
+                y      += charHeight;
             }
             else
             {
                 if ( character != ' ' ) // Spaces should be invisible, right?
                 {
-                    m_g.drawRGB( (int[])font.GetBitmapData( character ), 0,
-                        font.GetBitmapDataDimension() >> 16,
-                        rasterX, y,
-                        font.GetCharWidth( character ), font.GetLineHeight(),
-                        true );
+                    charWidth = font.GetCharWidth( character );
+                    
+                    if ( RectangleCollide(
+                            rasterX, y, charWidth, charHeight,
+                            clipX, clipY, clipW, clipH ) )
+                    {
+                        m_g.drawRGB( (int[])font.GetBitmapData( character ), 0,
+                            font.GetBitmapDataDimension() >> 16,
+                            rasterX, y, charWidth, charHeight, true );
+                    }
 
                     rasterX += font.GetSpaceBetweenCharacters() +
                         font.GetCharWidth( character );
@@ -103,5 +120,13 @@ public final class FontRenderer_MIDP implements ICFontRenderer
         RenderString( buffer, font, offset, borderOffset - offset, x, y );
     }
 
-    private Graphics m_g;
+    private boolean RectangleCollide( int x1, int y1, int w1, int h1,
+        int x2, int y2, int w2, int h2 )
+    {
+        return  (x1 < x2 + w2) && (y1 < y2 + h2) &&
+                (x2 < x1 + w1) && (y2 < y1 + h1);
+    }
+
+    private Graphics    m_g;
+    private RenderTool  m_renderTool;
 }

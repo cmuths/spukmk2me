@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me.scene;
@@ -150,7 +150,8 @@ public final class SceneManager
         //#ifdef __SPUKMK2ME_DEBUG
         if ( node == null )
         {
-            System.out.println( "RenderSceneNode: node is null" );
+            new IllegalArgumentException( "Rendered node is null." ).
+                printStackTrace();
             return;
         }
         //#endif

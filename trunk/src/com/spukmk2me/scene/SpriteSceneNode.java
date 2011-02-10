@@ -13,7 +13,7 @@
  *  GNU Lesser General Public License for more details.
  *
  *   You should have received a copy of the GNU Lesser General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.spukmk2me.scene;
@@ -110,8 +110,12 @@ public final class SpriteSceneNode extends ISceneNode
         //#ifdef __SPUKMK2ME_DEBUG
         if ( m_images != null )
         {
-            if ( frameIndex >= m_images.length )
-                System.out.println( "Set sprite index out of range." );
+            if ( (frameIndex >= m_images.length) || (frameIndex < 0) )
+            {
+                new IllegalArgumentException(
+                    "Sprite index was set out of range. Index: " +
+                    frameIndex ).printStackTrace();
+            }
         }
         //#endif
         
