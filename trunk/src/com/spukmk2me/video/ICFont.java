@@ -127,8 +127,10 @@ public abstract class ICFont
 
         int     lineWidth, maxWidth;
         char    ch;
+        // Small space added after each non-space character.
+        boolean additionalSpace = false;
 
-        lineWidth           = maxWidth = 0;
+        lineWidth = maxWidth = 0;
 
         while ( offset != border )
         {
@@ -141,18 +143,29 @@ public abstract class ICFont
                 if ( lineWidth > maxWidth )
                     maxWidth = lineWidth;
 
-                lineWidth = 0;
+                lineWidth       = 0;
+                additionalSpace = false;
             }
             else if ( ch != ' ' )
-                lineWidth += GetCharWidth( ch ) +
-                    GetSpaceBetweenCharacters();
+            {
+                lineWidth += GetCharWidth( ch ) + GetSpaceBetweenCharacters();
+                additionalSpace = true;
+            }
             else
+            {
                 lineWidth += GetCharWidth( ' ' );
+                
+                if ( additionalSpace )
+                    lineWidth -= GetSpaceBetweenCharacters();
+                
+                additionalSpace = false;
+            }
 
             ++offset;
         }
 
-        lineWidth -= GetSpaceBetweenCharacters();
+        if ( additionalSpace )
+            lineWidth -= GetSpaceBetweenCharacters();
 
         if ( lineWidth > maxWidth )
             maxWidth = lineWidth;

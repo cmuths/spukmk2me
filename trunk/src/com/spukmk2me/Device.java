@@ -37,13 +37,18 @@ import com.spukmk2me.scene.SceneManager;
  */
 
 /**
+ *  @package com.spukmk2me.debug
+ *  Contains debug-related classes. This package exists in debug version only.
+ */
+
+/**
  *  @package com.spukmk2me.scene
  *  Hold everything about scene managing.
  */
 
 /**
  *  @package com.spukmk2me.scene.complex
- *  Some advanced scene nodes.
+ *  Some advanced scene nodes, can be somewhat called "complex" nodes.
  */
 
 /**

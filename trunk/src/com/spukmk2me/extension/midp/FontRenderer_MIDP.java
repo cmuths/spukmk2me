@@ -57,11 +57,13 @@ public final class FontRenderer_MIDP implements ICFontRenderer
         if ( offset >= border )
             return;
 
-        int rasterX = x;
-        int charHeight = font.GetLineHeight();
-        int charWidth;
-        int clipX, clipY, clipW, clipH;
-        char character;
+        int     rasterX     = x;
+        int     charHeight  = font.GetLineHeight();
+        int     charWidth;
+        int     clipX, clipY, clipW, clipH;
+        char    character;
+        // Small space after each non-space character.
+        boolean additionalSpace = false;
 
         {
             long clipping = m_renderTool.GetClipping();
@@ -78,8 +80,9 @@ public final class FontRenderer_MIDP implements ICFontRenderer
 
             if ( character == '\n' )
             {
-                rasterX = x;
-                y      += charHeight;
+                rasterX         = x;
+                y              += charHeight;
+                additionalSpace = false;
             }
             else
             {
@@ -98,9 +101,16 @@ public final class FontRenderer_MIDP implements ICFontRenderer
 
                     rasterX += font.GetSpaceBetweenCharacters() +
                         font.GetCharWidth( character );
+                    additionalSpace = true;
                 }
                 else
-                    rasterX += font.GetCharWidth( ' ' );
+                {
+                    if ( additionalSpace )
+                        rasterX -= font.GetSpaceBetweenCharacters();
+
+                    rasterX        += font.GetCharWidth( ' ' );
+                    additionalSpace = false;
+                }
             }
 
             ++offset;

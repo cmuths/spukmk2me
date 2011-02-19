@@ -18,7 +18,9 @@
 
 package com.spukmk2me;
 
+import java.io.InputStream;
 import java.io.DataInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
@@ -81,20 +83,28 @@ public final class Util
     }
 
     /**
-     *  Read a ANSI-encoded line of text.
-     *  \details Can only deal with end-of-line character CR/LF and LF/CR.
-     *  Users must provide their own buffer because of allocation/deallocation
-     *  on Java is unreliable.
+     *   Read a ANSI-encoded line of text.
+     *   \details Can only deal with end-of-line character CR/LF and LF/CR.
+     *  Users must provide their own buffer because allocation/deallocation
+     *  on Java is unreliable.\n
+     *   \details User must remove any extra bytes, such as BOM in the input
+     * stream before passing the stream to this function.
+     *   @note Current implement requires buffer size is at least
+     *  max_bytes_per_line + 2.
+     *   @param is Input stream.
+     *   @param buffer User-provided buffer, for avoiding mass object
+     * instantiation.
      */
-    public static String ReadLine( DataInputStream is, byte[] buffer )
+    public static String ReadUTF8Line( InputStream is, byte[] buffer )
         throws IOException
     {
-        int     i = 0;
+        int     i = 2;
         byte    c = 0;
+        DataInputStream dis = new DataInputStream( is );
 
-        while ( (is.available() > 0) && (i < buffer.length) )
+        while ( (dis.available() > 0) && (i < buffer.length) )
         {
-            c = is.readByte();
+            c = dis.readByte();
 
             if ( (c == 13) || (c == 10) )
                 break;
@@ -102,16 +112,29 @@ public final class Util
             buffer[ i++ ] = c;
         }
 
-        is.readByte();
-        return new String( buffer, 0, i );
+        // Read LF (or CR)
+        if ( dis.available() != 0 )
+            dis.readByte();
+
+        buffer[ 0 ] = (byte)(i - 2 >> 8);
+        buffer[ 1 ] = (byte)((i - 2) & 0x000000FF);
+        return new DataInputStream( new ByteArrayInputStream( buffer, 0, i ) ).
+            readUTF();
     }
 
     /**
      *  Read the incoming word in the input stream.
      *  \details End-of-line characters, EOF, spaces and TABs are removed
      *  from the word.
+     *   \details User must remove any extra bytes, such as BOM in the input
+     * stream before passing the stream to this function.
+     *   @note Current implement requires buffer size is at least
+     *  max_bytes_per_line + 2.
+     *   @param is Input stream.
+     *   @param buffer User-provided buffer, for avoiding mass object
+     * instantiation.
      */
-    public static String ReadWord( DataInputStream is, byte[] buffer )
+    public static String ReadUTF8Word( InputStream is, byte[] buffer )
         throws IOException
     {
         if ( is.available() == 0 )
@@ -119,18 +142,19 @@ public final class Util
 
         int     i = 0;
         byte    c = 0;
+        DataInputStream dis = new DataInputStream( is );
 
         do
         {
-            c = is.readByte();
+            c = dis.readByte();
         } while ( ((c == 32) || (c == 8) || (c == 10) || (c == 13)) &&
-                (is.available() > 0) );
+                (dis.available() > 0) );
 
         buffer[ i++ ] = c;
 
-        while ( (is.available() > 0) && (i < buffer.length) )
+        while ( (dis.available() > 0) && (i < buffer.length) )
         {
-            c = is.readByte();
+            c = dis.readByte();
 
             if ( (c == 13) || (c == 10) || (c == 32) || (c == 8) )
                 break;
@@ -138,7 +162,10 @@ public final class Util
             buffer[ i++ ] = c;
         }
 
-        return new String( buffer, 0, i );
+        buffer[ 0 ] = (byte)(i - 2 >> 8);
+        buffer[ 1 ] = (byte)((i - 2) & 0x000000FF);
+        return new DataInputStream( new ByteArrayInputStream( buffer, 0, i ) ).
+            readUTF();
     }
 
     /**

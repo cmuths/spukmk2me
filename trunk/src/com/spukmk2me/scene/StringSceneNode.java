@@ -34,9 +34,9 @@ public final class StringSceneNode extends ISceneNode
 
     /**
      *  Setup the string.
-     *  \details If no truncating and special alignment are used,
-     * StringSceneNode will recalculate the width and the height of this node
-     * according to the visible width and visible height of the rendered
+     *  \details If no truncating and special alignment in one direction is
+     * used, StringSceneNode will recalculate the width and the height of this
+     * node according to the visible width and visible height of the rendered
      * string.
      *  @param s The string you want to associate with.
      *  @param properties Properties of rendered text. Depends on used font.
@@ -260,7 +260,7 @@ public final class StringSceneNode extends ISceneNode
                 m_lineStartIndexes[ lineIterator ] = i + 1;
                 widthOfLines[ lineIterator - 1 ] = m_font.GetStringWidth(
                     m_str, m_lineStartIndexes[ lineIterator - 1 ],
-                    i - m_lineStartIndexes[ lineIterator - 1 ] - 1 );
+                    i - m_lineStartIndexes[ lineIterator - 1 ] );
                 ++lineIterator;
             }
         }
@@ -284,8 +284,15 @@ public final class StringSceneNode extends ISceneNode
         }
         else
         {
+            m_width = 0;
+            
             for ( int i = 0; i != m_nLine; ++i )
+            {
                 m_lineStartX[ i ] = 0;
+                
+                if ( widthOfLines[ i ] > m_width )
+                    m_width = (short)widthOfLines[ i ];
+            }
         }
 
         if ( (m_alignment & ALIGN_CENTERY) != 0 )
@@ -293,7 +300,10 @@ public final class StringSceneNode extends ISceneNode
         else if ( (m_alignment & ALIGN_BOTTOM) != 0 )
             m_startY = m_height - m_nLine * m_font.GetLineHeight();
         else
+        {
             m_startY = 0;
+            m_height = (short)(m_nLine * m_font.GetLineHeight());
+        }
     }
 
     private void Initialise( ICFont font, byte[] properties,

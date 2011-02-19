@@ -20,6 +20,12 @@ package com.spukmk2me.scene;
 
 import com.spukmk2me.video.RenderTool;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.SPUKMK2meException;
+import com.spukmk2me.scene.complex.ClippingSceneNode;
+import com.spukmk2me.scene.complex.ViewportSceneNode;
+//#endif
+
 /**
  *  Basic element of SPUKMK2me rendering engine.
  *  \details SPUKMK2me doesn't render image, line, point, etc... directly.
@@ -100,8 +106,15 @@ public abstract class ISceneNode
         if ( (node.c_next != null) || (node.c_prev != null) ||
             (node.c_parent != null) )
         {
-            System.out.println( "WARNING: Adding potentially defected node." );
+            new SPUKMK2meException( "Adding potentially defected node." ).
+                printStackTrace();
         }
+
+        /*if (    (parent instanceof ClippingSceneNode) ||
+                (parent instanceof ViewportSceneNode) )
+            new SPUKMK2meException( "You are adding a node directly" +
+             "to a complex node. Did you intend to do that or you forgot" +
+             "to use GetEntryNode()?" ).printStackTrace();*/
         //#endif
 
         ISceneNode bindingNode;
@@ -146,10 +159,10 @@ public abstract class ISceneNode
     public void Drop()
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( (c_prev == null) || (c_next == null) )
+        if ( (c_prev == null) || (c_next == null) || (c_parent == null) )
         {
-            System.out.println( "ISceneNode dropping - Error: Unattached " +
-                "node dropped. Object: " + this.toString() );
+            new SPUKMK2meException( "Dropping unattached node." ).
+                printStackTrace();
         }
         //#endif
         c_prev.c_next = c_next;
@@ -167,7 +180,29 @@ public abstract class ISceneNode
         }
 
         c_next = c_prev = c_parent = null;
-    }    
+    }
+
+    /**
+     *  Drop all children.
+     */
+    public final void DropChildren()
+    {
+        //#ifdef __SPUKMK2ME_DEBUG
+        if ( c_children == null )
+        {
+            new SPUKMK2meException( "This node has no child." ).
+                printStackTrace();
+        }
+        //#endif
+
+        ISceneNode iterator = c_children.c_next;
+
+        while ( iterator != c_children )
+        {
+            iterator = iterator.c_next;
+            iterator.c_prev.Drop();
+        }
+    }
 
     /**
      *  Set the position of this node.

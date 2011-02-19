@@ -18,6 +18,9 @@
 
 package com.spukmk2me.scene;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.SPUKMK2meException;
+//#endif
 import com.spukmk2me.Util;
 import com.spukmk2me.video.RenderTool;
 import com.spukmk2me.video.IImage;
@@ -112,7 +115,7 @@ public final class SpriteSceneNode extends ISceneNode
         {
             if ( (frameIndex >= m_images.length) || (frameIndex < 0) )
             {
-                new IllegalArgumentException(
+                new SPUKMK2meException(
                     "Sprite index was set out of range. Index: " +
                     frameIndex ).printStackTrace();
             }

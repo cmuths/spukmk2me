@@ -251,7 +251,7 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( keyCode == m_softleftKeyCode )
             m_actionBitPattern &= ~ACT_LSOFT;
-        else if(keyCode == m_softrightKeyCode)
+        else if( keyCode == m_softrightKeyCode )
             m_actionBitPattern &= ~ACT_RSOFT;
     }
 
