@@ -186,6 +186,15 @@ public final class SpriteSceneNode extends ISceneNode
         m_images = images;
     }
 
+    /**
+     *  Check if the sprite is animating or not.
+     *  @return true if this sprite is animating, otherwise return false.
+     */
+    public boolean IsAnimating()
+    {
+        return m_animating;
+    }
+
     //! If the enabled bit of MODE_BACKWARD is zero, the sprite won't animate.
     public static final byte    MODE_ANIMATING      = 0x01;
     //! If the enabled bit of MODE_BACKWARD is zero, forward animation is used.
