@@ -22,8 +22,10 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.game.Sprite;
 
 import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IImage;
 
 /**
@@ -52,36 +54,99 @@ final class MIDPImage implements IImage
         //#ifdef __SPUKMK2ME_DEBUG
         System.out.print( "Loading image: " + filename );
         //#endif
-        m_image = Image.createImage( filename );
+        Image img = Image.createImage( filename );
         //#ifdef __SPUKMK2ME_DEBUG
         System.out.println( " Loaded." );
         //#endif
         
-        m_x = m_y   = 0;
-        m_width     = (short)m_image.getWidth();
-        m_height    = (short)m_image.getHeight();
+        CreateImage( img, (short)0, (short)0,
+            (short)img.getWidth(), (short)img.getHeight(), 0 );
     }
 
     public MIDPImage( MIDPImage image, short x, short y,
-        short width, short height )
+        short width, short height, int rotationDegree, byte flippingFlag )
     {
-        this( image.GetImage(), x, y, width, height );
+        int     midpTransformationFlag  = 0;
+        boolean hasVerticalFlipping     = false;
+
+        if ( flippingFlag != 0 )
+        {
+            if ( (flippingFlag & IVideoDriver.FLIP_HORIZONTAL) != 0 )
+                rotationDegree += 0x00B40000;
+
+            hasVerticalFlipping = (flippingFlag &
+                (IVideoDriver.FLIP_HORIZONTAL | IVideoDriver.FLIP_VERTICAL ))
+                != 0;
+        }
+
+        while ( rotationDegree >= 0x00228000 ) // larger or equal 360
+            rotationDegree -= 0x00228000;
+
+        while ( rotationDegree < 0 )
+            rotationDegree += 0x00228000;
+
+        // I don't know why they come up with those Sprite constants.
+        if ( hasVerticalFlipping )
+        {
+            switch ( rotationDegree )
+            {
+                case 0:
+                    m_midpTransformationFlag = Sprite.TRANS_MIRROR;
+                    break;
+
+                case 0x005A0000:
+                    m_midpTransformationFlag = Sprite.TRANS_MIRROR_ROT90;
+                    break;
+
+                case 0x00B40000:
+                    m_midpTransformationFlag = Sprite.TRANS_MIRROR_ROT180;
+                    break;
+
+                case 0x00FA0000:
+                    m_midpTransformationFlag = Sprite.TRANS_MIRROR_ROT270;
+                    break;
+            }
+        }
+        else
+        {
+            switch ( rotationDegree )
+            {
+                case 0:
+                    m_midpTransformationFlag = Sprite.TRANS_NONE;
+
+                case 0x005A0000:
+                    m_midpTransformationFlag = Sprite.TRANS_ROT90;
+                    break;
+
+                case 0x00B40000:
+                    m_midpTransformationFlag = Sprite.TRANS_ROT180;
+                    break;
+
+                case 0x00FA0000:
+                    m_midpTransformationFlag = Sprite.TRANS_ROT270;
+                    break;
+            }
+        }
+
+        CreateImage( image.GetImage(), x, y, width, height,
+            midpTransformationFlag );
     }
 
-    protected MIDPImage( Image image, short x, short y,
-        short width, short height )
+    private void CreateImage( Image image, short x, short y,
+        short width, short height, int midpTransformationFlag )
     {
-        m_image     = image;
-        m_x         = x;
-        m_y         = y;
-        m_width     = width;
-        m_height    = height;
+        m_image                     = image;
+        m_x                         = x;
+        m_y                         = y;
+        m_width                     = width;
+        m_height                    = height;
+        m_midpTransformationFlag    = midpTransformationFlag;
     }
 
     public void Render( RenderTool renderTool )
     {
         ((Graphics)renderTool.c_rAPI).drawRegion( m_image,
-            m_x, m_y, m_width, m_height, 0,
+            m_x, m_y, m_width, m_height, m_midpTransformationFlag,
             renderTool.c_rasterX, renderTool.c_rasterY,
             Graphics.TOP | Graphics.LEFT );
     }
@@ -118,10 +183,10 @@ final class MIDPImage implements IImage
         System.out.print( "Loading images from file: " + filename );
         //#endif
 
-        Image img       = Image.createImage( filename );
+        MIDPImage img   = new MIDPImage( filename );
         
-        int imgWidth    = img.getWidth();
-        int imgHeight   = img.getHeight();
+        int imgWidth    = img.GetWidth();
+        int imgHeight   = img.GetHeight();
         int nImageW     = imgWidth / width;
         int nImageH     = imgHeight / height;
         int nImage      = nImageW * nImageH;
@@ -139,7 +204,8 @@ final class MIDPImage implements IImage
             for ( int j = nImageW; j != 0; --j )
             {
                 images[ imgIterator ] =
-                    new MIDPImage( img, (short)_x, (short)_y, width, height );
+                    new MIDPImage( img, (short)_x, (short)_y, width, height,
+                        0, (byte)0 );
                 ++imgIterator;
                 _x += width;
             }
@@ -156,5 +222,6 @@ final class MIDPImage implements IImage
     }
 
     private Image   m_image;
+    private int     m_midpTransformationFlag;
     private short   m_x, m_y, m_width, m_height;
 }

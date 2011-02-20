@@ -198,18 +198,30 @@ public interface IVideoDriver
      *  Create a sub-image from a source image.
      *  \details If the desired sub-image is not valid or can't be created,
      * e.g user wants to create a image width negative size, this function will
-     * return a null value.
+     * return a null value.\n
+     *  Rotation and flipping is considered as a "patch" for image
+     * transformation.
      *  @param source The source image.
      *  @param x The X coordinate of sub-image.
      *  @param y The Y coordinate of sub-image.
      *  @param width The width of sub-image.
      *  @param height The height of sub-image.
+     *  @param rotationDegree The rotation, measured in degree. The positive
+     * direction is counter-clockwise. rotationDegree must be presented as a
+     * 16-16 fixed-point number. Rotation is applied after flipping.
+     *  @param flippingFlag Flipping option. See the constants for more
+     * information. Zero value for no flipping. Flipping is applied before
+     * rotation.
      *  @return The desired sub-image, or null if the sub-image cannot be
      * created.
      */
     public IImage CreateRegionalImage( IImage source,
-        short x, short y, short width, short height );
+        short x, short y, short width, short height, int rotationDegree,
+        byte flippingFlag );
 
     public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
     public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.
+
+    public static final byte FLIP_HORIZONTAL    = 0x01;
+    public static final byte FLIP_VERTICAL      = 0x02;
 }

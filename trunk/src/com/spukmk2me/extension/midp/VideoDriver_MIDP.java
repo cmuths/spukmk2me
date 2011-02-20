@@ -21,6 +21,10 @@ package com.spukmk2me.extension.midp;
 import java.io.IOException;
 import javax.microedition.lcdui.*;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.SPUKMK2meException;
+//#endif
+
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.ICFontRenderer;
 import com.spukmk2me.video.RenderTool;
@@ -214,14 +218,31 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         return MIDPImage.LoadImagesFromFile( filename, width, height );
     }
 
+    /**
+     *  Create a regional image.
+     *  \details Current implement of MIDP video driver only supports
+     * 90-degree-based rotation.\n
+     *  See the reference of IVideoDriver for more information.
+     */
     public IImage CreateRegionalImage( IImage src,
-        short x, short y, short width, short height )
+        short x, short y, short width, short height, int rotationDegree,
+        byte flippingFlag )
     {
+        //#ifdef __SPUKMK2ME_DEBUG
+        if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
+        {
+            new SPUKMK2meException( "MIDP driver currently does not support " +
+                "non-90-degree rotation, rotation degree will be reset to 0.");
+            rotationDegree = 0;
+        }
+        //#endif
+
         //#ifdef __SPUKMK2ME_DEBUG
         try
         {
         //#endif
-            return new MIDPImage( (MIDPImage)src, x, y, width, height );
+            return new MIDPImage( (MIDPImage)src, x, y, width, height,
+                rotationDegree, flippingFlag );
         //#ifdef __SPUKMK2ME_DEBUG
         } catch ( ClassCastException e ) {
             System.out.println( "You are creating a regional image from an " +
