@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.game.Sprite;
 
 import com.spukmk2me.video.RenderTool;
 import com.spukmk2me.video.IVideoDriver;
@@ -91,19 +90,19 @@ final class MIDPImage implements IImage
             switch ( rotationDegree )
             {
                 case 0:
-                    m_midpTransformationFlag = Sprite.TRANS_MIRROR;
+                    m_midpTransformationFlag = 2; // Sprite.TRANS_MIRROR
                     break;
 
                 case 0x005A0000:
-                    m_midpTransformationFlag = Sprite.TRANS_MIRROR_ROT90;
+                    m_midpTransformationFlag = 7; // Sprite.TRANS_MIRROR_ROT90
                     break;
 
                 case 0x00B40000:
-                    m_midpTransformationFlag = Sprite.TRANS_MIRROR_ROT180;
+                    m_midpTransformationFlag = 1; // Sprite.TRANS_MIRROR_ROT180
                     break;
 
                 case 0x00FA0000:
-                    m_midpTransformationFlag = Sprite.TRANS_MIRROR_ROT270;
+                    m_midpTransformationFlag = 4; // Sprite.TRANS_MIRROR_ROT270
                     break;
             }
         }
@@ -112,18 +111,18 @@ final class MIDPImage implements IImage
             switch ( rotationDegree )
             {
                 case 0:
-                    m_midpTransformationFlag = Sprite.TRANS_NONE;
+                    m_midpTransformationFlag = 0; // Sprite.TRANS_NONE
 
                 case 0x005A0000:
-                    m_midpTransformationFlag = Sprite.TRANS_ROT90;
+                    m_midpTransformationFlag = 5; // Sprite.TRANS_ROT90
                     break;
 
                 case 0x00B40000:
-                    m_midpTransformationFlag = Sprite.TRANS_ROT180;
+                    m_midpTransformationFlag = 3; // Sprite.TRANS_ROT180
                     break;
 
                 case 0x00FA0000:
-                    m_midpTransformationFlag = Sprite.TRANS_ROT270;
+                    m_midpTransformationFlag = 6; // Sprite.TRANS_ROT270
                     break;
             }
         }
@@ -180,7 +179,7 @@ final class MIDPImage implements IImage
         short width, short height ) throws IOException
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        System.out.print( "Loading images from file: " + filename );
+        System.out.println( "Loading image batch..." );
         //#endif
 
         MIDPImage img   = new MIDPImage( filename );
@@ -215,7 +214,7 @@ final class MIDPImage implements IImage
         }
 
         //#ifdef __SPUKMK2ME_DEBUG
-        System.out.println( " Loaded." );
+        System.out.println( "Image batch loaded." );
         //#endif
 
         return images;

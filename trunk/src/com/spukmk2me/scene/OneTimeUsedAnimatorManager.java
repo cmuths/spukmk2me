@@ -35,9 +35,7 @@ public final class OneTimeUsedAnimatorManager
     public OneTimeUsedAnimatorManager()
     {
         m_fakedFirstNode = new DoublyLinkedElement();
-
-        m_fakedFirstNode.c_data = null;
-        m_fakedFirstNode.c_next = m_fakedFirstNode.c_prev = m_fakedFirstNode;
+        Clear();
     }
 
     /**
@@ -76,7 +74,15 @@ public final class OneTimeUsedAnimatorManager
             else
                 iterator = iterator.c_next;
         }
+    }
 
+    /**
+     *  Clear all stored animators.
+     */
+    public void Clear()
+    {
+        m_fakedFirstNode.c_data = null;
+        m_fakedFirstNode.c_next = m_fakedFirstNode.c_prev = m_fakedFirstNode;
     }
 
     private DoublyLinkedElement m_fakedFirstNode; //!< For circular list.
