@@ -140,7 +140,7 @@ public final class Util
         if ( is.available() == 0 )
             return "";
 
-        int     i = 0;
+        int     i = 2;
         byte    c = 0;
         DataInputStream dis = new DataInputStream( is );
 

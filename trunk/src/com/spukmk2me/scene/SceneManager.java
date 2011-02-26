@@ -117,6 +117,7 @@ public final class SceneManager
             }
 
             m_layerNodes[ i ].SetPosition( (short)0, (short)0 );
+            m_layerNodes[ i ].c_visible = m_layerNodes[ i ].c_enable = true;
         }
 
         if ( m_animatorRootNode.c_children != null )
@@ -130,6 +131,9 @@ public final class SceneManager
                 iterator.c_prev.Drop();
             }
         }
+
+        m_animatorRootNode.SetPosition( (short)0, (short)0 );
+        m_animatorRootNode.c_visible = m_animatorRootNode.c_enable = true;
     }
 
     /**
