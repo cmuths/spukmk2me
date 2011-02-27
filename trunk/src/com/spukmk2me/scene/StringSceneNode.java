@@ -253,13 +253,15 @@ public final class StringSceneNode extends ISceneNode
         m_lineStartIndexes  = new int[ m_nLine + 1 ];
         m_lineStartIndexes[ 0 ] = 0;
 
+        m_font.PresetProperties( m_properties );
+
         for ( int i = 0; i != m_renderedLength; ++i )
         {
             if ( m_renderedString[ i ] == '\n' )
             {
                 m_lineStartIndexes[ lineIterator ] = i + 1;
                 widthOfLines[ lineIterator - 1 ] = m_font.GetStringWidth(
-                    m_str, m_lineStartIndexes[ lineIterator - 1 ],
+                    m_renderedString, m_lineStartIndexes[ lineIterator - 1 ],
                     i - m_lineStartIndexes[ lineIterator - 1 ] );
                 ++lineIterator;
             }
@@ -267,7 +269,7 @@ public final class StringSceneNode extends ISceneNode
 
         m_lineStartIndexes[ m_nLine ] = m_renderedLength;
         widthOfLines[ m_nLine - 1 ] = m_font.GetStringWidth(
-            m_str, m_lineStartIndexes[ m_nLine - 1 ],
+            m_renderedString, m_lineStartIndexes[ m_nLine - 1 ],
             m_renderedLength - m_lineStartIndexes[ m_nLine - 1 ] );
         
         m_lineStartX = new int[ m_nLine ];

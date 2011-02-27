@@ -128,6 +128,26 @@ public final class BitmapFont extends ICFont
         }
     }
 
+    /**
+     *  Create a byte array represents properties for BitmapFont.
+     *  \details The arrays are newly created, so don't overuse it.
+     *  @param color Color of the text, in ARGB8888 format.
+     *  @param style Style of the text, see the constants for more information.
+     *  @return An array represents properties for BitmapFont
+     */
+    public byte[] CreateProperties( int color, byte style )
+    {
+        byte[] returnedArray = new byte[ 5 ];
+
+        returnedArray[ 0 ]  = (byte)((color >> 24) & 0x000000FF);
+        returnedArray[ 1 ]  = (byte)((color >> 16) & 0x000000FF);
+        returnedArray[ 2 ]  = (byte)((color >> 8) & 0x000000FF);
+        returnedArray[ 3 ]  = (byte)(color & 0x000000FF);
+        returnedArray[ 4 ]  = style;
+
+        return returnedArray;
+    }
+
     private void DrawUnderline( int width )
     {
         int index = m_bufferWidth * m_yUnderline;
