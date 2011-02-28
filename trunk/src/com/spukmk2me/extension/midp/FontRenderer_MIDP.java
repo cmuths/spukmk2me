@@ -57,63 +57,72 @@ public final class FontRenderer_MIDP implements ICFontRenderer
         if ( offset >= border )
             return;
 
-        int     rasterX     = x;
-        int     charHeight  = font.GetLineHeight();
-        int     charWidth;
-        int     clipX, clipY, clipW, clipH;
-        char    character;
-        // Small space after each non-space character.
-        boolean additionalSpace = false;
+        font.RequestFont();
 
+        try
         {
-            long clipping = m_renderTool.GetClipping();
+            int     rasterX     = x;
+            int     charHeight  = font.GetLineHeight();
+            int     charWidth;
+            int     clipX, clipY, clipW, clipH;
+            char    character;
+            // Small space after each non-space character.
+            boolean additionalSpace = false;
+
+            {
+                long clipping = m_renderTool.GetClipping();
             
-            clipX = (int)(clipping >> 48);
-            clipY = (int)((clipping >> 32) & 0x0000FFFF);
-            clipW = (int)((clipping >> 16) & 0x0000FFFF);
-            clipH = (int)(clipping & 0x0000FFFF);
-        }
-        
-        while ( offset != border )
-        {
-            character = s[ offset ];
-
-            if ( character == '\n' )
-            {
-                rasterX         = x;
-                y              += charHeight;
-                additionalSpace = false;
+                clipX = (int)(clipping >> 48);
+                clipY = (int)((clipping >> 32) & 0x0000FFFF);
+                clipW = (int)((clipping >> 16) & 0x0000FFFF);
+                clipH = (int)(clipping & 0x0000FFFF);
             }
-            else
+        
+            while ( offset != border )
             {
-                if ( character != ' ' ) // Spaces should be invisible, right?
-                {
-                    charWidth = font.GetCharWidth( character );
-                    
-                    if ( RectangleCollide(
-                            rasterX, y, charWidth, charHeight,
-                            clipX, clipY, clipW, clipH ) )
-                    {
-                        m_g.drawRGB( (int[])font.GetBitmapData( character ), 0,
-                            font.GetBitmapDataDimension() >> 16,
-                            rasterX, y, charWidth, charHeight, true );
-                    }
+                character = s[ offset ];
 
-                    rasterX += font.GetSpaceBetweenCharacters() +
-                        font.GetCharWidth( character );
-                    additionalSpace = true;
+                if ( character == '\n' )
+                {
+                    rasterX         = x;
+                    y              += charHeight;
+                    additionalSpace = false;
                 }
                 else
                 {
-                    if ( additionalSpace )
-                        rasterX -= font.GetSpaceBetweenCharacters();
+                    // Spaces should be invisible, right?
+                    if ( character != ' ' )
+                    {
+                        charWidth = font.GetCharWidth( character );
+                    
+                        if ( RectangleCollide(
+                                rasterX, y, charWidth, charHeight,
+                                clipX, clipY, clipW, clipH ) )
+                        {
+                            m_g.drawRGB(
+                                (int[])font.GetBitmapData( character ), 0,
+                                font.GetBitmapDataDimension() >> 16,
+                                rasterX, y, charWidth, charHeight, true );
+                        }
 
-                    rasterX        += font.GetCharWidth( ' ' );
-                    additionalSpace = false;
+                        rasterX += font.GetSpaceBetweenCharacters() +
+                            font.GetCharWidth( character );
+                        additionalSpace = true;
+                    }
+                    else
+                    {
+                        if ( additionalSpace )
+                            rasterX -= font.GetSpaceBetweenCharacters();
+
+                        rasterX        += font.GetCharWidth( ' ' );
+                        additionalSpace = false;
+                    }
                 }
-            }
 
-            ++offset;
+                ++offset;
+            }
+        } finally {
+            font.ReleaseFont();
         }
     }
     

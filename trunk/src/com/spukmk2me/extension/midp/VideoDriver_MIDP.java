@@ -165,9 +165,9 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         return m_fontRenderer;
     }
 
-    public int GetScreenWidthHeight()
+    public short GetScreenWidth()
     {
-        return (this.getWidth() << 16) | (this.getHeight() & 0x0000FFFF);
+        return (short)this.getWidth();
     }
 
     public short GetScreenHeight()

@@ -22,6 +22,9 @@ import com.spukmk2me.video.RenderTool;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.scene.NullSceneNode;
 
+/**
+ *  Scene node which provides clipping feature.
+ */
 public final class ClippingSceneNode extends ISceneNode
 {
     private final class SubClippingSceneNode extends ISceneNode
@@ -43,7 +46,7 @@ public final class ClippingSceneNode extends ISceneNode
             return m_height;
         }
 
-        public void SetClipping( short x, short y, short width, short height )
+        private void SetClipping( short x, short y, short width, short height )
         {
             m_x         = x;
             m_y         = y;
@@ -87,6 +90,13 @@ public final class ClippingSceneNode extends ISceneNode
         return m_height;
     }
 
+    /**
+     *  Set clipping rectangle.
+     *  @param x X coordinate of top-left point.
+     *  @param y Y coordinate of top-left point.
+     *  @param width Width of clipping rectangle.
+     *  @param height Height of clipping rectangle.
+     */
     public void SetClipping( short x, short y, short width, short height )
     {
         m_entryNode.c_x = (short)-x;
@@ -95,6 +105,12 @@ public final class ClippingSceneNode extends ISceneNode
         m_height        = height;
     }
 
+    /**
+     *  Get entry node for ClippingSceneNode.
+     *  \details Do not add nodes directly to ClippingSceneNode if you
+     * want to use clipping function.
+     *  @return Entry node.
+     */
     public ISceneNode GetEntryNode()
     {
         return m_entryNode;

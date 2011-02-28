@@ -22,8 +22,14 @@ import com.spukmk2me.Util;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.video.RenderTool;
 
+/**
+ *  An advanced node built from ClippingSceneNode, acts like a viewport.
+ */
 public final class ViewportSceneNode extends ISceneNode
 {
+    /**
+     *  Constructor.
+     */
     public ViewportSceneNode()
     {
         m_clippingNode = new ClippingSceneNode();
@@ -41,57 +47,78 @@ public final class ViewportSceneNode extends ISceneNode
             m_cursorY = m_cursorNode.c_y;
         }
 
-        int relativeX = m_cursorX - Util.FPRound( m_originX );
-        int relativeY = m_cursorY - Util.FPRound( m_originY );
+        int rX1 = m_cursorX - Util.FPRound( m_originX );
+        int rY1 = m_cursorY - Util.FPRound( m_originY );
+        int rX2, rY2;
         int deltaX, deltaY;
 
-        if ( relativeX < m_alterX )
-            deltaX = relativeX - m_alterX;
-        else if ( relativeX >= m_alterX + m_alterWidth )
-            deltaX = relativeX - m_alterX - m_alterWidth + 1;
+        if ( m_cursorNode == null )
+        {
+            rX2 = rX1;
+            rY2 = rY1;
+        }
+        else
+        {
+            rX2 = rX1 + m_cursorNode.GetWidth();
+            rY2 = rY1 + m_cursorNode.GetHeight();
+        }
+
+        if ( rX1 < m_alterX )
+            deltaX = rX1 - m_alterX;
+        else if ( rX2 >= m_alterX + m_alterWidth )
+            deltaX = rX2 - m_alterX - m_alterWidth + 1;
         else
             deltaX = 0;
 
-        if ( relativeY < m_alterY )
-            deltaY = relativeY - m_alterY;
-        else if ( relativeY >= m_alterY + m_alterHeight )
-            deltaY = relativeY - m_alterY - m_alterHeight + 1;
+        if ( rY1 < m_alterY )
+            deltaY = rY1 - m_alterY;
+        else if ( rY2 >= m_alterY + m_alterHeight )
+            deltaY = rY2 - m_alterY - m_alterHeight + 1;
         else
             deltaY = 0;
 
         if ( (deltaX == 0) && (deltaY == 0) )
             return;
 
+        int movingX = 0, movingY = 0;
+
         deltaX <<= 16;
         deltaY <<= 16;
 
-        int baseSpeed = Util.FPDiv( m_movingSpeed,
-            Math.abs( deltaX ) + Math.abs( deltaY ) );
-        int movingX = 0, movingY = 0;
-
-        switch ( m_movingType )
+        if ( m_movingType == MOVINGTYPE_ALWAYS_INSIDE )
         {
-            case MOVINGTYPE_CONST_SPEED:
-                movingX = Util.FPMul(
-                    Util.FPMul( baseSpeed, deltaX ),
-                    renderTool.c_timePassed );
-                movingY = Util.FPMul(
-                    Util.FPMul( baseSpeed, deltaY ),
-                    renderTool.c_timePassed );
-                break;
+            movingX = deltaX;
+            movingY = deltaY;
+        }
+        else
+        {
+            int baseSpeed = Util.FPDiv( m_movingSpeed,
+                Math.abs( deltaX ) + Math.abs( deltaY ) );
+        
+            switch ( m_movingType )
+            {
+                case MOVINGTYPE_CONST_SPEED:
+                    movingX = Util.FPMul(
+                        Util.FPMul( baseSpeed, deltaX ),
+                        renderTool.c_timePassed );
+                    movingY = Util.FPMul(
+                        Util.FPMul( baseSpeed, deltaY ),
+                        renderTool.c_timePassed );
+                    break;
 
-            case MOVINGTYPE_SPP:
-                movingX = Util.FPMul(
-                    Util.FPMul(
-                        Util.FPMul( baseSpeed, Math.abs( deltaX ) ),
-                        renderTool.c_timePassed ),
-                    deltaX );
-                movingY = Util.FPMul(
-                    Util.FPMul(
-                        Util.FPMul( baseSpeed, Math.abs( deltaY ) ),
-                        renderTool.c_timePassed ),
-                    deltaY );
-                break;
+                case MOVINGTYPE_SPP:
+                    movingX = Util.FPMul(
+                        Util.FPMul(
+                            Util.FPMul( baseSpeed, Math.abs( deltaX ) ),
+                            renderTool.c_timePassed ),
+                        deltaX );
+                    movingY = Util.FPMul(
+                        Util.FPMul(
+                            Util.FPMul( baseSpeed, Math.abs( deltaY ) ),
+                            renderTool.c_timePassed ),
+                        deltaY );
+                    break;
+            }
         }
 
         m_originX += movingX;
@@ -124,6 +151,24 @@ public final class ViewportSceneNode extends ISceneNode
         return m_height;
     }
 
+    /**
+     *  Setup information for viewport.
+     *  @param width The width of viewport.
+     *  @param height The height of viewport.
+     *  @param viewableWidth Total navigable width.
+     *  @param viewableHeight Total navigable height.
+     *  @param alterX X coordinate of "alter" rectangle's top left point.
+     *  @param alterY Y coordinate of "alter" rectangle's top left point.
+     *  @param alterWidth Width of "alter" rectangle.
+     *  @param alterHeight Height of "alter" rectangle.
+     *  @param movingSpeed Moving speed, in 16-16 fixed-point format.
+     *  @param movingType See the constants for more information. If movingType
+     * is MOVINGTYPE_MANUAL, all the following parameters: alterX, alterY,
+     * alterWidth, alterHeight, movingSpeed and cursorNode will be ignored.
+     *  @param cursorNode A scene node acts as the cursor of this viewport. The
+     * viewport will takes it's information for automatic calculation of
+     * viewport information.
+     */
     public void SetupViewport( short width, short height,
         short viewableWidth, short viewableHeight,
         short alterX, short alterY, short alterWidth, short alterHeight,
@@ -141,8 +186,18 @@ public final class ViewportSceneNode extends ISceneNode
         m_movingType        = movingType;
         m_cursorNode        = cursorNode;
         m_originX           = m_originY = 0;
+
+        m_clippingNode.SetClipping( (short)0, (short)0, width, height );
     }
 
+    /**
+     *  Set the origin for this viewport.
+     *  \details If you use this function for an automatic viewport, this
+     * function may not work. This function is supposed to use in manual mode
+     * only.
+     *  @param x X coordinate of top-left point.
+     *  @param y Y coordinate of top-left point.
+     */
     public void SetOrigin( short x, short y )
     {
         m_originX = x << 16;
@@ -150,6 +205,13 @@ public final class ViewportSceneNode extends ISceneNode
         m_clippingNode.SetClipping( x, y, m_width, m_height );
     }
 
+    /**
+     *  Set the position for cursor.
+     *  \details This function won't work if this viewport use a scene node
+     * as the cursor, or the moving type is MOVINGTYPE_MANUAL.
+     *  @param x X coordinate.
+     *  @param y Y coordinate.
+     */
     public void SetCursorPosition( short x, short y )
     {
         if ( m_cursorNode == null )
@@ -159,14 +221,25 @@ public final class ViewportSceneNode extends ISceneNode
         }
     }
 
+     /**
+     *  Get entry node for ClippingSceneNode.
+     *  \details Do not add nodes directly to ClippingSceneNode if you
+     * want to use clipping function.
+     *  @return Entry node.
+     */
     public ISceneNode GetEntryNode()
     {
         return m_clippingNode.GetEntryNode();
     }
 
+    //! Manually control the viewport.
     public static final byte MOVINGTYPE_MANUAL          = 0;
+    //! Viewport will move at constant speed.
     public static final byte MOVINGTYPE_CONST_SPEED     = 1;
+    //! Viewport will move with the "speed per pixel" speed.
     public static final byte MOVINGTYPE_SPP             = 2;
+    //! Cursor will always lie inside the alter rectangle (unimplemented).
+    public static final byte MOVINGTYPE_ALWAYS_INSIDE   = 3;
 
     private ClippingSceneNode   m_clippingNode;
     private ISceneNode          m_cursorNode;

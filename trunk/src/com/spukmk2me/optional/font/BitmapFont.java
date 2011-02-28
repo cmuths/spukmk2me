@@ -24,6 +24,10 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.SPUKMK2meException;
+//#endif
+
 /**
  *  One-bit resolution font; save memory, but has moderate rendering overhead.
  *  \details Properties of bitmap font consist of five bytes: the first four
@@ -38,6 +42,7 @@ public final class BitmapFont extends ICFont
     public BitmapFont( String filename ) throws IOException
     {
         LoadFontFromFile( filename );
+        m_currentLockHolder = null;
     }
 
     public byte GetRenderDataType()
@@ -128,6 +133,42 @@ public final class BitmapFont extends ICFont
         }
     }
 
+    public synchronized void RequestFont()
+    {
+        if ( m_currentLockHolder == null )
+            m_currentLockHolder = Thread.currentThread();
+        else
+        {
+            try
+            {
+                this.wait();
+            } catch ( InterruptedException e ) {
+                //#ifdef __SPUKMK2ME_DEBUG
+                e.printStackTrace();
+                //#endif
+            }
+
+            m_currentLockHolder = Thread.currentThread();
+        }
+    }
+
+    public synchronized void ReleaseFont()
+    {
+        //#ifdef __SPUKMK2ME_DEBUG
+        if ( m_currentLockHolder != Thread.currentThread() )
+        {
+            new SPUKMK2meException( "This thread doesn't hold the lock." ).
+                printStackTrace();
+        }
+        //#endif
+
+        if ( m_currentLockHolder == Thread.currentThread() )
+        {
+            m_currentLockHolder = null;
+            this.notify();
+        }
+    }
+
     /**
      *  Create a byte array represents properties for BitmapFont.
      *  \details The arrays are newly created, so don't overuse it.
@@ -135,7 +176,7 @@ public final class BitmapFont extends ICFont
      *  @param style Style of the text, see the constants for more information.
      *  @return An array represents properties for BitmapFont
      */
-    public byte[] CreateProperties( int color, byte style )
+    public static byte[] CreateProperties( int color, byte style )
     {
         byte[] returnedArray = new byte[ 5 ];
 
@@ -398,6 +439,8 @@ public final class BitmapFont extends ICFont
     public static final byte STYLE_BOLD         = 0x01;
     public static final byte STYLE_ITALIC       = 0x02;
     public static final byte STYLE_UNDERLINE    = 0x04;
+
+    private Thread m_currentLockHolder;
 
     private int[]   m_extraCharMap, m_charWidth, m_buffer, m_preprocessedData;
     private byte[]  m_data;

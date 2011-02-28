@@ -23,6 +23,8 @@ package com.spukmk2me.video;
  *  \details This interface is suitable only for character-based fonts. Any
  * font with variables glyph, such as fonts that depend on sequences of
  * character, may be unable to be implemented through this interface.\n
+ *  All ICFont are designed to be no thread-safe (to increase processing
+ * speed).
  *  ICFont uses two-dimension buffer or IImage to represent its characters. For
  * now, due to the limit of J2ME API, only integer array and IImage should be
  * returned.\n
@@ -69,7 +71,6 @@ public abstract class ICFont
 
     /**
      *  @param ch The character to render.
-     *  @param properties The properties of character.
      *  @return The bitmap data, represented by a integer array, or an IImage,
      * whatever that match the returned value of GetRenderDataType().
      */
@@ -90,7 +91,6 @@ public abstract class ICFont
      * rendering, caching frequently used characters should reduce the overhead
      * of data processing.
      *  @param ch Character to cache.
-     *  @param properties Properties of character.
      */
     public abstract void CacheCharacter( char ch );
 
@@ -103,13 +103,25 @@ public abstract class ICFont
     public abstract void PresetProperties( byte[] properties );
 
     /**
+     *  Request the font for processing, this is a kind of thread locking to
+     * prevent violation. Threads that failed to acquire the font will be put
+     * to sleep. RequestFont() is strongly recommended to use if your
+     * application has more than one thread that access one font at a time.
+     */
+    public abstract void RequestFont();
+
+    /**
+     *  Release the font acquired.
+     */
+    public abstract void ReleaseFont();
+
+    /**
      *  Get width of string.
      *  \details If the string contains more than one line, then the longest
      * width will be returned. Lines are separated by '\n'.
      *  @param s The string you want to examine.
      *  @param offset Index for rendering to start.
      *  @param length The number of rendered characters.
-     *  @param properties The properties of rendered text.
      *  @return The width of rendered string.
      */
     public final int GetStringWidth( char[] s, int offset, int length )

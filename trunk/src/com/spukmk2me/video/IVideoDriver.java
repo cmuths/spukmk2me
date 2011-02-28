@@ -124,11 +124,16 @@ public interface IVideoDriver
     public ICFontRenderer GetFontRenderer();
 
     /**
-     *  Get the width/height of rendering surface.
-     *  @return The width/height of rendering surface. The two higher bytes
-     * indicates the width, and the other twos hold the value of the height.
+     *  Get the width of screen, in pixel.
+     *  @return Width of screen.
      */
-    public int GetScreenWidthHeight();
+    public short GetScreenWidth();
+    
+    /**
+     *  Get the height of screen, in pixel.
+     *  @return Width of screen.
+     */
+    public short GetScreenHeight();
 
     /**
      *  Set the origin of rendering coordinates.

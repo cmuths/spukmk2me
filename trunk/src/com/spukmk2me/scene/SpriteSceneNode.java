@@ -137,7 +137,7 @@ public final class SpriteSceneNode extends ISceneNode
     /**
      *  Setup the animation.
      *  @param mode The animating mode. Can be combined from MODE_BACKWARD,
-     * MODE_FRAMESTOP, MODE_TIMESTOP, MODE_ANIMATING, MODE_AUTODROP.
+     * MODE_FRAMESTOP, MODE_ANIMATING, MODE_AUTODROP.
      *  @param firstIndex The first frame index of animated frame sequence.
      *  @param lastFrame The last frame index of animated frame sequence.
      *  @param msPerFrame Amount of time for a frame, measured in milliseconds.
@@ -195,11 +195,11 @@ public final class SpriteSceneNode extends ISceneNode
         return m_animating;
     }
 
-    //! If the enabled bit of MODE_BACKWARD is zero, the sprite won't animate.
+    //! If the enabled bit of MODE_ANIMATING is zero, the sprite won't animate.
     public static final byte    MODE_ANIMATING      = 0x01;
     //! If the enabled bit of MODE_BACKWARD is zero, forward animation is used.
     public static final byte    MODE_BACKWARD       = 0x02;
-    //! Stop after n frames.
+    //! Stop after pre-defined number of frames.
     public static final byte    MODE_FRAMESTOP      = 0x04;
     //! Automatically drop this node if the animation is stopped.
     public static final byte    MODE_AUTODROP       = 0x10;
