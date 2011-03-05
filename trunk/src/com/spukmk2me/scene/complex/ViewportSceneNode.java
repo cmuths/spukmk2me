@@ -34,6 +34,7 @@ public final class ViewportSceneNode extends ISceneNode
     {
         m_clippingNode = new ClippingSceneNode();
         ISceneNode.AddSceneNode( m_clippingNode, this );
+        m_originX = m_originY = 0;
     }
 
     public void Render( RenderTool renderTool )
@@ -210,9 +211,10 @@ public final class ViewportSceneNode extends ISceneNode
         m_movingSpeed       = movingSpeed;
         m_movingType        = movingType;
         m_cursorNode        = cursorNode;
-        m_originX           = m_originY = 0;
-
-        m_clippingNode.SetClipping( (short)0, (short)0, width, height );
+        
+        m_clippingNode.SetClipping(
+            Util.FPRound( m_originX ), Util.FPRound( m_originY ),
+            width, height );
     }
 
     /**
