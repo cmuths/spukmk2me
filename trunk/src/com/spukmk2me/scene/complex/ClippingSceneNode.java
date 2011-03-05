@@ -105,6 +105,16 @@ public final class ClippingSceneNode extends ISceneNode
         m_height        = height;
     }
 
+    public short GetOriginX()
+    {
+        return (short)-m_entryNode.c_x;
+    }
+
+    public short GetOriginY()
+    {
+        return (short)-m_entryNode.c_y;
+    }
+
     /**
      *  Get entry node for ClippingSceneNode.
      *  \details Do not add nodes directly to ClippingSceneNode if you

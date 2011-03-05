@@ -104,7 +104,9 @@ public final class SceneManager
 
         for ( int i = 0; i != m_nLayer; ++i )
         {
-            if ( m_layerNodes[ i ].c_children != null )
+            m_layerNodes[ i ].DropChildren();
+
+            /*if ( m_layerNodes[ i ].c_children != null )
             {
                 finish      = m_layerNodes[ i ].c_children;
                 iterator    = finish.c_next;
@@ -114,13 +116,15 @@ public final class SceneManager
                     iterator = iterator.c_next;
                     iterator.c_prev.Drop();
                 }
-            }
+            }*/
 
             m_layerNodes[ i ].SetPosition( (short)0, (short)0 );
             m_layerNodes[ i ].c_visible = m_layerNodes[ i ].c_enable = true;
         }
 
-        if ( m_animatorRootNode.c_children != null )
+        m_animatorRootNode.DropChildren();
+
+        /*if ( m_animatorRootNode.c_children != null )
         {
             finish      = m_animatorRootNode.c_children;
             iterator    = finish.c_next;
@@ -130,7 +134,7 @@ public final class SceneManager
                 iterator = iterator.c_next;
                 iterator.c_prev.Drop();
             }
-        }
+        }*/
 
         m_animatorRootNode.SetPosition( (short)0, (short)0 );
         m_animatorRootNode.c_visible = m_animatorRootNode.c_enable = true;

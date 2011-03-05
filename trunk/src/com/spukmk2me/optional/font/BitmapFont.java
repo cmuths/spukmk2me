@@ -135,10 +135,15 @@ public final class BitmapFont extends ICFont
 
     public synchronized void RequestFont()
     {
-        if ( m_currentLockHolder == null )
+        /*if ( m_currentLockHolder == null )
+        {
             m_currentLockHolder = Thread.currentThread();
+            System.out.println( m_currentLockHolder.toString() + "acquired lock." );
+        }
         else
         {
+            System.out.println( m_currentLockHolder.toString() + "is waiting." );
+
             try
             {
                 this.wait();
@@ -149,13 +154,14 @@ public final class BitmapFont extends ICFont
             }
 
             m_currentLockHolder = Thread.currentThread();
-        }
+            System.out.println( m_currentLockHolder.toString() + "acquired lock." );
+        }*/
     }
 
-    public synchronized void ReleaseFont()
+    public void ReleaseFont()
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( m_currentLockHolder != Thread.currentThread() )
+        /*if ( m_currentLockHolder != Thread.currentThread() )
         {
             new SPUKMK2meException( "This thread doesn't hold the lock." ).
                 printStackTrace();
@@ -164,9 +170,11 @@ public final class BitmapFont extends ICFont
 
         if ( m_currentLockHolder == Thread.currentThread() )
         {
+            System.out.println( Thread.currentThread().toString() + "releasing lock." );
             m_currentLockHolder = null;
             this.notify();
-        }
+            System.out.println( Thread.currentThread().toString() + "released lock." );
+        }*/
     }
 
     /**
@@ -346,6 +354,7 @@ public final class BitmapFont extends ICFont
 
         m_data = new byte[ m_nChar * m_bytesPerLine * m_height ];
         dis.read( m_data );
+        dis.close();
 
         FindCharactersWidth();
 

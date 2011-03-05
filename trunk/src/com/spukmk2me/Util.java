@@ -255,13 +255,33 @@ public final class Util
     }
 
     /**
-     *  Calculate the sine of angle. Unimplemented
-     *  @param angle Measured in radius, it's a fixed-point number.
-     *  @return Sine of angle.
+     *  Calculate the sine of angle x. Unimplemented
+     *  @param x Measured in radiant, it's a fixed-point number.
+     *  @return sin(x).
      */
-    public static int FPSin( int angle )
+    public static int FPSin( int x )
     {
-        return 0;
+        int sinx = 0, epsilon, factorial, k;
+        int squaredX = FPMul( x, x );
+        boolean sign = true;
+
+        epsilon = factorial = k = 1;
+
+        while ( epsilon != 0 )
+        {
+            epsilon = x / factorial;
+
+            if ( sign )
+                sinx += epsilon;
+            else
+                sinx -= epsilon;
+
+            factorial *= ++k;
+            factorial *= ++k;
+            x = FPMul( x, squaredX );
+        }
+
+        return sinx;
     }
 
     /**
@@ -334,6 +354,8 @@ public final class Util
     {
         return 0;
     }
+
+    public static final int PI = 0;
 
     private static long m_randSeed;
 }

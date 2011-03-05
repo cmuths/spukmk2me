@@ -124,17 +124,35 @@ public final class ViewportSceneNode extends ISceneNode
         m_originX += movingX;
         m_originY += movingY;
 
-        if ( m_originX > m_viewableWidth - m_width << 16 )
-            m_originX = m_viewableWidth - m_width << 16;
+        short cursorNodeW, cursorNodeH;
 
-        if ( m_originX < 0 )
-            m_originX = 0;
+        if ( m_cursorNode == null )
+        {
+            cursorNodeW = m_cursorNode.GetWidth();
+            cursorNodeH = m_cursorNode.GetHeight();
+        }
+        else
+            cursorNodeW = cursorNodeH = 0;
 
-        if ( m_originY > m_viewableHeight - m_height << 16 )
-            m_originY = m_viewableHeight - m_height << 16;
+        if ( m_originX > m_viewableX + m_viewableWidth -
+            cursorNodeW - m_width << 16 )
+        {
+            m_originX = m_viewableX + m_viewableWidth -
+                cursorNodeW - m_width << 16;
+        }
 
-        if ( m_originY < 0 )
-            m_originY = 0;
+        if ( m_originX < m_viewableX << 16 )
+            m_originX = m_viewableX << 16;
+
+        if ( m_originY > m_viewableY + m_viewableHeight -
+            cursorNodeH - m_height << 16 )
+        {
+            m_originY = m_viewableY + m_viewableHeight -
+                cursorNodeH - m_height << 16;
+        }
+
+        if ( m_originY < m_viewableY << 16 )
+            m_originY = m_viewableY << 16;
 
         m_clippingNode.SetClipping(
             Util.FPRound( m_originX ), Util.FPRound( m_originY ),
@@ -155,6 +173,8 @@ public final class ViewportSceneNode extends ISceneNode
      *  Setup information for viewport.
      *  @param width The width of viewport.
      *  @param height The height of viewport.
+     *  @param viewableX X coordinate of top-left point of viewable area.
+     *  @param viewableY Y coordinate of top-left point of viewable area.
      *  @param viewableWidth Total navigable width.
      *  @param viewableHeight Total navigable height.
      *  @param alterX X coordinate of "alter" rectangle's top left point.
@@ -163,19 +183,24 @@ public final class ViewportSceneNode extends ISceneNode
      *  @param alterHeight Height of "alter" rectangle.
      *  @param movingSpeed Moving speed, in 16-16 fixed-point format.
      *  @param movingType See the constants for more information. If movingType
-     * is MOVINGTYPE_MANUAL, all the following parameters: alterX, alterY,
-     * alterWidth, alterHeight, movingSpeed and cursorNode will be ignored.
+     * is MOVINGTYPE_MANUAL, all the following parameters:
+     * viewableX, viewableY, viewableWidth, viewableHeight,
+     * alterX, alterY, alterWidth, alterHeight, movingSpeed and cursorNode
+     * will be ignored.
      *  @param cursorNode A scene node acts as the cursor of this viewport. The
      * viewport will takes it's information for automatic calculation of
      * viewport information.
      */
     public void SetupViewport( short width, short height,
+        short viewableX, short viewableY,
         short viewableWidth, short viewableHeight,
         short alterX, short alterY, short alterWidth, short alterHeight,
         int movingSpeed, byte movingType, ISceneNode cursorNode )
     {
         m_width             = width;
         m_height            = height;
+        m_viewableX         = viewableX;
+        m_viewableY         = viewableY;
         m_viewableWidth     = viewableWidth;
         m_viewableHeight    = viewableHeight;
         m_alterX            = alterX;
@@ -205,6 +230,16 @@ public final class ViewportSceneNode extends ISceneNode
         m_clippingNode.SetClipping( x, y, m_width, m_height );
     }
 
+    public short GetOriginX()
+    {
+        return Util.FPRound( m_originX );
+    }
+
+    public short GetOriginY()
+    {
+        return Util.FPRound( m_originY );
+    }
+
     /**
      *  Set the position for cursor.
      *  \details This function won't work if this viewport use a scene node
@@ -221,7 +256,7 @@ public final class ViewportSceneNode extends ISceneNode
         }
     }
 
-     /**
+    /**
      *  Get entry node for ClippingSceneNode.
      *  \details Do not add nodes directly to ClippingSceneNode if you
      * want to use clipping function.
@@ -238,7 +273,7 @@ public final class ViewportSceneNode extends ISceneNode
     public static final byte MOVINGTYPE_CONST_SPEED     = 1;
     //! Viewport will move with the "speed per pixel" speed.
     public static final byte MOVINGTYPE_SPP             = 2;
-    //! Cursor will always lie inside the alter rectangle (unimplemented).
+    //! Cursor will always lie inside the alter rectangle.
     public static final byte MOVINGTYPE_ALWAYS_INSIDE   = 3;
 
     private ClippingSceneNode   m_clippingNode;
@@ -246,7 +281,9 @@ public final class ViewportSceneNode extends ISceneNode
 
     private int     m_movingSpeed;
     private int     m_originX, m_originY;   // Fixed-point.
-    private short   m_width, m_height, m_viewableWidth, m_viewableHeight,
+    private short   m_width, m_height,
+                    m_viewableX, m_viewableY,
+                    m_viewableWidth, m_viewableHeight,
                     m_alterX, m_alterY, m_alterWidth, m_alterHeight,
                     m_cursorX, m_cursorY;
     private byte    m_movingType;

@@ -108,26 +108,34 @@ public final class StringSceneNode extends ISceneNode
             return;
 
         ICFontRenderer fr = renderTool.c_fontRenderer;
-        m_font.PresetProperties( m_properties );
 
-        if ( m_renderedString == null ) // Unprocessed string
-        {
-            fr.RenderString( m_str, m_font, 0, m_str.length,
-                renderTool.c_rasterX, renderTool.c_rasterY );
-        }
-        else
-        {
-            short y = (short)(renderTool.c_rasterY + m_startY);
+        m_font.RequestFont();
 
-            for ( int i = 0; i != m_nLine; ++i )
+        try
+        {
+            m_font.PresetProperties( m_properties );
+
+            if ( m_renderedString == null ) // Unprocessed string
             {
-                fr.RenderString( m_renderedString, m_font,
-                    m_lineStartIndexes[ i ],
-                    m_lineStartIndexes[ i + 1 ] - m_lineStartIndexes[ i ],
-                    (short)(renderTool.c_rasterX + m_lineStartX[ i ]),
-                    y );
-                y += m_font.GetLineHeight();
+                fr.RenderString( m_str, m_font, 0, m_str.length,
+                    renderTool.c_rasterX, renderTool.c_rasterY );
             }
+            else
+            {
+                short y = (short)(renderTool.c_rasterY + m_startY);
+
+                for ( int i = 0; i != m_nLine; ++i )
+                {
+                    fr.RenderString( m_renderedString, m_font,
+                        m_lineStartIndexes[ i ],
+                        m_lineStartIndexes[ i + 1 ] - m_lineStartIndexes[ i ],
+                        (short)(renderTool.c_rasterX + m_lineStartX[ i ]),
+                        y );
+                    y += m_font.GetLineHeight();
+                }
+            }
+        } finally {
+            m_font.ReleaseFont();
         }
     }
 
@@ -158,91 +166,99 @@ public final class StringSceneNode extends ISceneNode
         }
         else
         {
-            int     lastIndex       = 0, nextIndex = 0;
-            int     remainedWidth   = m_width, nextWidth;
-            int     i, copyBorder;
-            // Ambiguous separator is a separator which was temporary space,
-            // but it can become endline character if the next word doesn't fit
-            // the width.
-            boolean hasAmbiguousSeparator = false;
-            char    c;
-
-            m_renderedLength    = 0;
-            m_nLine             = 1;
-            m_font.PresetProperties( m_properties );
-
-            while ( lastIndex != m_str.length )
+            m_font.RequestFont();
+            
+            try
             {
-                //++lastIndex;
-                //nextIndex = m_str.indexOf( ' ', lastIndex ) + 1;
-                while ( nextIndex != m_str.length )
+                int     lastIndex       = 0, nextIndex = 0;
+                int     remainedWidth   = m_width, nextWidth;
+                int     i, copyBorder;
+
+                // Ambiguous separator is a separator which was temporary
+                // space, but it can become endline character if the next word
+                // doesn't fit the width.
+                boolean hasAmbiguousSeparator = false;
+                char    c;
+
+                m_renderedLength    = 0;
+                m_nLine             = 1;
+                m_font.PresetProperties( m_properties );
+
+                while ( lastIndex != m_str.length )
                 {
-                    c = m_str[ nextIndex++ ];
-
-                    if ( (c == ' ') || (c == '\n') )
-                        break;
-                }
-
-                copyBorder = ( nextIndex == m_str.length )? nextIndex :
-                    nextIndex - 1;
-
-                //if ( nextIndex == m_str.length ) // Didn't find anything
-                //    nextIndex = strLength;
-                
-                nextWidth = m_font.GetStringWidth(
-                    m_str, lastIndex, copyBorder - lastIndex );
-
-                if ( remainedWidth < nextWidth )
-                {
-                    //m_renderedString += "\n" +
-                    //    m_str.substring( lastIndex, nextIndex );
-                    if ( hasAmbiguousSeparator )
-                        --m_renderedLength;
-
-                    if ( remainedWidth < m_width )
+                    //++lastIndex;
+                    //nextIndex = m_str.indexOf( ' ', lastIndex ) + 1;
+                    while ( nextIndex != m_str.length )
                     {
-                        m_renderedString[ m_renderedLength++ ] = '\n';
-                        ++m_nLine;
+                        c = m_str[ nextIndex++ ];
+
+                        if ( (c == ' ') || (c == '\n') )
+                            break;
                     }
 
-                    for ( i = lastIndex; i != copyBorder; ++i )
-                        m_renderedString[ m_renderedLength++ ] = m_str[ i ];
+                    copyBorder = ( nextIndex == m_str.length )? nextIndex :
+                        nextIndex - 1;
 
-                    if ( m_width < nextWidth )
+                    //if ( nextIndex == m_str.length ) // Didn't find anything
+                    //    nextIndex = strLength;
+
+                    nextWidth = m_font.GetStringWidth(
+                        m_str, lastIndex, copyBorder - lastIndex );
+
+                    if ( remainedWidth < nextWidth )
                     {
-                        //m_renderedString += "\n";
-                        if ( nextIndex != m_str.length )
+                        //m_renderedString += "\n" +
+                        //    m_str.substring( lastIndex, nextIndex );
+                        if ( hasAmbiguousSeparator )
+                            --m_renderedLength;
+
+                        if ( remainedWidth < m_width )
                         {
                             m_renderedString[ m_renderedLength++ ] = '\n';
                             ++m_nLine;
-                            remainedWidth = m_width;
-                            hasAmbiguousSeparator = false;
+                        }
+
+                        for ( i = lastIndex; i != copyBorder; ++i )
+                            m_renderedString[ m_renderedLength++ ] = m_str[ i ];
+
+                        if ( m_width < nextWidth )
+                        {
+                            //m_renderedString += "\n";
+                            if ( nextIndex != m_str.length )
+                            {
+                                m_renderedString[ m_renderedLength++ ] = '\n';
+                                ++m_nLine;
+                                remainedWidth = m_width;
+                                hasAmbiguousSeparator = false;
+                            }
+                        }
+                        else
+                        {
+                            remainedWidth = m_width - nextWidth;
+                            hasAmbiguousSeparator = (copyBorder != m_str.length);
                         }
                     }
                     else
                     {
-                        remainedWidth = m_width - nextWidth;
+                        //m_renderedString +=
+                        //    m_str.substring( lastIndex, nextIndex );
+                        for ( i = lastIndex; i != copyBorder; ++i )
+                            m_renderedString[ m_renderedLength++ ] = m_str[ i ];
+                    
+                        remainedWidth -= nextWidth;
                         hasAmbiguousSeparator = (copyBorder != m_str.length);
                     }
-                }
-                else
-                {
-                    //m_renderedString +=
-                    //    m_str.substring( lastIndex, nextIndex );
-                    for ( i = lastIndex; i != copyBorder; ++i )
-                        m_renderedString[ m_renderedLength++ ] = m_str[ i ];
-                    
-                    remainedWidth -= nextWidth;
-                    hasAmbiguousSeparator = (copyBorder != m_str.length);
-                }
 
-                if ( hasAmbiguousSeparator )
-                {
-                    m_renderedString[ m_renderedLength++ ] = ' ';
-                    remainedWidth -= m_font.GetCharWidth( ' ' );
-                }
+                    if ( hasAmbiguousSeparator )
+                    {
+                        m_renderedString[ m_renderedLength++ ] = ' ';
+                        remainedWidth -= m_font.GetCharWidth( ' ' );
+                    }
 
-                lastIndex = nextIndex;
+                    lastIndex = nextIndex;
+                }
+            } finally {
+                m_font.ReleaseFont();
             }
         }
 

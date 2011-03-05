@@ -123,7 +123,7 @@ public abstract class ISceneNode
         {
             parent.c_children       = bindingNode = new NullSceneNode();
             bindingNode.c_parent    = parent;
-            bindingNode.c_prev      = bindingNode.c_next = parent.c_children;
+            bindingNode.c_prev      = bindingNode.c_next = bindingNode;
         }
         else
             bindingNode = parent.c_children;
@@ -158,13 +158,15 @@ public abstract class ISceneNode
      */
     public void Drop()
     {
-        //#ifdef __SPUKMK2ME_DEBUG
         if ( (c_prev == null) || (c_next == null) || (c_parent == null) )
         {
-            new SPUKMK2meException( "Dropping unattached node." ).
+            //#ifdef __SPUKMK2ME_DEBUG
+            new SPUKMK2meException( "WARNING: Dropping unattached node." ).
                 printStackTrace();
+            //#endif
+            return;
         }
-        //#endif
+        
         c_prev.c_next = c_next;
         c_next.c_prev = c_prev;
 
@@ -187,17 +189,15 @@ public abstract class ISceneNode
      */
     public final void DropChildren()
     {
-        //#ifdef __SPUKMK2ME_DEBUG
         if ( c_children == null )
-        {
-            new SPUKMK2meException( "This node has no child." ).
-                printStackTrace();
-        }
-        //#endif
+            return;
 
-        ISceneNode iterator = c_children.c_next;
-
-        while ( iterator != c_children )
+        // ISceneNode.Drop() can alter its parent's c_child, so I must copy
+        // it for comparision.
+        ISceneNode finishNode   = c_children;
+        ISceneNode iterator     = finishNode.c_next;
+        
+        while ( iterator != finishNode )
         {
             iterator = iterator.c_next;
             iterator.c_prev.Drop();
