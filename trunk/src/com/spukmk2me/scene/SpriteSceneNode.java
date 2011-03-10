@@ -25,7 +25,7 @@ import com.spukmk2me.Util;
 import com.spukmk2me.video.RenderTool;
 import com.spukmk2me.video.IImage;
 
-public final class SpriteSceneNode extends ISceneNode
+public final class SpriteSceneNode extends ITopLeftOriginSceneNode
 {
     public SpriteSceneNode( IImage[] images )
     {
@@ -49,12 +49,12 @@ public final class SpriteSceneNode extends ISceneNode
         m_images[ Util.FPRound( m_currentFrame ) ].Render( renderTool );
     }
 
-    public short GetWidth()
+    public short GetAABBWidth()
     {
         return ( m_images == null )? 0 : m_images[ 0 ].GetWidth();
     }
 
-    public short GetHeight()
+    public short GetAABBHeight()
     {
         return ( m_images == null )? 0 : m_images[ 0 ].GetHeight();
     }

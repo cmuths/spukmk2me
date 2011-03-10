@@ -25,7 +25,7 @@ import com.spukmk2me.video.ICFont;
 /**
  *  A scene node that display string.
  */
-public final class StringSceneNode extends ISceneNode
+public final class StringSceneNode extends ITopLeftOriginSceneNode
 {
     /**
      *  Constructor.
@@ -139,12 +139,12 @@ public final class StringSceneNode extends ISceneNode
         }
     }
 
-    public short GetWidth()
+    public short GetAABBWidth()
     {
         return m_width;
     }
 
-    public short GetHeight()
+    public short GetAABBHeight()
     {
         return m_height;
     }

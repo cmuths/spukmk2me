@@ -160,8 +160,9 @@ public final class BitmapFont extends ICFont
 
     public void ReleaseFont()
     {
+        /*
         //#ifdef __SPUKMK2ME_DEBUG
-        /*if ( m_currentLockHolder != Thread.currentThread() )
+        if ( m_currentLockHolder != Thread.currentThread() )
         {
             new SPUKMK2meException( "This thread doesn't hold the lock." ).
                 printStackTrace();

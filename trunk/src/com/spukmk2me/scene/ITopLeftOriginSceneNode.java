@@ -18,17 +18,23 @@
 
 package com.spukmk2me.scene;
 
-import com.spukmk2me.video.IVideoDriver;
-
 /**
- *  Interface for scene manager.
+ *  Abstract scene node that has AABB top-left coordinate (0, 0).
+ *  \details Because ISceneNode now has GetAABBX() and GetAABBY(), sub-classes
+ * must implement them, resulting extra code (and byte-code too). Since
+ * there are many scene nodes which take (0, 0) as their AABB top-left
+ * coordinate, this class was written with the hope reducing the size
+ * of SPUKMK2me.
  */
-public interface ISceneManager
+public abstract class ITopLeftOriginSceneNode extends ISceneNode
 {
-    public void AddSceneNode( ISceneNode node, ISceneNode parent );
-    public void DropSceneNode( ISceneNode node );
-    public void AddAnimator( IAnimator animator );
-    public void DropAnimator( IAnimator animator );
-    public void SetVideoDriver( IVideoDriver vdriver );
-    public void RenderAll();
+    public final short GetAABBX()
+    {
+        return 0;
+    }
+
+    public final short GetAABBY()
+    {
+        return 0;
+    }
 }

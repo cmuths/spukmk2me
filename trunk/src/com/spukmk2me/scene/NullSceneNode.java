@@ -23,7 +23,7 @@ import com.spukmk2me.video.RenderTool;
 /**
  *  Used as a dummy or a faked-first node in the list. It's multi-purpose node.
  */
-public final class NullSceneNode extends ISceneNode
+public final class NullSceneNode extends ITopLeftOriginSceneNode
 {
     /**
      *  Default constructor.
@@ -35,12 +35,12 @@ public final class NullSceneNode extends ISceneNode
 
     public final void Render( RenderTool renderTool ) {}
 
-    public final short GetWidth()
+    public final short GetAABBWidth()
     {
         return c_width;
     }
 
-    public final short GetHeight()
+    public final short GetAABBHeight()
     {
         return c_height;
     }

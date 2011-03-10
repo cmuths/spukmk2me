@@ -20,12 +20,13 @@ package com.spukmk2me.scene.complex;
 
 import com.spukmk2me.Util;
 import com.spukmk2me.scene.ISceneNode;
+import com.spukmk2me.scene.ITopLeftOriginSceneNode;
 import com.spukmk2me.video.RenderTool;
 
 /**
  *  An advanced node built from ClippingSceneNode, acts like a viewport.
  */
-public final class ViewportSceneNode extends ISceneNode
+public final class ViewportSceneNode extends ITopLeftOriginSceneNode
 {
     /**
      *  Constructor.
@@ -60,8 +61,8 @@ public final class ViewportSceneNode extends ISceneNode
         }
         else
         {
-            rX2 = rX1 + m_cursorNode.GetWidth();
-            rY2 = rY1 + m_cursorNode.GetHeight();
+            rX2 = rX1 + m_cursorNode.GetAABBWidth();
+            rY2 = rY1 + m_cursorNode.GetAABBHeight();
         }
 
         if ( rX1 < m_alterX )
@@ -129,8 +130,8 @@ public final class ViewportSceneNode extends ISceneNode
 
         if ( m_cursorNode == null )
         {
-            cursorNodeW = m_cursorNode.GetWidth();
-            cursorNodeH = m_cursorNode.GetHeight();
+            cursorNodeW = m_cursorNode.GetAABBWidth();
+            cursorNodeH = m_cursorNode.GetAABBHeight();
         }
         else
             cursorNodeW = cursorNodeH = 0;
@@ -160,12 +161,12 @@ public final class ViewportSceneNode extends ISceneNode
             m_width, m_height );
     }
 
-    public short GetWidth()
+    public short GetAABBWidth()
     {
         return m_width;
     }
 
-    public short GetHeight()
+    public short GetAABBHeight()
     {
         return m_height;
     }

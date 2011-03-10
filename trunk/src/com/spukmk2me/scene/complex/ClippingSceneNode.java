@@ -20,14 +20,15 @@ package com.spukmk2me.scene.complex;
 
 import com.spukmk2me.video.RenderTool;
 import com.spukmk2me.scene.ISceneNode;
+import com.spukmk2me.scene.ITopLeftOriginSceneNode;
 import com.spukmk2me.scene.NullSceneNode;
 
 /**
  *  Scene node which provides clipping feature.
  */
-public final class ClippingSceneNode extends ISceneNode
+public final class ClippingSceneNode extends ITopLeftOriginSceneNode
 {
-    private final class SubClippingSceneNode extends ISceneNode
+    private final class SubClippingSceneNode extends ITopLeftOriginSceneNode
     {
         public SubClippingSceneNode() {}
 
@@ -36,12 +37,12 @@ public final class ClippingSceneNode extends ISceneNode
             renderTool.SetClipping( m_x, m_y, m_width, m_height );
         }
 
-        public short GetWidth()
+        public short GetAABBWidth()
         {
             return m_width;
         }
 
-        public short GetHeight()
+        public short GetAABBHeight()
         {
             return m_height;
         }
@@ -80,12 +81,12 @@ public final class ClippingSceneNode extends ISceneNode
             (short)(clippingArea & 0x000000000000FFFFL) );
     }
     
-    public short GetWidth()
+    public short GetAABBWidth()
     {
         return m_width;
     }
 
-    public short GetHeight()
+    public short GetAABBHeight()
     {
         return m_height;
     }

@@ -25,14 +25,14 @@ package com.spukmk2me.scene;
  * animator root node in your scene manager. Animation controls are implemented
  * in Render() method.
  */
-public abstract class IAnimator extends ISceneNode
+public abstract class IAnimator extends ITopLeftOriginSceneNode
 {
-    public final short GetWidth()
+    public final short GetAABBWidth()
     {
         return 0;
     }
 
-    public final short GetHeight()
+    public final short GetAABBHeight()
     {
         return 0;
     }

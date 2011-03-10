@@ -79,18 +79,30 @@ public abstract class ISceneNode
     public abstract void Render( RenderTool renderTool );
 
     /**
-     *  Get the width of this node.
-     *  \details A node may have zero width, if you think that's suitable.
-     *  @return The width of the node.
+     *  Get the top-left X coordinate of AABB.
+     *  \details The coordinate of AABB is relative to node's position.
+     *  @return The X coordinate of top-left point of the node.
      */
-    public abstract short GetWidth();
+    public abstract short GetAABBX();
+    
+    /**
+     *  Get the top-left Y coordinate of AABB.
+     *  \details The coordinate of AABB is relative to node's position.
+     *  @return The Y coordinate of top-left point of the node.
+     */
+    public abstract short GetAABBY();
 
     /**
-     *  Get the height of this node.
-     *  \details A node may have zero height, if you think that's suitable.
+     *  Get the width of AABB.
      *  @return The width of the node.
      */
-    public abstract short GetHeight();
+    public abstract short GetAABBWidth();
+
+    /**
+     *  Get the height of AABB.
+     *  @return The width of the node.
+     */
+    public abstract short GetAABBHeight();
 
     /**
      *  Add the scene node to this scene manager.

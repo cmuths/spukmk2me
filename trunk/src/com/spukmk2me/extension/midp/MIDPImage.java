@@ -70,19 +70,31 @@ final class MIDPImage implements IImage
 
         if ( flippingFlag != 0 )
         {
-            if ( (flippingFlag & IVideoDriver.FLIP_HORIZONTAL) != 0 )
+            // Vertical & horizontal flipping
+            if ( (flippingFlag & (IVideoDriver.FLIP_HORIZONTAL |
+                IVideoDriver.FLIP_VERTICAL)) ==
+                (IVideoDriver.FLIP_HORIZONTAL | IVideoDriver.FLIP_VERTICAL) )
+            {
+                flippingFlag = 0;
                 rotationDegree += 0x00B40000;
+            }
+            
+            else
+            {
+                // Vertical flipping only
+                // Vertical flipping = Horizontal flipping + Rotate 180 degree
+                if ( (flippingFlag & IVideoDriver.FLIP_VERTICAL) != 0 )
+                    rotationDegree += 0x00B40000;
 
-            hasVerticalFlipping = (flippingFlag &
-                (IVideoDriver.FLIP_HORIZONTAL | IVideoDriver.FLIP_VERTICAL ))
-                != 0;
+                hasVerticalFlipping = true;
+            }
         }
 
-        while ( rotationDegree >= 0x00228000 ) // larger or equal 360
-            rotationDegree -= 0x00228000;
+        while ( rotationDegree >= 0x01680000 ) // larger or equal 360
+            rotationDegree -= 0x01680000;
 
         while ( rotationDegree < 0 )
-            rotationDegree += 0x00228000;
+            rotationDegree += 0x01680000;
 
         // I don't know why they come up with those Sprite constants.
         if ( hasVerticalFlipping )
@@ -90,19 +102,19 @@ final class MIDPImage implements IImage
             switch ( rotationDegree )
             {
                 case 0:
-                    m_midpTransformationFlag = 2; // Sprite.TRANS_MIRROR
+                    midpTransformationFlag = 2; // Sprite.TRANS_MIRROR
                     break;
 
                 case 0x005A0000:
-                    m_midpTransformationFlag = 7; // Sprite.TRANS_MIRROR_ROT90
+                    midpTransformationFlag = 4; // Sprite.TRANS_MIRROR_ROT270
                     break;
 
                 case 0x00B40000:
-                    m_midpTransformationFlag = 1; // Sprite.TRANS_MIRROR_ROT180
+                    midpTransformationFlag = 1; // Sprite.TRANS_MIRROR_ROT180
                     break;
 
-                case 0x00FA0000:
-                    m_midpTransformationFlag = 4; // Sprite.TRANS_MIRROR_ROT270
+                case 0x010E0000:
+                    midpTransformationFlag = 7; // Sprite.TRANS_MIRROR_ROT90
                     break;
             }
         }
@@ -111,23 +123,25 @@ final class MIDPImage implements IImage
             switch ( rotationDegree )
             {
                 case 0:
-                    m_midpTransformationFlag = 0; // Sprite.TRANS_NONE
+                    midpTransformationFlag = 0; // Sprite.TRANS_NONE
+                    break;
 
                 case 0x005A0000:
-                    m_midpTransformationFlag = 5; // Sprite.TRANS_ROT90
+                    midpTransformationFlag = 6; // Sprite.TRANS_ROT270
                     break;
 
                 case 0x00B40000:
-                    m_midpTransformationFlag = 3; // Sprite.TRANS_ROT180
+                    midpTransformationFlag = 3; // Sprite.TRANS_ROT180
                     break;
 
-                case 0x00FA0000:
-                    m_midpTransformationFlag = 6; // Sprite.TRANS_ROT270
+                case 0x010E0000:
+                    midpTransformationFlag = 5; // Sprite.TRANS_ROT90
                     break;
             }
         }
 
-        CreateImage( image.GetImage(), x, y, width, height,
+        CreateImage( image.GetImage(),
+            (short)(x + image.m_x), (short)(y + image.m_y), width, height,
             midpTransformationFlag );
     }
 

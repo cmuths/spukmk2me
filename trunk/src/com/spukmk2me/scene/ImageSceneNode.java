@@ -24,7 +24,7 @@ import com.spukmk2me.video.IImage;
 /**
  *  Scene node that display an image.
  */
-public final class ImageSceneNode extends ISceneNode
+public final class ImageSceneNode extends ITopLeftOriginSceneNode
 {
     /**
      *  A constructor
@@ -43,12 +43,12 @@ public final class ImageSceneNode extends ISceneNode
         m_image.Render( renderTool );
     }
 
-    public short GetWidth()
+    public short GetAABBWidth()
     {
         return m_image.GetWidth();
     }
 
-    public short GetHeight()
+    public short GetAABBHeight()
     {
         return m_image.GetHeight();
     }
