@@ -133,51 +133,6 @@ public final class BitmapFont extends ICFont
         }
     }
 
-    public synchronized void RequestFont()
-    {
-        /*if ( m_currentLockHolder == null )
-        {
-            m_currentLockHolder = Thread.currentThread();
-            System.out.println( m_currentLockHolder.toString() + "acquired lock." );
-        }
-        else
-        {
-            System.out.println( m_currentLockHolder.toString() + "is waiting." );
-
-            try
-            {
-                this.wait();
-            } catch ( InterruptedException e ) {
-                //#ifdef __SPUKMK2ME_DEBUG
-                e.printStackTrace();
-                //#endif
-            }
-
-            m_currentLockHolder = Thread.currentThread();
-            System.out.println( m_currentLockHolder.toString() + "acquired lock." );
-        }*/
-    }
-
-    public void ReleaseFont()
-    {
-        /*
-        //#ifdef __SPUKMK2ME_DEBUG
-        if ( m_currentLockHolder != Thread.currentThread() )
-        {
-            new SPUKMK2meException( "This thread doesn't hold the lock." ).
-                printStackTrace();
-        }
-        //#endif
-
-        if ( m_currentLockHolder == Thread.currentThread() )
-        {
-            System.out.println( Thread.currentThread().toString() + "releasing lock." );
-            m_currentLockHolder = null;
-            this.notify();
-            System.out.println( Thread.currentThread().toString() + "released lock." );
-        }*/
-    }
-
     /**
      *  Create a byte array represents properties for BitmapFont.
      *  \details The arrays are newly created, so don't overuse it.

@@ -126,31 +126,17 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
         m_originX += movingX;
         m_originY += movingY;
 
-        short cursorNodeW, cursorNodeH;
-
-        if ( m_cursorNode == null )
+        if ( m_originX > m_viewableX + m_viewableWidth - m_width << 16 )
         {
-            cursorNodeW = m_cursorNode.GetAABBWidth();
-            cursorNodeH = m_cursorNode.GetAABBHeight();
-        }
-        else
-            cursorNodeW = cursorNodeH = 0;
-
-        if ( m_originX > m_viewableX + m_viewableWidth -
-            cursorNodeW - m_width << 16 )
-        {
-            m_originX = m_viewableX + m_viewableWidth -
-                cursorNodeW - m_width << 16;
+            m_originX = m_viewableX + m_viewableWidth - m_width << 16;
         }
 
         if ( m_originX < m_viewableX << 16 )
             m_originX = m_viewableX << 16;
 
-        if ( m_originY > m_viewableY + m_viewableHeight -
-            cursorNodeH - m_height << 16 )
+        if ( m_originY > m_viewableY + m_viewableHeight - m_height << 16 )
         {
-            m_originY = m_viewableY + m_viewableHeight -
-                cursorNodeH - m_height << 16;
+            m_originY = m_viewableY + m_viewableHeight - m_height << 16;
         }
 
         if ( m_originY < m_viewableY << 16 )

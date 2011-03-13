@@ -141,6 +141,7 @@ public final class GameThread extends Thread
 
         m_vdriver.CleanupRenderingContext();
         m_device.StopDevice();
+        m_owner.QuitApplication();
     }
 
     private Device          m_device;

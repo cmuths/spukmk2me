@@ -170,6 +170,11 @@ public abstract class InputMonitor_MIDP extends GameCanvas
             m_actionBitPattern |= ACT_RSOFT;
     }
 
+    protected void keyRepeated( int keyCode )
+    {
+        this.keyPressed( keyCode );
+    }
+
     protected void keyReleased( int keyCode )
     {
         if ( (m_inputMode & INPUTMODE_KEY) == 0 )
@@ -459,21 +464,21 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     private static final byte PLATFORM_LG       = 5;
 
     private static final int[][] SOFTLEFT_KEYCODES = {
-        { -6 },                 // Nokia
-        { -21, 21, -20, -11 },  // Motorola
-        { -6 },                 // Samsung
-        { -6 },                 // Sony Ericsson
-        { -1, 105 },            // Siemens
-        { -6, -202 }            // LG
+        { -6 },                     // Nokia
+        { -21, 21, -20, -11, -7 },  // Motorola
+        { -6, 21, -7, -8 },         // Samsung
+        { -6 },                     // Sony Ericsson
+        { -1, 105 },                // Siemens
+        { -6, -202, -20 }           // LG
     };
 
     private static final int[][] SOFTRIGHT_KEYCODES = {
-        { -7 },             // Nokia
-        { -22, 22 },        // Motorola
-        { -7 },             // Samsung
-        { -7 },             // Sony Ericsson
-        { -4, 106 },        // Siemens
-        { -7, -203 }        // LG
+        { -7 },                 // Nokia
+        { -21, -22, 22, -8 },   // Motorola
+        { -7, 22, -6, -7 },     // Samsung
+        { -7 },                 // Sony Ericsson
+        { -4, 106 },            // Siemens
+        { -7, -203, -21 }       // LG
     };
 
     // Default key codes below are usually used by "unusual" devices and

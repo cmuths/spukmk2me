@@ -48,7 +48,7 @@ public abstract class GameMIDlet extends MIDlet
     
     protected final void destroyApp( boolean forceToQuit )
     {
-        QuitApplication();
+        m_gameThread.Quit();
     }
     
     public final void QuitApplication()

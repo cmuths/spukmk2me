@@ -18,6 +18,10 @@
 
 package com.spukmk2me.extension.midp;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.SPUKMK2meException;
+//#endif
+
 import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
@@ -51,6 +55,13 @@ final class MIDPImage implements IImage
     public MIDPImage( String filename ) throws IOException
     {
         //#ifdef __SPUKMK2ME_DEBUG
+        if ( filename.charAt( 0 ) != '/' )
+        {
+            new SPUKMK2meException(
+                "WARNING: Filename does not start with '/'" ).
+                printStackTrace();
+        }
+
         System.out.print( "Loading image: " + filename );
         //#endif
         Image img = Image.createImage( filename );

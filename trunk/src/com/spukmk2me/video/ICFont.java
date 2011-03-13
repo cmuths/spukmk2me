@@ -103,19 +103,6 @@ public abstract class ICFont
     public abstract void PresetProperties( byte[] properties );
 
     /**
-     *  Request the font for processing, this is a kind of thread locking to
-     * prevent violation. Threads that failed to acquire the font will be put
-     * to sleep. RequestFont() is strongly recommended to use if your
-     * application has more than one thread that access one font at a time.
-     */
-    public abstract void RequestFont();
-
-    /**
-     *  Release the font acquired.
-     */
-    public abstract void ReleaseFont();
-
-    /**
      *  Get width of string.
      *  \details If the string contains more than one line, then the longest
      * width will be returned. Lines are separated by '\n'.
