@@ -101,6 +101,55 @@ final class MIDPImage implements IImage
             }
         }
 
+        if ( image.m_midpTransformationFlag != 0 )
+        {
+            boolean oldHasVP = false;
+            int     oldRot = 0;
+
+            switch ( image.m_midpTransformationFlag )
+            {
+                case 2: // VP
+                    oldHasVP    = true;
+                    break;
+
+                case 4: // VP + rotate 90 degree
+                    oldHasVP    = true;
+                    oldRot      = 0x005A0000;
+                    break;
+
+                case 1: // VP + rotate 180 degree
+                    oldHasVP    = true;
+                    oldRot      = 0x00B40000;
+                    break;
+
+                case 7: // VP + rotate 270 degree
+                    oldHasVP    = true;
+                    oldRot      = 0x010E0000;
+                    break;
+
+                case 6: // rotate 90 degree
+                    oldRot      = 0x005A0000;
+                    break;
+
+                case 3: // rotate 180 degree
+                    oldRot      = 0x00B40000;
+                    break;
+
+                case 5: // rotate 270 degree
+                    oldRot      = 0x010E0000;
+                    break;
+            }
+
+            // If the old image:
+            // - Has v flipping and no rotation: just remove v flipping.
+            // - Has v flipping and rotation: new_rot -= old_rot.
+            // - Doesn't have V flipping and no rotation: nothing to do.
+            // - Doesn't have V flipping and has rotation: new_rot -= old_rot.
+            hasVerticalFlipping = (oldHasVP && !hasVerticalFlipping) ||
+                (!oldHasVP && hasVerticalFlipping); // No logical XOR O_o?
+            rotationDegree     -= oldRot;
+        }
+
         while ( rotationDegree >= 0x01680000 ) // larger or equal 360
             rotationDegree -= 0x01680000;
 

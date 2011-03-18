@@ -25,12 +25,14 @@ import javax.microedition.lcdui.Graphics;
 /**
  *  Interface for video driver, an essential part of SPUKMK2ME engine.
  *  \details IVideoDriver is the common interface for video drivers, which take
- * responsibility about rendering.\n
- *  A video driver can be usable before the call to PrepareRenderingContext().
- * The constructor of any video driver must only do platform-independent work
- * to ensure the stability of SPUKMK2ME engine. After construction, user can
- * check if the driver is supported on the current platform or not.
- *  A video driver must create it's propriety font renderer for rendering.\n\n
+ * responsibility for rendering.\n
+ *  A video driver can be unusable before the call to
+ * PrepareRenderingContext(). The constructor of any video driver must only do
+ * platform-independent work to ensure the stability of SPUKMK2ME engine. After
+ * construction, user can check if the driver is supported on the current
+ * platform or not.
+ *  A video driver must create it's suitable font renderer for rendering.\n\n
+ *
  *  Question: Why J2ME need JSRs thing?
  *  Answer: Because J2ME can't do any thing without called-by-many-people
  * unsafe native code. It doesn't allow you to surpass any thing. How about
@@ -57,8 +59,8 @@ public interface IVideoDriver
      * initialization.\n
      *  Notice that this function <b>should</b> be called after the driver has
      * somehow acquired the "visible" rendering surface, especially that
-     * applies for MIDP driver. If you're using class from com.spukmk2me.gameflow,
-     * you need not to worry about this.
+     * applies for MIDP driver. If you're using class from
+     * com.spukmk2me.gameflow, you need not to worry about this.
      */
     public void PrepareRenderingContext();
 

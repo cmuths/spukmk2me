@@ -42,7 +42,6 @@ public final class BitmapFont extends ICFont
     public BitmapFont( String filename ) throws IOException
     {
         LoadFontFromFile( filename );
-        m_currentLockHolder = null;
     }
 
     public byte GetRenderDataType()
@@ -71,8 +70,8 @@ public final class BitmapFont extends ICFont
         //#ifdef __SPUKMK2ME_DEBUG
         if ( !IsSupported( ch ) )
         {
-            System.out.println( "No such character stored in this font:" +
-                ch );
+            new SPUKMK2meException( "No such character stored in this font:" +
+                ch ).printStackTrace();
             return -1;
         }
         //#endif
@@ -404,8 +403,6 @@ public final class BitmapFont extends ICFont
     public static final byte STYLE_BOLD         = 0x01;
     public static final byte STYLE_ITALIC       = 0x02;
     public static final byte STYLE_UNDERLINE    = 0x04;
-
-    private Thread m_currentLockHolder;
 
     private int[]   m_extraCharMap, m_charWidth, m_buffer, m_preprocessedData;
     private byte[]  m_data;
