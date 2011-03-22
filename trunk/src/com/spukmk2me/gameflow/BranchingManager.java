@@ -25,7 +25,6 @@ public final class BranchingManager
         m_maxStack  = maxStack;
         m_stack     = new int[ m_maxStack ];
         m_nStack    = 0;
-        m_downgrade = false;
     }
 
     public void ImportWorkers( IBranching[] workers )
@@ -38,16 +37,24 @@ public final class BranchingManager
         if ( m_nStack == 0 )
             return;
 
-        m_workers[ m_stack[ m_nStack - 1 ] ].DoWork();
-
-        if ( m_workers[ m_stack[ m_nStack - 1 ] ].GetChainedWork() !=
-            IBranching.CHAIN_NOTHING )
-            ChainWork( m_workers[ m_stack[ m_nStack - 1 ] ].GetChainedWork() );
-
-        while ( m_workers[ m_stack[ m_nStack - 1 ] ].IsFinished() )
+        if ( !m_workers[ m_stack[ m_nStack - 1 ] ].IsFinished() )
         {
-            if ( --m_nStack == 0 )
-                break;
+            m_workers[ m_stack[ m_nStack - 1 ] ].DoWork();
+
+            if ( m_workers[ m_stack[ m_nStack - 1 ] ].GetChainedWork() !=
+                IBranching.CHAIN_NOTHING )
+            {
+                ChainWork( m_workers[ m_stack[ m_nStack - 1 ] ].
+                    GetChainedWork() );
+            }
+        }
+        else
+        {
+            while ( m_workers[ m_stack[ m_nStack - 1 ] ].IsFinished() )
+            {
+                if ( --m_nStack == 0 )
+                    break;
+            }
         }
     }
 
@@ -60,5 +67,4 @@ public final class BranchingManager
     private IBranching[]    m_workers;
     private int[]           m_stack;
     private int             m_maxStack, m_nStack;
-    private boolean         m_downgrade;
 }

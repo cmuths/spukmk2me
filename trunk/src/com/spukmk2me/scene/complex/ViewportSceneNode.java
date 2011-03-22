@@ -40,6 +40,90 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
 
     public void Render( RenderTool renderTool )
     {
+        if ( m_autoUpdate )
+            CalculateOrigin( renderTool.c_timePassed );
+
+        m_clippingNode.SetClipping(
+            Util.FPRound( m_originX ), Util.FPRound( m_originY ),
+            m_width, m_height );
+    }
+
+    public short GetAABBWidth()
+    {
+        return m_width;
+    }
+
+    public short GetAABBHeight()
+    {
+        return m_height;
+    }
+
+    /**
+     *  Setup information for viewport.
+     *  @param width The width of viewport.
+     *  @param height The height of viewport.
+     *  @param viewableX X coordinate of top-left point of viewable area.
+     *  @param viewableY Y coordinate of top-left point of viewable area.
+     *  @param viewableWidth Total navigable width.
+     *  @param viewableHeight Total navigable height.
+     *  @param alterX X coordinate of "alter" rectangle's top left point.
+     *  @param alterY Y coordinate of "alter" rectangle's top left point.
+     *  @param alterWidth Width of "alter" rectangle.
+     *  @param alterHeight Height of "alter" rectangle.
+     *  @param movingSpeed Moving speed, in 16-16 fixed-point format.
+     *  @param movingType See the constants for more information. If movingType
+     * is MOVINGTYPE_MANUAL, all the following parameters:
+     * viewableX, viewableY, viewableWidth, viewableHeight,
+     * alterX, alterY, alterWidth, alterHeight, movingSpeed and cursorNode
+     * will be ignored.
+     *  @param cursorNode A scene node acts as the cursor of this viewport. The
+     * viewport will takes it's information for automatic calculation of
+     * viewport information.
+     *  @param autoUpdate true if you want the viewport automatically update
+     * the coordinate itself (before it's drawn), when the moving type isn't
+     * manual. Set this argument to false to manually update viewport via
+     * CalculateOrigin(). Please distinct this argument with MOVINGTYPE_MANUAL,
+     * since autoUpdate help overcome the viewport synchronization problem. If
+     * you don't understand what's written before, just ignore and set it to
+     * true.
+     */
+    public void SetupViewport( short width, short height,
+        short viewableX, short viewableY,
+        short viewableWidth, short viewableHeight,
+        short alterX, short alterY, short alterWidth, short alterHeight,
+        int movingSpeed, byte movingType, ISceneNode cursorNode,
+        boolean autoUpdate )
+    {
+        m_width             = width;
+        m_height            = height;
+        m_viewableX         = viewableX;
+        m_viewableY         = viewableY;
+        m_viewableWidth     = viewableWidth;
+        m_viewableHeight    = viewableHeight;
+        m_alterX            = alterX;
+        m_alterY            = alterY;
+        m_alterWidth        = alterWidth;
+        m_alterHeight       = alterHeight;
+        m_movingSpeed       = movingSpeed;
+        m_movingType        = movingType;
+        m_cursorNode        = cursorNode;
+        m_autoUpdate        = autoUpdate;
+        
+        m_clippingNode.SetClipping(
+            Util.FPRound( m_originX ), Util.FPRound( m_originY ),
+            width, height );
+    }
+
+    /**
+     *  Manually call this function to do origin calculation. This shouldn't be
+     * called if autoUpdate (in SetupViewport()) is true, and don't call it
+     * if you don't really understand about it.
+     *
+     *  @param timePassed Period of time in seconds since the last updated
+     * moment. (16-16 fixed point)
+     */
+    public void CalculateOrigin( int timePassed )
+    {
         if ( m_movingType == MOVINGTYPE_MANUAL )
             return;
 
@@ -96,28 +180,26 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
         {
             int baseSpeed = Util.FPDiv( m_movingSpeed,
                 Math.abs( deltaX ) + Math.abs( deltaY ) );
-        
+
             switch ( m_movingType )
             {
                 case MOVINGTYPE_CONST_SPEED:
                     movingX = Util.FPMul(
-                        Util.FPMul( baseSpeed, deltaX ),
-                        renderTool.c_timePassed );
+                        Util.FPMul( baseSpeed, deltaX ), timePassed );
                     movingY = Util.FPMul(
-                        Util.FPMul( baseSpeed, deltaY ),
-                        renderTool.c_timePassed );
+                        Util.FPMul( baseSpeed, deltaY ), timePassed );
                     break;
 
                 case MOVINGTYPE_SPP:
                     movingX = Util.FPMul(
                         Util.FPMul(
                             Util.FPMul( baseSpeed, Math.abs( deltaX ) ),
-                            renderTool.c_timePassed ),
+                            timePassed ),
                         deltaX );
                     movingY = Util.FPMul(
                         Util.FPMul(
                             Util.FPMul( baseSpeed, Math.abs( deltaY ) ),
-                            renderTool.c_timePassed ),
+                            timePassed ),
                         deltaY );
                     break;
             }
@@ -141,67 +223,6 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
 
         if ( m_originY < m_viewableY << 16 )
             m_originY = m_viewableY << 16;
-
-        m_clippingNode.SetClipping(
-            Util.FPRound( m_originX ), Util.FPRound( m_originY ),
-            m_width, m_height );
-    }
-
-    public short GetAABBWidth()
-    {
-        return m_width;
-    }
-
-    public short GetAABBHeight()
-    {
-        return m_height;
-    }
-
-    /**
-     *  Setup information for viewport.
-     *  @param width The width of viewport.
-     *  @param height The height of viewport.
-     *  @param viewableX X coordinate of top-left point of viewable area.
-     *  @param viewableY Y coordinate of top-left point of viewable area.
-     *  @param viewableWidth Total navigable width.
-     *  @param viewableHeight Total navigable height.
-     *  @param alterX X coordinate of "alter" rectangle's top left point.
-     *  @param alterY Y coordinate of "alter" rectangle's top left point.
-     *  @param alterWidth Width of "alter" rectangle.
-     *  @param alterHeight Height of "alter" rectangle.
-     *  @param movingSpeed Moving speed, in 16-16 fixed-point format.
-     *  @param movingType See the constants for more information. If movingType
-     * is MOVINGTYPE_MANUAL, all the following parameters:
-     * viewableX, viewableY, viewableWidth, viewableHeight,
-     * alterX, alterY, alterWidth, alterHeight, movingSpeed and cursorNode
-     * will be ignored.
-     *  @param cursorNode A scene node acts as the cursor of this viewport. The
-     * viewport will takes it's information for automatic calculation of
-     * viewport information.
-     */
-    public void SetupViewport( short width, short height,
-        short viewableX, short viewableY,
-        short viewableWidth, short viewableHeight,
-        short alterX, short alterY, short alterWidth, short alterHeight,
-        int movingSpeed, byte movingType, ISceneNode cursorNode )
-    {
-        m_width             = width;
-        m_height            = height;
-        m_viewableX         = viewableX;
-        m_viewableY         = viewableY;
-        m_viewableWidth     = viewableWidth;
-        m_viewableHeight    = viewableHeight;
-        m_alterX            = alterX;
-        m_alterY            = alterY;
-        m_alterWidth        = alterWidth;
-        m_alterHeight       = alterHeight;
-        m_movingSpeed       = movingSpeed;
-        m_movingType        = movingType;
-        m_cursorNode        = cursorNode;
-        
-        m_clippingNode.SetClipping(
-            Util.FPRound( m_originX ), Util.FPRound( m_originY ),
-            width, height );
     }
 
     /**
@@ -275,5 +296,6 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
                     m_viewableWidth, m_viewableHeight,
                     m_alterX, m_alterY, m_alterWidth, m_alterHeight,
                     m_cursorX, m_cursorY;
+    private boolean m_autoUpdate;
     private byte    m_movingType;
 }
