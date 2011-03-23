@@ -28,10 +28,10 @@ import com.spukmk2me.video.RenderTool;
  *  A font renderer which use MIDP API as the main rendering API.
  *  \details Currently, it can only render font with maximum character
  * width/height is 18/23. You can extends the range of rendering up to
- * 32/any_number by changing the constant of this class. Because of current
- * implement, if the character width is large than 32, some of the essential
- * part must be re-written.
- *  @see spukmk2me.video.BitmapFont
+ * 32/any_number by changing the constant of this class.
+ *  Note that current implement can only handle font with the width of
+ * characters is 32 or less.
+ *  @see spukmk2me.video.ICFont
  */
 public final class FontRenderer_MIDP implements ICFontRenderer
 {    
@@ -68,10 +68,25 @@ public final class FontRenderer_MIDP implements ICFontRenderer
         {
             long clipping = m_renderTool.GetClipping();
             
-            clipX = (int)(clipping >> 48);
+            clipX = (int)(clipping >> 48) & 0x0000FFFF;
+
+            if ( (clipX & 0x00008000) != 0 )
+                clipX |= 0xFFFF0000;
+
             clipY = (int)((clipping >> 32) & 0x0000FFFF);
+
+            if ( (clipY & 0x00008000) != 0 )
+                clipY |= 0xFFFF0000;
+
             clipW = (int)((clipping >> 16) & 0x0000FFFF);
+
+            if ( (clipW & 0x00008000) != 0 )
+                clipW |= 0xFFFF0000;
+
             clipH = (int)(clipping & 0x0000FFFF);
+
+            if ( (clipH & 0x00008000) != 0 )
+                clipH |= 0xFFFF0000;
         }
         
         while ( offset != border )

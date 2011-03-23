@@ -92,9 +92,6 @@ public final class Device
         m_videoDriver   = vdriver;
         m_inputMonitor  = inputMonitor;
         m_sceneManager  = scene;
-
-        m_videoDriver.StartInternalClock();
-        m_inputMonitor.SetInputMode( IInputMonitor.INPUTMODE_KEY );
     }
 
     /**
@@ -119,12 +116,12 @@ public final class Device
             //#ifdef __SPUKMK2ME_MIDP
 //#             case IVideoDriver.VIDEODRIVER_MIDP:
 //#                 vdriver = new VideoDriver_MIDP();
-//# 
+//#
 //#                 if ( vdriver.IsSupported() )
 //#                     imonitor = (IInputMonitor)vdriver;
 //#                 else
 //#                     vdriver = null;
-//# 
+//#
 //#                 break;
             //#endif
 
@@ -183,6 +180,23 @@ public final class Device
         if ( (vdriver == null) || (smonitor == null) || (imonitor == null) )
             return null;
 
+        return new Device( vdriver, smonitor, imonitor, scene );
+    }
+
+    /**
+     *  Setup a device manually. Not recommended for new developer.
+     *  \details If you can manually setup all the components, you can forget
+     * about Device object and this function as well.
+     *  @param vdriver Video driver.
+     *  @param smonitor Sound monitor.
+     *  @param imonitor Input monitor.
+     *  @param scene Scene manager.
+     *  @return Device that hold all the components above.
+     */
+    public static Device CreateSPUKMK2meDevice(
+        IVideoDriver vdriver, ISoundMonitor smonitor,
+        IInputMonitor imonitor, SceneManager scene )
+    {
         return new Device( vdriver, smonitor, imonitor, scene );
     }
 

@@ -37,24 +37,26 @@ public final class BranchingManager
         if ( m_nStack == 0 )
             return;
 
-        if ( !m_workers[ m_stack[ m_nStack - 1 ] ].IsFinished() )
-        {
-            m_workers[ m_stack[ m_nStack - 1 ] ].DoWork();
+        int currentIndex = m_nStack - 1;
 
-            if ( m_workers[ m_stack[ m_nStack - 1 ] ].GetChainedWork() !=
+        if ( !m_workers[ m_stack[ currentIndex ] ].IsFinished() )
+        {
+            m_workers[ m_stack[ currentIndex ] ].DoWork();
+
+            if ( m_workers[ m_stack[ currentIndex ] ].GetChainedWork() !=
                 IBranching.CHAIN_NOTHING )
             {
-                ChainWork( m_workers[ m_stack[ m_nStack - 1 ] ].
+                ChainWork( m_workers[ m_stack[ currentIndex ] ].
                     GetChainedWork() );
             }
         }
-        else
+
+        if ( m_workers[ m_stack[ currentIndex ] ].IsFinished() )
         {
-            while ( m_workers[ m_stack[ m_nStack - 1 ] ].IsFinished() )
-            {
-                if ( --m_nStack == 0 )
-                    break;
-            }
+            for ( ; currentIndex < m_nStack - 1; ++currentIndex )
+                m_stack[ currentIndex ] = m_stack[ currentIndex + 1 ];
+
+            --m_nStack;
         }
     }
 

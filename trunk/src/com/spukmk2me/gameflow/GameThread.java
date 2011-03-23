@@ -73,6 +73,7 @@ public final class GameThread extends Thread
 
         m_vdriver.PrepareRenderingContext();
         m_vdriver.StartInternalClock();
+        m_imonitor.SetInputMode( IInputMonitor.INPUTMODE_KEY );
         lastWakeupTime = lastProcessTime = System.currentTimeMillis();
 
         while ( m_alive )
