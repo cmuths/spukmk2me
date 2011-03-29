@@ -19,7 +19,7 @@
 package com.spukmk2me.scene;
 
 import com.spukmk2me.Util;
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 
 /**
  *  An animator used for translating scene node.
@@ -28,13 +28,15 @@ public final class TranslateAnimator extends IAnimator
 {
     public TranslateAnimator() {}      
 
-    public final void Render( RenderTool renderTool )
+    public final void Render( IVideoDriver driver )
     {
         if ( m_sceneNode == null )
             return;
 
-        m_currentX += Util.FPMul( m_speedX, renderTool.c_timePassed );
-        m_currentY += Util.FPMul( m_speedY, renderTool.c_timePassed );
+        int passedTime = driver.GetRenderInfo().c_passedTime;
+        
+        m_currentX += Util.FPMul( m_speedX, passedTime );
+        m_currentY += Util.FPMul( m_speedY, passedTime );
 
         if ( m_speedX > 0 )
         {

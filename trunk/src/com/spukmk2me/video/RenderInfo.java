@@ -19,19 +19,10 @@
 package com.spukmk2me.video;
 
 /**
- *  A abstract way to describe the image type used by SPUKMK2ME.
+ *  Hold some rendering information (cannot rely on Java inlining).
  */
-public interface IImage
+public final class RenderInfo
 {
-    /**
-     *  Get the width of image.
-     *  @return The width of image.
-     */
-    public short GetWidth();
-
-    /**
-     *  Get the height of image.
-     *  @return The height of image.
-     */
-    public short GetHeight();
+    public short    c_rasterX, c_rasterY;
+    public int      c_passedTime;
 }

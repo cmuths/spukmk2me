@@ -18,7 +18,7 @@
 
 package com.spukmk2me.scene;
 
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IImage;
 
 /**
@@ -37,10 +37,9 @@ public final class ImageSceneNode extends ITopLeftOriginSceneNode
         m_image = image;
     }
 
-    public void Render( RenderTool renderTool )
+    public void Render( IVideoDriver driver )
     {
-        // I'm searching for a way to elminate this type of callings
-        m_image.Render( renderTool );
+        driver.RenderImage( m_image );
     }
 
     public short GetAABBWidth()

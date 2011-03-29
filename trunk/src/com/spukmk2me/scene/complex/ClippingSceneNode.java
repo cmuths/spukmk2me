@@ -18,7 +18,7 @@
 
 package com.spukmk2me.scene.complex;
 
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.scene.ITopLeftOriginSceneNode;
 import com.spukmk2me.scene.NullSceneNode;
@@ -32,9 +32,9 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
     {
         public SubClippingSceneNode() {}
 
-        public void Render( RenderTool renderTool )
+        public void Render( IVideoDriver driver )
         {
-            renderTool.SetClipping( m_x, m_y, m_width, m_height );
+            driver.SetClipping( m_x, m_y, m_width, m_height );
         }
 
         public short GetAABBWidth()
@@ -66,13 +66,13 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
         ISceneNode.AddSceneNode( m_unclippingNode, this );
     }
     
-    public void Render( RenderTool renderTool )
+    public void Render( IVideoDriver driver )
     {
-        long clippingArea = renderTool.GetClipping();
+        long clippingArea = driver.GetClipping();
         
-        renderTool.SetClipping(
-            (short)(renderTool.c_rasterX),
-            (short)(renderTool.c_rasterY),
+        driver.SetClipping(
+            driver.GetRenderInfo().c_rasterX,
+            driver.GetRenderInfo().c_rasterY,
             m_width, m_height );
         m_unclippingNode.SetClipping(
             (short)(clippingArea >> 48),

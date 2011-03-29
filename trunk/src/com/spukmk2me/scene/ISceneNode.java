@@ -18,12 +18,10 @@
 
 package com.spukmk2me.scene;
 
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 
 //#ifdef __SPUKMK2ME_DEBUG
 import com.spukmk2me.debug.SPUKMK2meException;
-import com.spukmk2me.scene.complex.ClippingSceneNode;
-import com.spukmk2me.scene.complex.ViewportSceneNode;
 //#endif
 
 /**
@@ -76,7 +74,7 @@ public abstract class ISceneNode
      * renderTool.c_rasterX and renderTool.c_rasterY.
      *  @param renderTool A set of data for rendering.
      */
-    public abstract void Render( RenderTool renderTool );
+    public abstract void Render( IVideoDriver driver );
 
     /**
      *  Get the top-left X coordinate of AABB.

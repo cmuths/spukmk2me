@@ -43,11 +43,12 @@ public final class BranchingManager
         {
             m_workers[ m_stack[ currentIndex ] ].DoWork();
 
-            if ( m_workers[ m_stack[ currentIndex ] ].GetChainedWork() !=
-                IBranching.CHAIN_NOTHING )
+            byte chained =
+                m_workers[ m_stack[ currentIndex ] ].GetChainedWork();
+            
+            if ( chained != IBranching.CHAIN_NOTHING )
             {
-                ChainWork( m_workers[ m_stack[ currentIndex ] ].
-                    GetChainedWork() );
+                ChainWork( chained );
             }
         }
 

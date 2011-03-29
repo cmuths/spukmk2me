@@ -18,7 +18,7 @@
 
 package com.spukmk2me.scene;
 
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 
 /**
  *  A animator that makes scene nodes move in a zigzag line.
@@ -31,7 +31,7 @@ public final class ZigzagAnimator extends IAnimator
         m_translateAnimator = new TranslateAnimator();
     }
 
-    public void Render( RenderTool renderTool )
+    public void Render( IVideoDriver driver )
     {
         if ( m_sceneNode == null )
             return;
@@ -55,14 +55,14 @@ public final class ZigzagAnimator extends IAnimator
 
         if ( m_remainingTime > 0 )
         {
-            m_remainingTime -= renderTool.c_timePassed;
+            m_remainingTime -= driver.GetRenderInfo().c_passedTime;
             
             if ( m_remainingTime < 0 )
                 StopAnimation();
         }
 
         if ( m_remainingTime != 0 )
-            m_translateAnimator.Render( renderTool );
+            m_translateAnimator.Render( driver );
     }
 
     public ISceneNode GetSceneNode()

@@ -295,8 +295,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
             System.getProperty( "microedition.platform" );
 
         ///////////////////////////////
-        // Nokia detection
-        if ( platformHint.indexOf( "Nokia" ) != -1 )
+        // Nokia detection ("Nokia")
+        if ( platformHint.toUpperCase().indexOf( "NOKIA" ) != -1 ) // Nokia
         {
             m_platform = PLATFORM_NOKIA;
             return;
@@ -311,8 +311,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         
         ///////////////////////////////
-        // Sony Ericsson detection
-        if ( platformHint.indexOf( "SonyEricsson" ) != -1 )
+        // Sony Ericsson detection ("SonyEricsson")
+        if ( platformHint.toUpperCase().indexOf( "SONYERICSSON" ) != -1 )
         {
             m_platform = PLATFORM_SE;
             return;

@@ -19,6 +19,7 @@
 package com.spukmk2me.gameflow;
 
 import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
 
 import com.spukmk2me.Device;
 import com.spukmk2me.video.IVideoDriver;
@@ -53,7 +54,7 @@ public final class GameThread extends Thread
         }
 
         Display.getDisplay( m_owner ).setCurrent(
-            m_vdriver.GetMIDPDisplayable() );
+            (Displayable)m_vdriver.GetMIDPDisplayable() );
         m_working = true;
     }
 

@@ -22,7 +22,7 @@ package com.spukmk2me.scene;
 import com.spukmk2me.debug.SPUKMK2meException;
 //#endif
 import com.spukmk2me.Util;
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IImage;
 
 public final class SpriteSceneNode extends ITopLeftOriginSceneNode
@@ -32,7 +32,7 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
         m_images        = images;
     }    
 
-    public void Render( RenderTool renderTool )
+    public void Render( IVideoDriver driver )
     {
         if ( m_autoDrop && !m_animating )
         {
@@ -44,9 +44,9 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
             return;
 
         if ( m_animating )
-            UpdateAnimation( renderTool.c_timePassed );
+            UpdateAnimation( driver.GetRenderInfo().c_passedTime );
 
-        m_images[ Util.FPRound( m_currentFrame ) ].Render( renderTool );
+        driver.RenderImage( m_images[ Util.FPRound( m_currentFrame ) ] );
     }
 
     public short GetAABBWidth()

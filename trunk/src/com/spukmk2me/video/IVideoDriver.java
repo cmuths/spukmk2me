@@ -19,8 +19,6 @@
 package com.spukmk2me.video;
 
 import java.io.IOException;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Graphics;
 
 /**
  *  Interface for video driver, an essential part of SPUKMK2ME engine.
@@ -100,30 +98,47 @@ public interface IVideoDriver
      */
     public void FinishRendering();
 
-    public RenderTool GetRenderTool();
-
     /**
      *  Get the displayable to display.
      *  \details Since MIDP API relies on Displayable, all things are put to
      * screen must be Displayable. Of course you must put a Displayable object
      * to your screen via javax.microedition.lcdui.Display.setCurrent().
-     *  @return The representative MIDP Displayable object.
+     *  @return The representative MIDP Displayable object or null if an
+     * instance of javax.microedition.lcdui.Displayable. You can return
+     * something similar to Displayable if you're using the implemented driver
+     * for platforms other than J2ME.
      */
-    public Displayable GetMIDPDisplayable();
+    public Object GetMIDPDisplayable();
 
     /**
      *  Get the Graphics for manual drawing.
      *  \details SPUKMK2ME engine isn't completed, even if it's completed,
      * sometimes we must do some manual drawing.
-     *  @return The Graphics object to draw to the screen.
+     *  @return The Graphics object to draw to the screen or null if an
+     * instance of javax.microedition.lcdui.Graphics cannot be returned (or
+     * don't need to be returned, or both, e.g. in the scene editor written for
+     * running on PC).
      */
-    public Graphics GetMIDPGraphics();
+    public Object GetMIDPGraphics();
+
+    /**
+     *
+     *
+     */
+    public Object GetOtherRenderingAPI();
 
     /**
      *  Get the font renderer associated with this video driver.
      *  @return The font renderer for text rendering.
      */
     public ICFontRenderer GetFontRenderer();
+
+    public RenderInfo GetRenderInfo();
+
+    /**
+     *  Render an image to the screen at current raster position.
+     */
+    public void RenderImage( IImage image );
 
     /**
      *  Get the width of screen, in pixel.

@@ -27,7 +27,7 @@ import com.spukmk2me.debug.SPUKMK2meException;
 
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.ICFontRenderer;
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.RenderInfo;
 import com.spukmk2me.video.IImage;
 
 /**
@@ -68,7 +68,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         m_clipY         = y;
         m_clipWidth     = width;
         m_clipHeight    = height;
-        ((Graphics)m_renderTool.c_rAPI).setClip( x, y, width, height );
+        m_g.setClip( x, y, width, height );
     }
 
     public long GetClipping()
@@ -77,6 +77,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             ((long)(m_clipY & 0x0000FFFF) << 32) |
             ((long)(m_clipWidth & 0x0000FFFF) << 16) |
             (long)(m_clipHeight & 0x0000FFFF);
+    }
+
+    public void RenderImage( IImage image )
+    {
+        ((MIDPImage)image).Render( m_g,
+            m_renderInfo.c_rasterX, m_renderInfo.c_rasterY );
     }
 
     public void StartInternalClock()
@@ -105,15 +111,11 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             m_fpsString[ 9 ] = (char)(fpsDeltaTime % 10 + 0x30);
         }
         //#endif
-        m_renderTool.c_scrWidth     = (short)this.getWidth();
-        m_renderTool.c_scrHeight    = (short)this.getHeight();
 
         if ( clearScreen )
         {
-            Graphics g = (Graphics)m_renderTool.c_rAPI;
-            g.setColor( clearColor );
-            g.fillRect(
-                0, 0, m_renderTool.c_scrWidth, m_renderTool.c_scrHeight );
+            m_g.setColor( clearColor );
+            m_g.fillRect( 0, 0, getWidth(), getHeight() );
         }
 
         long passedTime;
@@ -130,39 +132,44 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         else
             passedTime = deltaMilliseconds;
 
-        m_renderTool.c_timePassed = ((int)passedTime << 16) / 1000;
+        m_renderInfo.c_passedTime = ((int)passedTime << 16) / 1000;
         m_lastTime += passedTime;
     }
 
     public void FinishRendering()
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        ((Graphics)m_renderTool.c_rAPI).setColor( 0xFF7F7F7F );
-        ((Graphics)m_renderTool.c_rAPI).drawChars( m_fpsString, 0, 10, 0, 0,
+        m_g.setColor( 0xFF7F7F7F );
+        m_g.drawChars( m_fpsString, 0, 10, 0, 0,
             Graphics.TOP | Graphics.LEFT );
         //#endif
 
         this.flushGraphics();        
     }
 
-    public RenderTool GetRenderTool()
-    {
-        return m_renderTool;
-    }
-
-    public Displayable GetMIDPDisplayable()
+    public Object GetMIDPDisplayable()
     {
         return this;
     }
 
-    public Graphics GetMIDPGraphics()
+    public Object GetMIDPGraphics()
     {
-        return (Graphics)m_renderTool.c_rAPI;
+        return m_g;
+    }
+
+    public Object GetOtherRenderingAPI()
+    {
+        return null;
     }
 
     public ICFontRenderer GetFontRenderer()
     {
         return m_fontRenderer;
+    }
+
+    public RenderInfo GetRenderInfo()
+    {
+        return m_renderInfo;
     }
 
     public short GetScreenWidth()
@@ -185,15 +192,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         // Initialise
         m_lastTime  = 0;
 
-        m_fontRenderer = new FontRenderer_MIDP();
-        m_renderTool = new RenderTool( this );
-        m_renderTool.c_rAPI         = this.getGraphics();
-        m_renderTool.c_fontRenderer = m_fontRenderer;
-        m_renderTool.c_vdriverID    = VIDEODRIVER_MIDP;
+        m_fontRenderer  = new FontRenderer_MIDP();
+        m_renderInfo    = new RenderInfo();
+        m_g             = this.getGraphics();
+        m_fontRenderer.SetVideoDriver( this );
 
-        m_fontRenderer.SetRenderTool( m_renderTool );
-
-        m_x0 = m_y0 = 0;
+        m_x0 = m_y0 = m_renderInfo.c_rasterX = m_renderInfo.c_rasterY = 0;
 
         //#ifdef __SPUKMK2ME_DEBUG
         m_fpsLastTime   = 0;
@@ -256,11 +260,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     
     private static final long   MAX_TIME_PER_STEP = 100;
 
+    private Graphics        m_g;
     private ICFontRenderer  m_fontRenderer;
-    private RenderTool      m_renderTool;
+    private RenderInfo      m_renderInfo;
     private long            m_lastTime;
-    private short           m_x0, m_y0, m_clipX, m_clipY, m_clipWidth,
-                            m_clipHeight;
+    private short           m_x0, m_y0, m_clipX, m_clipY,
+                            m_clipWidth, m_clipHeight;
 
     //#ifdef __SPUKMK2ME_DEBUG
     private char[]      m_fpsString;

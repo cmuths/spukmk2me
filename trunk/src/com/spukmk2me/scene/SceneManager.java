@@ -19,7 +19,7 @@
 package com.spukmk2me.scene;
 
 import com.spukmk2me.video.IVideoDriver;
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.RenderInfo;
 
 /**
  *  An essential part of SPUKMK2me rendering engine.
@@ -151,10 +151,6 @@ public final class SceneManager
     public void RenderSceneNode( ISceneNode node, short x, short y,
         boolean renderAtOrigin )
     {
-        ISceneNode  iterator;
-        RenderTool  renderTool = m_vdriver.GetRenderTool();
-        int         topStack = 0;
-
         //#ifdef __SPUKMK2ME_DEBUG
         if ( node == null )
         {
@@ -164,6 +160,10 @@ public final class SceneManager
         }
         //#endif
 
+        ISceneNode  iterator;
+        RenderInfo  renderInfo = m_vdriver.GetRenderInfo();
+        int         topStack = 0;
+
         m_stack[ 0 ]    = node;
         m_finish[ 0 ]   = node.c_next;
 
@@ -171,13 +171,13 @@ public final class SceneManager
         {
             int origin = m_vdriver.GetOrigin();
 
-            renderTool.c_rasterX = (short)(origin >> 16);
-            renderTool.c_rasterY = (short)(origin & 0x0000FFFF);
+            renderInfo.c_rasterX = (short)(origin >> 16);
+            renderInfo.c_rasterY = (short)(origin & 0x0000FFFF);
         }
         else
         {
-            renderTool.c_rasterX = x;
-            renderTool.c_rasterY = y;
+            renderInfo.c_rasterX = x;
+            renderInfo.c_rasterY = y;
         }
 
         while ( topStack != -1 )
@@ -186,8 +186,8 @@ public final class SceneManager
             {
                 m_stack[ topStack ]     = null;
                 m_finish[ topStack ]    = null;
-                renderTool.c_rasterX -= m_stackX[ topStack ];
-                renderTool.c_rasterY -= m_stackY[ topStack-- ];
+                renderInfo.c_rasterX -= m_stackX[ topStack ];
+                renderInfo.c_rasterY -= m_stackY[ topStack-- ];
             }
             else
             {
@@ -196,16 +196,16 @@ public final class SceneManager
 
                 if ( iterator.c_enable )
                 {
-                    renderTool.c_rasterX += iterator.c_x;
-                    renderTool.c_rasterY += iterator.c_y;
+                    renderInfo.c_rasterX += iterator.c_x;
+                    renderInfo.c_rasterY += iterator.c_y;
 
                     if ( iterator.c_visible )
-                        iterator.Render( renderTool );
+                        iterator.Render( m_vdriver );
 
                     if ( iterator.c_children == null )
                     {
-                        renderTool.c_rasterX -= iterator.c_x;
-                        renderTool.c_rasterY -= iterator.c_y;
+                        renderInfo.c_rasterX -= iterator.c_x;
+                        renderInfo.c_rasterY -= iterator.c_y;
                     }
                     else
                     {

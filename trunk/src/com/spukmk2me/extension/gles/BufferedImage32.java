@@ -24,7 +24,6 @@ import java.nio.IntBuffer;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.lcdui.Image;
 
-import com.spukmk2me.video.RenderTool;
 import com.spukmk2me.video.IImage;
 
 /**

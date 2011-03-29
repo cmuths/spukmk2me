@@ -18,7 +18,7 @@
 
 package com.spukmk2me.scene;
 
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 
 /**
  *  Used as a dummy or a faked-first node in the list. It's multi-purpose node.
@@ -33,7 +33,7 @@ public final class NullSceneNode extends ITopLeftOriginSceneNode
         c_visible = false;
     }
 
-    public final void Render( RenderTool renderTool ) {}
+    public final void Render( IVideoDriver driver ) {}
 
     public final short GetAABBWidth()
     {

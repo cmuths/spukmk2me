@@ -23,7 +23,7 @@ package com.spukmk2me.video;
  */
 public interface ICFontRenderer
 {
-    public void SetRenderTool( RenderTool renderTool );
+    public void SetVideoDriver( IVideoDriver driver );
 
     /**
      *  Render a string.

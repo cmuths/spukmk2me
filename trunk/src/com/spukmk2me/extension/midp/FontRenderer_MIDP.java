@@ -22,7 +22,7 @@ import javax.microedition.lcdui.Graphics;
 
 import com.spukmk2me.video.ICFont;
 import com.spukmk2me.video.ICFontRenderer;
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
 
 /**
  *  A font renderer which use MIDP API as the main rendering API.
@@ -37,10 +37,10 @@ public final class FontRenderer_MIDP implements ICFontRenderer
 {    
     public FontRenderer_MIDP() {}
 
-    public void SetRenderTool( RenderTool renderTool )
+    public void SetVideoDriver( IVideoDriver driver )
     {
-        m_g             = (Graphics)renderTool.c_rAPI;
-        m_renderTool    = renderTool;
+        m_vdriver   = driver;
+        m_g         = (Graphics)driver.GetMIDPGraphics();
     }
 
     public void RenderString( char[] s, ICFont font, int offset, int length,
@@ -66,7 +66,7 @@ public final class FontRenderer_MIDP implements ICFontRenderer
         boolean additionalSpace = false;
 
         {
-            long clipping = m_renderTool.GetClipping();
+            long clipping = m_vdriver.GetClipping();
             
             clipX = (int)(clipping >> 48) & 0x0000FFFF;
 
@@ -154,6 +154,6 @@ public final class FontRenderer_MIDP implements ICFontRenderer
                 (x2 < x1 + w1) && (y2 < y1 + h1);
     }
 
-    private Graphics    m_g;
-    private RenderTool  m_renderTool;
+    private Graphics        m_g;
+    private IVideoDriver    m_vdriver;
 }

@@ -19,7 +19,8 @@
 package com.spukmk2me.scene;
 
 import com.spukmk2me.video.ICFontRenderer;
-import com.spukmk2me.video.RenderTool;
+import com.spukmk2me.video.IVideoDriver;
+import com.spukmk2me.video.RenderInfo;
 import com.spukmk2me.video.ICFont;
 
 /**
@@ -102,30 +103,31 @@ public final class StringSceneNode extends ITopLeftOriginSceneNode
         return m_str;
     }
 
-    public void Render( RenderTool renderTool )
+    public void Render( IVideoDriver driver )
     {
         if ( m_str == null )
             return;
 
-        ICFontRenderer fr = renderTool.c_fontRenderer;
+        ICFontRenderer  fr = driver.GetFontRenderer();
+        RenderInfo      ri = driver.GetRenderInfo();
 
         m_font.PresetProperties( m_properties );
 
         if ( m_renderedString == null ) // Unprocessed string
         {
             fr.RenderString( m_str, m_font, 0, m_str.length,
-                renderTool.c_rasterX, renderTool.c_rasterY );
+                ri.c_rasterX, ri.c_rasterY );
         }
         else
         {
-            short y = (short)(renderTool.c_rasterY + m_startY);
+            short y = (short)(ri.c_rasterY + m_startY);
 
             for ( int i = 0; i != m_nLine; ++i )
             {
                 fr.RenderString( m_renderedString, m_font,
                     m_lineStartIndexes[ i ],
                     m_lineStartIndexes[ i + 1 ] - m_lineStartIndexes[ i ],
-                    (short)(renderTool.c_rasterX + m_lineStartX[ i ]), y );
+                    (short)(ri.c_rasterX + m_lineStartX[ i ]), y );
                 y += m_font.GetLineHeight();
             }
         }

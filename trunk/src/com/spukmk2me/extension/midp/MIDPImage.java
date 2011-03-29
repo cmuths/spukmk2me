@@ -27,7 +27,6 @@ import java.io.IOException;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 
-import com.spukmk2me.video.RenderTool;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IImage;
 
@@ -216,12 +215,11 @@ final class MIDPImage implements IImage
         m_midpTransformationFlag    = midpTransformationFlag;
     }
 
-    public void Render( RenderTool renderTool )
+    public void Render( Graphics g, short x, short y )
     {
-        ((Graphics)renderTool.c_rAPI).drawRegion( m_image,
+        g.drawRegion( m_image,
             m_x, m_y, m_width, m_height, m_midpTransformationFlag,
-            renderTool.c_rasterX, renderTool.c_rasterY,
-            Graphics.TOP | Graphics.LEFT );
+            x, y, Graphics.TOP | Graphics.LEFT );
     }
 
     public short GetWidth()
