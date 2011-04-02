@@ -21,6 +21,9 @@ package com.spukmk2me.extension.midp;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.game.GameCanvas;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.Logger;
+//#endif
 import com.spukmk2me.input.IInputMonitor;
 
 public abstract class InputMonitor_MIDP extends GameCanvas
@@ -32,11 +35,13 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         DetectExternalKeyCodes();
         m_actionBitPattern  = IInputMonitor.ACT_NONE;
         m_pointerPosition   = 0xFFFFFFFF;
+        m_behaviourList     = new byte[ 32 ];
     }
 
     public final int GetActionBitPattern()
     {
         long currentTime = System.currentTimeMillis();
+        int ret;
 
         m_keyCooldown  -= currentTime - m_keyLastTime;
         m_keyLastTime   = currentTime;
@@ -52,10 +57,13 @@ public abstract class InputMonitor_MIDP extends GameCanvas
                     m_keyCooldown = m_keyLatency;
             }
 
-            return m_actionBitPattern;
+            ret = m_actionBitPattern;
         }
         else
-            return ACT_NONE;
+            ret = ACT_NONE;
+
+        RescanInputAction();
+        return ret;
     }
 
     public final int GetTouchingPosition()
@@ -72,6 +80,27 @@ public abstract class InputMonitor_MIDP extends GameCanvas
             m_actionBitPattern  = ACT_NONE;
             m_pointerPosition   = 0xFFFFFFFF;
         }
+    }
+
+    public final void SetInputBehaviour( int action, byte behaviour )
+    {
+        //#ifdef __SPUKMK2ME_DEBUG
+        if ( action == 0 )
+        {
+            Logger.Log( "Inputed action is 0." );
+            return;
+        }
+        //#endif
+
+        int index = 0;
+
+        while ( (action & 0x00000001) == 0 )
+        {
+            ++index;
+            action >>= 1;
+        }
+
+        m_behaviourList[ index ] = behaviour;
     }
 
     public final void SetLatency( long latency )
@@ -170,11 +199,6 @@ public abstract class InputMonitor_MIDP extends GameCanvas
             m_actionBitPattern |= ACT_RSOFT;
     }
 
-    protected void keyRepeated( int keyCode )
-    {
-        this.keyPressed( keyCode );
-    }
-
     protected void keyReleased( int keyCode )
     {
         if ( (m_inputMode & INPUTMODE_KEY) == 0 )
@@ -183,81 +207,86 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         switch ( keyCode )
         {
             case Canvas.KEY_NUM0:
-                m_actionBitPattern &= ~ACT_NUM0;
+                ApplyKeyReleasing( ACT_NUM0 );
                 return;
 
             case Canvas.KEY_NUM1:
-                m_actionBitPattern &= ~ACT_NUM1;
+                ApplyKeyReleasing( ACT_NUM1 );
                 return;
 
             case Canvas.KEY_NUM2:
-                m_actionBitPattern &= ~(ACT_UP | ACT_NUM2);
+                ApplyKeyReleasing( ACT_UP );
+                ApplyKeyReleasing( ACT_NUM2 );
                 return;
 
             case Canvas.KEY_NUM3:
-                m_actionBitPattern &= ~ACT_NUM3;
+                ApplyKeyReleasing( ACT_NUM3 );
                 return;
 
             case Canvas.KEY_NUM4:
-                m_actionBitPattern &= ~(ACT_LEFT | ACT_NUM4);
+                ApplyKeyReleasing( ACT_LEFT );
+                ApplyKeyReleasing( ACT_NUM4 );
                 return;
 
             case Canvas.KEY_NUM5:
-                m_actionBitPattern &= ~(ACT_FIRE | ACT_NUM5);
+                ApplyKeyReleasing( ACT_FIRE );
+                ApplyKeyReleasing( ACT_NUM5 );
                 return;
 
             case Canvas.KEY_NUM6:
-                m_actionBitPattern &= ~(ACT_RIGHT | ACT_NUM6);
+                ApplyKeyReleasing( ACT_RIGHT );
+                ApplyKeyReleasing( ACT_NUM6 );
                 return;
 
             case Canvas.KEY_NUM7:
-                m_actionBitPattern &= ~ACT_NUM7;
+                ApplyKeyReleasing( ACT_NUM7 );
                 return;
 
             case Canvas.KEY_NUM8:
-                m_actionBitPattern &= ~(ACT_DOWN | ACT_NUM8);
+                ApplyKeyReleasing( ACT_DOWN );
+                ApplyKeyReleasing( ACT_NUM8 );
                 return;
 
             case Canvas.KEY_NUM9:
-                m_actionBitPattern &= ~ACT_NUM9;
+                ApplyKeyReleasing( ACT_NUM9 );
                 return;
 
             case Canvas.KEY_POUND:
-                m_actionBitPattern &= ~ACT_NUMPND;
+                ApplyKeyReleasing( ACT_NUMPND );
                 return;
 
             case Canvas.KEY_STAR:
-                m_actionBitPattern &= ~ACT_NUMSTAR;
+                ApplyKeyReleasing( ACT_NUMSTAR );
                 return;
         }
 
         switch ( this.getGameAction( keyCode ) )
         {
             case Canvas.UP:
-                m_actionBitPattern &= ~ACT_UP;
+                ApplyKeyReleasing( ACT_UP );
                 return;
 
             case Canvas.LEFT:
-                m_actionBitPattern &= ~ACT_LEFT;
+                ApplyKeyReleasing( ACT_LEFT );
                 return;
 
             case Canvas.DOWN:
-                m_actionBitPattern &= ~ACT_DOWN;
+                ApplyKeyReleasing( ACT_DOWN );
                 return;
 
             case Canvas.RIGHT:
-                m_actionBitPattern &= ~ACT_RIGHT;
+                ApplyKeyReleasing( ACT_RIGHT );
                 return;
 
             case Canvas.FIRE:
-                m_actionBitPattern &= ~ACT_FIRE;
+                ApplyKeyReleasing( ACT_FIRE );
                 return;
         }
 
         if ( keyCode == m_softleftKeyCode )
-            m_actionBitPattern &= ~ACT_LSOFT;
+            ApplyKeyReleasing( ACT_LSOFT );
         else if( keyCode == m_softrightKeyCode )
-            m_actionBitPattern &= ~ACT_RSOFT;
+            ApplyKeyReleasing( ACT_RSOFT );
     }
 
     protected void pointerPressed( int x, int y )
@@ -276,6 +305,42 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         m_actionBitPattern &= ~IInputMonitor.ACT_FIRE;
         m_pointerPosition   = 0xFFFFFFFF;
+    }
+
+    private void ApplyKeyReleasing( int action )
+    {
+        int index = 0;
+        
+        while ( (action & 0x00000001) == 0 )
+        {
+            ++index;
+            action >>= 1;
+        }
+
+        action <<= index;
+
+        if ( m_behaviourList[ index ] != BHV_FIX_DOUBLE_SIGNAL_PR )
+            m_actionBitPattern &= ~action;
+    }
+
+    private void RescanInputAction()
+    {
+        int index   = 0;
+        int action  = m_actionBitPattern;
+        int mask    = 0x00000001;
+
+        while ( index != 32 )
+        {
+            if ( (action & 0x00000001) != 0 )
+            {
+                if ( m_behaviourList[ index ] != BHV_ENABLE_WHEN_HOLDING )
+                    m_actionBitPattern &= ~mask;
+            }
+
+            ++index;
+            mask      <<= 1;
+            action    >>= 1;
+        }
     }
 
     // This function detect key codes for keys which aren't standardised in
@@ -485,6 +550,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     // emulators (I'm not sure, let's assume that it's right).
     private static final int KEY_DEFAULT_SOFTLEFT   = -6;
     private static final int KEY_DEFAULT_SOFTRIGHT  = -7;
+
+    private byte[]      m_behaviourList;
 
     private long    m_keyCooldown, m_keyLatency, m_keyLastTime;
     private int     m_actionBitPattern, m_pointerPosition;

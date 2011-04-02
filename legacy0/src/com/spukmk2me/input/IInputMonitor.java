@@ -36,6 +36,13 @@ public interface IInputMonitor
     public void SetInputMode( int inputMode );
 
     /**
+     *  Setup the receiving behaviour.
+     *  @param action Input action that will be affected.
+     *  @param behaviour New behaviour of input action.
+     */
+    public void SetInputBehaviour( int action, byte behaviour );
+
+    /**
      *  Get the bit pattern for actions.
      *  \details The key waiting time will be reseted to the maximum value (the
      * value passed to SetLatency())
@@ -101,6 +108,27 @@ public interface IInputMonitor
     public static final int ACT_NUM9    = 0x00010000; //!< Numpad 9
     public static final int ACT_NUMPND  = 0x00020000; //!< Numpad #
     public static final int ACT_NUMSTAR = 0x00040000; //!< Numpad *
+
+    //! Action bit is enabled when the corresponding key is held.
+    //! \details This is the default behaviour. Action bit is enabled if and
+    //! only if the key is held.
+    public static final byte BHV_ENABLE_WHEN_HOLDING    = 0;
+
+    //! Action bit is enabled when the corresponding key is pressed (once).
+    //! \details The action bit is enabled only when the key is pressed. After
+    //! that, from the next call to GetActionBitPattern(), the bit will be
+    //! disabled even the key is held. It is enabled again if and only if the
+    //! key is pressed again.
+    //! Key releasing will (of course), disable the action bit.
+    public static final byte BHV_ENABLE_ON_FIRST_PRESS  = 1;
+
+    //! Action bit will be enabled once when the corresponding key is pressed.
+    //! \details This behaviour is just like BHV_ENABLE_ON_FIRST_PRESS, the
+    //! action bit is enabled once. The difference is: key releasing is
+    //! ignored. This behaviour is created originaly to work around
+    //! Nokia X3-02 devices, which send "key released" (R) right after
+    //! "key pressed" (P) signal if user press softkeys.
+    public static final byte BHV_FIX_DOUBLE_SIGNAL_PR   = 2;
 
     public static final byte INPUTMODE_NONE     = 0x00; //!< Disable the input.
     public static final byte INPUTMODE_KEY      = 0x01; //!< Accept keys.

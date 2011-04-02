@@ -19,7 +19,8 @@
 package com.spukmk2me.extension.midp;
 
 import java.io.IOException;
-import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
 
 //#ifdef __SPUKMK2ME_DEBUG
 import com.spukmk2me.debug.SPUKMK2meException;
@@ -147,12 +148,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         this.flushGraphics();        
     }
 
-    public Object GetMIDPDisplayable()
+    public Displayable GetMIDPDisplayable()
     {
         return this;
     }
 
-    public Object GetMIDPGraphics()
+    public Graphics GetMIDPGraphics()
     {
         return m_g;
     }

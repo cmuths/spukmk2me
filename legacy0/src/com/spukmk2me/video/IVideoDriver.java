@@ -19,6 +19,8 @@
 package com.spukmk2me.video;
 
 import java.io.IOException;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
 
 /**
  *  Interface for video driver, an essential part of SPUKMK2ME engine.
@@ -108,7 +110,7 @@ public interface IVideoDriver
      * something similar to Displayable if you're using the implemented driver
      * for platforms other than J2ME.
      */
-    public Object GetMIDPDisplayable();
+    public Displayable GetMIDPDisplayable();
 
     /**
      *  Get the Graphics for manual drawing.
@@ -119,7 +121,7 @@ public interface IVideoDriver
      * don't need to be returned, or both, e.g. in the scene editor written for
      * running on PC).
      */
-    public Object GetMIDPGraphics();
+    public Graphics GetMIDPGraphics();
 
     /**
      *
