@@ -41,7 +41,6 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     public final int GetActionBitPattern()
     {
         long currentTime = System.currentTimeMillis();
-        int ret;
 
         m_keyCooldown  -= currentTime - m_keyLastTime;
         m_keyLastTime   = currentTime;
@@ -57,13 +56,13 @@ public abstract class InputMonitor_MIDP extends GameCanvas
                     m_keyCooldown = m_keyLatency;
             }
 
-            ret = m_actionBitPattern;
+            int ret = m_actionBitPattern;
+
+            RescanInputAction();
+            return ret;
         }
         else
-            ret = ACT_NONE;
-
-        RescanInputAction();
-        return ret;
+            return ACT_NONE;
     }
 
     public final int GetTouchingPosition()
