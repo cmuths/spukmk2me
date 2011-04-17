@@ -194,7 +194,7 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( keyCode == m_softleftKeyCode )
             m_actionBitPattern |= ACT_LSOFT;
-        else if(keyCode == m_softrightKeyCode)
+        else if( keyCode == m_softrightKeyCode )
             m_actionBitPattern |= ACT_RSOFT;
     }
 
@@ -293,17 +293,31 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         if ( (m_inputMode & INPUTMODE_TOUCH) == 0 )
             return;
 
-        m_actionBitPattern |= IInputMonitor.ACT_FIRE;
         m_pointerPosition   = ((short)x << 16) | (short)y;
-    }
 
-    protected void pointerReleased( int x, int y )
-    {
-        if ( (m_inputMode & INPUTMODE_TOUCH) == 0 )
-            return;
+        if ( (m_inputMode & INPUTMODE_TOUCH_SK_FIX_NOKIAS40) != 0 )
+        {
+            if ( y >= this.getHeight() - 48 )
+            {
+                int buttonSize = this.getWidth() / 3;
 
-        m_actionBitPattern &= ~IInputMonitor.ACT_FIRE;
-        m_pointerPosition   = 0xFFFFFFFF;
+                if ( x <= buttonSize )
+                {
+                    m_actionBitPattern |= ACT_LSOFT;
+                    ApplyKeyReleasing( ACT_LSOFT );
+                }
+                else if ( x <= (buttonSize << 1) )
+                {
+                    m_actionBitPattern |= ACT_FIRE;
+                    ApplyKeyReleasing( ACT_FIRE );
+                }
+                else
+                {
+                    m_actionBitPattern |= ACT_RSOFT;
+                    ApplyKeyReleasing( ACT_RSOFT );
+                }
+            }
+        }
     }
 
     private void ApplyKeyReleasing( int action )
@@ -316,6 +330,7 @@ public abstract class InputMonitor_MIDP extends GameCanvas
             action >>= 1;
         }
 
+        action  &= 0x00000001;
         action <<= index;
 
         if ( m_behaviourList[ index ] != BHV_FIX_DOUBLE_SIGNAL_PR )
@@ -324,6 +339,9 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
     private void RescanInputAction()
     {
+        if ( m_actionBitPattern == 0 )
+            return;
+
         int index   = 0;
         int action  = m_actionBitPattern;
         int mask    = 0x00000001;
