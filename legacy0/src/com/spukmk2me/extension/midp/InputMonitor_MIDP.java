@@ -37,7 +37,7 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         m_pointerPosition       = 0xFFFFFFFF;
         m_behaviourList         = new byte[ 32 ];
         m_touchSKNotExecuted    = true;
-        m_touchLastTime         = 0;
+        m_touchHolding          = false;
         m_touchSimulatedActions = 0;
     }
 
@@ -53,6 +53,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( m_keyCooldown == 0 )
         {
+            PostTouchProcess();
+
             if ( m_actionBitPattern != 0 )
             {
                 if ( m_keyCooldown < m_keyLatency )
@@ -312,12 +314,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
         {
-            if ( System.currentTimeMillis() - m_touchLastTime < 350 )
-            {
-                m_actionBitPattern |= ACT_FIRE;
-                m_touchSimulatedActions |= ACT_FIRE;
-                m_touchSKNotExecuted = false;
-            }
+            m_touchHoldLastTime = System.currentTimeMillis();
+            m_touchHolding      = true;
         }
 
         if ( (m_inputMode & INPUTMODE_TOUCH_SK_FIX_NOKIAS40) != 0 )
@@ -343,8 +341,6 @@ public abstract class InputMonitor_MIDP extends GameCanvas
                 }
             }
         }
-
-        m_touchLastTime = System.currentTimeMillis();
     }
 
     protected void pointerDragged( int x, int y )
@@ -356,6 +352,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
         {
+            m_touchHolding = false;
+
             if ( m_touchSKNotExecuted )
             {
                 if ( x - m_pressedX > 20 )
@@ -392,10 +390,12 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         if ( (m_inputMode & INPUTMODE_TOUCH) == 0 )
             return;
 
-        m_pointerPosition       = 0xFFFFFFFF;
+        m_pointerPosition = 0xFFFFFFFF;
         
         if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
         {
+            m_touchHolding = false;
+
             int action = 1;
 
             for ( int i = 32; i != 0; --i )
@@ -427,6 +427,22 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( m_behaviourList[ index ] != BHV_FIX_DOUBLE_SIGNAL_PR )
             m_actionBitPattern &= ~action;
+    }
+
+    private void PostTouchProcess()
+    {
+        if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
+        {
+            if ( m_touchSKNotExecuted && m_touchHolding )
+            {
+                if ( System.currentTimeMillis() - m_touchHoldLastTime > 750 )
+                {
+                    m_actionBitPattern |= ACT_FIRE;
+                    m_touchSimulatedActions |= ACT_FIRE;
+                    m_touchSKNotExecuted = false;
+                }
+            }
+        }
     }
 
     private void RescanInputAction()
@@ -663,12 +679,14 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     private byte[]  m_behaviourList;
 
     private long    m_keyCooldown, m_keyLatency, m_keyLastTime,
-                    m_touchLastTime;
+                    m_touchHoldLastTime;    // Last time holding touch without
+                                            // moving or releasing.
     private int     m_actionBitPattern, m_pointerPosition,
                     m_touchSimulatedActions;
     private int     m_softleftKeyCode, m_softrightKeyCode;
     private int     m_inputMode;
     private short   m_pressedX, m_pressedY;
-    private boolean m_touchSKNotExecuted;
+    private boolean m_touchSKNotExecuted,
+                    m_touchHolding; // User touchs without dragging.
     private byte    m_platform;
 }
