@@ -27,6 +27,7 @@ public abstract class GameMIDlet extends MIDlet
     protected GameMIDlet( IGameProcessor gameProcessor )
     {
         m_gameProcessor = gameProcessor;
+        m_gameThread    = null;
     }
     
     protected final void startApp()
@@ -59,6 +60,6 @@ public abstract class GameMIDlet extends MIDlet
         this.notifyDestroyed();
     }
 
-    protected   GameThread      m_gameThread = null;
+    protected   GameThread      m_gameThread;
     private     IGameProcessor  m_gameProcessor;
 }

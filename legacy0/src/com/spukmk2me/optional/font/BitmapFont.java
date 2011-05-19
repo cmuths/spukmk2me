@@ -115,8 +115,10 @@ public final class BitmapFont extends ICFont
 
     public void PresetProperties( byte[] properties )
     {
-        m_color =   properties[ 0 ] << 24   | properties[ 1 ] << 16 |
-                    properties[ 2 ] << 8    | properties[ 3 ];
+        m_color =   properties[ 0 ] << 24   |
+                    ((properties[ 1 ] << 16) & 0x00FF0000) |
+                    ((properties[ 2 ] << 8) & 0x0000FF00) |
+                    (properties[ 3 ] & 0x000000FF);
         m_style =   properties[ 4 ];
 
         m_additionalCharWidth   = 0;
