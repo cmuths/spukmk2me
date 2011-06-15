@@ -39,9 +39,62 @@ import com.spukmk2me.debug.SPUKMK2meException;
  */
 public final class BitmapFont extends ICFont
 {
-    public BitmapFont( String filename ) throws IOException
+    /**
+     * Currently this function only supports file format version 0.1.
+     *  \details Write once, run everywhere huh? Stop throwing trash and
+     * putting nonsense into media. I've had enough of your garbage. Just see
+     * what you can do about opening stream between two of your own platforms.
+     *  @param is User must provide their own input stream. Don't ask me why I
+     * removed constructor with filename, ask Sun Microsystem.
+     *  @param source Don't ask me, ask Java suck.
+     *  @throws IOException If there is an IO error.
+     */
+    public BitmapFont( InputStream is ) throws IOException
     {
-        LoadFontFromFile( filename );
+        DataInputStream dis = new DataInputStream( is );
+
+        // Header
+        // Skip the first two bytes, and "SPUKMK2me_BITMAPFONT_0.1"
+        // Assume that the bit/little endian mode is compatible
+        dis.skipBytes( 26 );
+        m_nChar         = dis.readUnsignedShort();
+        m_width         = dis.readUnsignedShort();
+        m_height        = dis.readUnsignedShort();
+        m_charDistance  = dis.readUnsignedShort();
+        m_space         = dis.readUnsignedShort();
+        m_yUnderline    = dis.readUnsignedShort();
+        m_italicStride  = dis.readUnsignedShort();
+        // Skip 120 reserved bytes
+        dis.skip( 120 );
+
+        // Trunk
+        if ( m_nChar > 94 )
+        {
+            m_extraCharMap = new int[ m_nChar - 94 ];
+
+            int charIterator = 0;
+
+            for ( int i = m_nChar - 94; i != 0; --i )
+                m_extraCharMap[ charIterator++ ] = dis.readInt();
+        }
+
+        m_bytesPerLine = (byte)(m_width >> 3);
+
+        if ( (m_width & 0x07) != 0 )
+            ++m_bytesPerLine;
+
+        m_charWidth = new int[ m_nChar ];
+
+        m_data = new byte[ m_nChar * m_bytesPerLine * m_height ];
+        dis.read( m_data );
+        dis.close();
+
+        FindCharactersWidth();
+
+        m_bytesPerChar      = m_bytesPerLine * m_height;
+        m_bufferWidth       = m_width + 1 + m_italicStride;
+        m_buffer            = new int[ m_bufferWidth * m_height ];
+        m_preprocessedData  = new int[ m_bytesPerChar ];
     }
 
     public byte GetRenderDataType()
@@ -265,58 +318,6 @@ public final class BitmapFont extends ICFont
 
             argbFirst += m_bufferWidth;
         }
-    }
-
-    // Currently this function only supports file format version 0.1
-    private void LoadFontFromFile( String filename ) throws IOException
-    {
-        InputStream is =
-            (InputStream)this.getClass().getResourceAsStream( filename );
-
-        DataInputStream dis = new DataInputStream( is );
-
-        // Header
-        // Skip the first two bytes, and "SPUKMK2me_BITMAPFONT_0.1"
-        // Assume that the bit/little endian mode is compatible
-        dis.skipBytes( 26 );
-        m_nChar         = dis.readUnsignedShort();
-        m_width         = dis.readUnsignedShort();
-        m_height        = dis.readUnsignedShort();
-        m_charDistance  = dis.readUnsignedShort();
-        m_space         = dis.readUnsignedShort();
-        m_yUnderline    = dis.readUnsignedShort();
-        m_italicStride  = dis.readUnsignedShort();
-        // Skip 120 reserved bytes
-        dis.skip( 120 );
-
-        // Trunk
-        if ( m_nChar > 94 )
-        {
-            m_extraCharMap = new int[ m_nChar - 94 ];
-
-            int charIterator = 0;
-
-            for ( int i = m_nChar - 94; i != 0; --i )
-                m_extraCharMap[ charIterator++ ] = dis.readInt();
-        }
-
-        m_bytesPerLine = (byte)(m_width >> 3);
-
-        if ( (m_width & 0x07) != 0 )
-            ++m_bytesPerLine;
-
-        m_charWidth = new int[ m_nChar ];
-
-        m_data = new byte[ m_nChar * m_bytesPerLine * m_height ];
-        dis.read( m_data );
-        dis.close();
-
-        FindCharactersWidth();
-
-        m_bytesPerChar      = m_bytesPerLine * m_height;
-        m_bufferWidth       = m_width + 1 + m_italicStride;
-        m_buffer            = new int[ m_bufferWidth * m_height ];
-        m_preprocessedData  = new int[ m_bytesPerChar ];
     }
 
     private void FindCharactersWidth()

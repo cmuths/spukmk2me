@@ -21,30 +21,124 @@ package com.spukmk2me.video;
 /**
  *  Interface for character font renderer.
  */
-public interface ICFontRenderer
+public abstract class ICFontRenderer
 {
-    public void SetVideoDriver( IVideoDriver driver );
+    protected ICFontRenderer( IVideoDriver vdriver )
+    {
+        m_vdriver = vdriver;
+    }
 
-    /**
-     *  Render a string.
-     *  \details This function render a character sequence from s[ offset ] to
-     * s[ offset + length - 1 ]. If offset + length is greater than the
-     * string's length, this function only renders to the end of string. If
-     * offset is somehow greater than s.length(), or length is smaller than 0,
-     * this function does nothing.\n
-     *  Alignment is also applied.
-     *  @param s The string.
-     *  @param offset Index for rendering to start.
-     *  @param length The number of rendered characters.
-     *  @param x X coordinate.
-     *  @param y Y coordinate.
-     */
-    public void RenderString( char[] s, ICFont font, int offset, int length,
-        int x, int y );
-    
-    /**
-     *  Alternative version of RenderString(), which takes String as input.
-     */
-    public void RenderString( String s, ICFont font, int offset, int length,
-        int x, int y );
+    protected abstract void RenderCharacter( ICFont font, char character );
+
+    public final void RenderString( char[] s, ICFont font,
+        int offset, int length, int x, int y )
+    {
+        if ( s == null )
+            return;
+
+        int border = offset + length;
+
+        if ( border > s.length )
+            border = s.length;
+
+        if ( offset >= border )
+            return;
+
+        short   clipX, clipY, clipW, clipH;
+        char    character;
+        // Small space after each non-space character.
+        boolean additionalSpace = false;
+
+        {
+            long clipping = m_vdriver.GetClipping();
+
+            clipX = (short)((clipping >> 48) & 0x0000FFFF);
+
+            if ( (clipX & 0x00008000) != 0 )
+                clipX |= 0xFFFF0000;
+
+            clipY = (short)((clipping >> 32) & 0x0000FFFF);
+
+            if ( (clipY & 0x00008000) != 0 )
+                clipY |= 0xFFFF0000;
+
+            clipW = (short)((clipping >> 16) & 0x0000FFFF);
+
+            if ( (clipW & 0x00008000) != 0 )
+                clipW |= 0xFFFF0000;
+
+            clipH = (short)(clipping & 0x0000FFFF);
+
+            if ( (clipH & 0x00008000) != 0 )
+                clipH |= 0xFFFF0000;
+        }
+
+        m_rasterX       = (short)x;
+        m_rasterY       = (short)y;
+        m_charHeight    = (short)font.GetLineHeight();
+
+        while ( offset != border )
+        {
+            character = s[ offset ];
+
+            if ( character == '\n' )
+            {
+                m_rasterX       = (short)x;
+                m_rasterY      += m_charHeight;
+                additionalSpace = false;
+            }
+            else
+            {
+                // Spaces should be invisible, right?
+                if ( character != ' ' )
+                {
+                    m_charWidth = (short)font.GetCharWidth( character );
+
+                    if ( RectangleCollide(
+                            m_rasterX, m_rasterY, m_charWidth, m_charHeight,
+                            clipX, clipY, clipW, clipH ) )
+                        RenderCharacter( font, character );
+
+                    m_rasterX += font.GetSpaceBetweenCharacters() +
+                        font.GetCharWidth( character );
+                    additionalSpace = true;
+                }
+                else
+                {
+                    if ( additionalSpace )
+                        m_rasterX -= font.GetSpaceBetweenCharacters();
+
+                    m_rasterX      += font.GetCharWidth( ' ' );
+                    additionalSpace = false;
+                }
+            }
+
+            ++offset;
+        }
+    }
+
+    public final void RenderString( String s, ICFont font,
+        int offset, int length, int x, int y )
+    {
+        if ( s == null )
+            return;
+
+        int borderOffset    = Math.min( offset + length, s.length() );
+        char[] buffer       = new char[ borderOffset - offset ];
+
+        s.getChars( offset, borderOffset, buffer, 0 );
+        RenderString( buffer, font, offset, borderOffset - offset, x, y );
+    }
+
+    private boolean RectangleCollide( short x1, short y1, short w1, short h1,
+        short x2, short y2, short w2, short h2 )
+    {
+        return  (x1 < x2 + w2) && (y1 < y2 + h2) &&
+                (x2 < x1 + w1) && (y2 < y1 + h1);
+    }
+
+    //! Current video driver.
+    protected IVideoDriver  m_vdriver;
+    //! Current render position and current character's dimension.
+    protected short         m_rasterX, m_rasterY, m_charWidth, m_charHeight;
 }

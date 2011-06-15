@@ -38,7 +38,7 @@ public final class Util
      */
     public static void InitialiseRandomSeed( long seed )
     {
-        m_randSeed = (seed ^ 0x5DEECE66DL) & ((1L << 48) - 1);
+        RANDSEED = (seed ^ 0x5DEECE66DL) & ((1L << 48) - 1);
     }
 
     /**
@@ -52,8 +52,8 @@ public final class Util
      */
     private static int GetRandNext( int bits )
     {
-        m_randSeed = (m_randSeed * 0x5DEECE66DL + 0xBL) & ((1L << 48) - 1);
-        return (int)(m_randSeed >>> (48 - bits));
+        RANDSEED = (RANDSEED * 0x5DEECE66DL + 0xBL) & ((1L << 48) - 1);
+        return (int)(RANDSEED >>> (48 - bits));
     }
 
     /**
@@ -176,26 +176,6 @@ public final class Util
      */
     public static int FPMul( int fnumber1, int fnumber2 )
     {
-        /*boolean positive = ((fnumber1 ^ fnumber2) & 0x80000000) == 0 ;
-
-        fnumber1 = Math.abs( fnumber1 );
-        fnumber2 = Math.abs( fnumber2 );
-
-        int product     = fnumber1 * (fnumber2 >> 16);
-        int fnumber_dec = fnumber2 & 0x0000FFFF;
-        int i = 1;
-
-        while ( i != 17 )
-        {
-            fnumber_dec <<= 1;
-
-            if ( (fnumber_dec & 0x00010000) != 0 )
-                product += fnumber1 >> i;
-
-            ++i;
-        }
-
-        return ( positive )? product : -product;*/
         return (int)(((long)fnumber1 * (long)fnumber2) >> 16);
     }
 
@@ -207,23 +187,6 @@ public final class Util
      */
     public static int FPDiv( int fnumber1, int fnumber2 )
     {
-        /*boolean positive = ((fnumber1 ^ fnumber2) & 0x80000000) == 0;
-
-        fnumber1 = Math.abs( fnumber1 );
-        fnumber2 = Math.abs( fnumber2 );
-
-        int quotient   = fnumber1 / fnumber2 << 16;
-        int remainder  = fnumber1 % fnumber2;
-        int i = 15;
-
-        while ( i != -1 )
-        {
-            remainder <<= 1;
-            quotient   |= remainder / fnumber2 << i--;
-            remainder  %= fnumber2;
-        }
-
-        return ( positive )? quotient : -quotient;*/
         return (int)(((long)fnumber1 << 32) / (long)fnumber2 >> 16);
     }
 
@@ -234,20 +197,6 @@ public final class Util
      */
     public static short FPRound( int fnumber )
     {
-        /*boolean positive = (fnumber & 0x80000000) == 0;
-
-        if ( !positive )
-            fnumber = -fnumber;
-
-        int result = fnumber >> 16;
-
-        if ( positive )
-        {
-            if ( (fnumber & 0x00008000) != 0 )
-                ++result;
-        }
-        
-        return (short)(( positive )? result : -result);*/
         if ( (fnumber & 0x00008000) != 0 )
             return (short)((fnumber >> 16) + 1);
 
@@ -357,5 +306,5 @@ public final class Util
 
     public static final int PI = 0;
 
-    private static long m_randSeed;
+    private static long RANDSEED;
 }

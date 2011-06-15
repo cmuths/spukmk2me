@@ -19,7 +19,7 @@
 package com.spukmk2me.scene;
 
 import com.spukmk2me.video.IVideoDriver;
-import com.spukmk2me.video.IImage;
+import com.spukmk2me.video.ISubImage;
 
 /**
  *  Scene node that display an image.
@@ -32,14 +32,14 @@ public final class ImageSceneNode extends ITopLeftOriginSceneNode
      * image.
      *  @param image The image will be displayed by this node.
      */
-    public ImageSceneNode( IImage image )
+    public ImageSceneNode( ISubImage image )
     {        
         m_image = image;
     }
 
     public void Render( IVideoDriver driver )
     {
-        driver.RenderImage( m_image );
+        m_image.Render( driver );
     }
 
     public short GetAABBWidth()
@@ -56,7 +56,7 @@ public final class ImageSceneNode extends ITopLeftOriginSceneNode
      *  Get the image which is held by this node.
      *  @return The current image of this node.
      */
-    public IImage GetImage()
+    public ISubImage GetImage()
     {
         return m_image;
     }
@@ -65,10 +65,10 @@ public final class ImageSceneNode extends ITopLeftOriginSceneNode
      *  Set new image to this node for displaying
      *  @param image New image.
      */
-    public final void SetImage( IImage image )
+    public final void SetImage( ISubImage image )
     {
         m_image = image;
     }    
     
-    private IImage m_image;
+    private ISubImage m_image;
 }

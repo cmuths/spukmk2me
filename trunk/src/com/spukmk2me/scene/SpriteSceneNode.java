@@ -19,15 +19,15 @@
 package com.spukmk2me.scene;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.SPUKMK2meException;
+import com.spukmk2me.debug.Logger;
 //#endif
 import com.spukmk2me.Util;
 import com.spukmk2me.video.IVideoDriver;
-import com.spukmk2me.video.IImage;
+import com.spukmk2me.video.ISubImage;
 
 public final class SpriteSceneNode extends ITopLeftOriginSceneNode
 {
-    public SpriteSceneNode( IImage[] images )
+    public SpriteSceneNode( ISubImage[] images )
     {
         m_images        = images;
     }    
@@ -46,7 +46,7 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
         if ( m_animating )
             UpdateAnimation( driver.GetRenderInfo().c_passedTime );
 
-        driver.RenderImage( m_images[ Util.FPRound( m_currentFrame ) ] );
+        m_images[ Util.FPRound( m_currentFrame ) ].Render( driver );
     }
 
     public short GetAABBWidth()
@@ -115,9 +115,8 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
         {
             if ( (frameIndex >= m_images.length) || (frameIndex < 0) )
             {
-                new SPUKMK2meException(
-                    "Sprite index was set out of range. Index: " +
-                    frameIndex ).printStackTrace();
+                Logger.Log( "Sprite index was set out of range. Index: " +
+                    frameIndex );
             }
         }
         //#endif
@@ -129,7 +128,7 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
      *  Get the images referenced by this scene node.
      *  @return An array contains images used by the node.
      */
-    public IImage[] GetImages()
+    public ISubImage[] GetImages()
     {
         return m_images;
     }
@@ -181,7 +180,7 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
      *  Set images for this scene node.
      *  @param images An array of IImage that this scene node will display.
      */
-    public void SetImages( IImage[] images )
+    public void SetImages( ISubImage[] images )
     {
         m_images = images;
     }
@@ -204,7 +203,7 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
     //! Automatically drop this node if the animation is stopped.
     public static final byte    MODE_AUTODROP       = 0x10;
 
-    private IImage[]    m_images;
+    private ISubImage[] m_images;
     private int         m_currentFrame, m_remainingFrames, m_secPerFrame,
                         m_firstIndex, m_lastIndex, m_finishFrame;
     private boolean     m_direction, m_animating, m_frameStop, m_autoDrop;

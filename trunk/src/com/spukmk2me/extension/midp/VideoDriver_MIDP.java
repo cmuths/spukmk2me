@@ -19,16 +19,18 @@
 package com.spukmk2me.extension.midp;
 
 import java.io.IOException;
-import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.SPUKMK2meException;
+import com.spukmk2me.debug.Logger;
 //#endif
 
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.ICFontRenderer;
 import com.spukmk2me.video.RenderInfo;
-import com.spukmk2me.video.IImage;
+import com.spukmk2me.video.ISubImage;
+import com.spukmk2me.video.IImageResource;
 
 /**
  *  A So-so implement of IVideoDriver, which use MIDP rendering API to render.
@@ -77,12 +79,6 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             ((long)(m_clipY & 0x0000FFFF) << 32) |
             ((long)(m_clipWidth & 0x0000FFFF) << 16) |
             (long)(m_clipHeight & 0x0000FFFF);
-    }
-
-    public void RenderImage( IImage image )
-    {
-        ((MIDPImage)image).Render( m_g,
-            m_renderInfo.c_rasterX, m_renderInfo.c_rasterY );
     }
 
     public void StartInternalClock()
@@ -147,12 +143,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         this.flushGraphics();        
     }
 
-    public Object GetMIDPDisplayable()
+    public Displayable GetMIDPDisplayable()
     {
         return this;
     }
 
-    public Object GetMIDPGraphics()
+    public Graphics GetMIDPGraphics()
     {
         return m_g;
     }
@@ -192,10 +188,9 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         // Initialise
         m_lastTime  = 0;
 
-        m_fontRenderer  = new FontRenderer_MIDP();
+        m_fontRenderer  = new FontRenderer_MIDP( this );
         m_renderInfo    = new RenderInfo();
         m_g             = this.getGraphics();
-        m_fontRenderer.SetVideoDriver( this );
 
         m_x0 = m_y0 = m_renderInfo.c_rasterX = m_renderInfo.c_rasterY = 0;
 
@@ -211,53 +206,52 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     
     public void CleanupRenderingContext() {}
 
-    public IImage LoadImage( String filename ) throws IOException
-    {
-        return new MIDPImage( filename );
-    }
-
-    public IImage[] LoadImages( String filename, short width, short height )
+    public IImageResource CreateImageResource( String filename )
         throws IOException
     {
-        return MIDPImage.LoadImagesFromFile( filename, width, height );
+        return new MIDPImageResource( filename );
     }
 
-    /**
-     *  Create a regional image.
-     *  \details Current implement of MIDP video driver only supports
-     * 90-degree-based rotation.\n
-     *  See the reference of IVideoDriver for more information.
-     */
-    public IImage CreateRegionalImage( IImage src,
-        short x, short y, short width, short height, int rotationDegree,
-        byte flippingFlag )
+    public ISubImage CreateSubImage( IImageResource imgResource,
+        short x, short y, short width, short height,
+        int rotationDegree, byte flippingFlag )
     {
         //#ifdef __SPUKMK2ME_DEBUG
         if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
         {
-            new SPUKMK2meException( "MIDP driver currently does not support " +
+            Logger.Log( "MIDP driver currently does not support " +
                 "non-90-degree rotation, rotation degree will be reset to 0.");
             rotationDegree = 0;
+
+            try
+            {
+                MIDPImageResource test = (MIDPImageResource)imgResource;
+            } catch ( ClassCastException e ) {
+                Logger.Log( "This isn't image resource created by MIDP driver"
+                    );
+            }
         }
         //#endif
 
+        return new MIDPSubImage( (MIDPImageResource)imgResource,
+            x, y, width, height, rotationDegree, flippingFlag );
+    }
+
+    public ISubImage[] CreateSubImages( IImageResource imgResource,
+        short width, short height )
+    {
         //#ifdef __SPUKMK2ME_DEBUG
         try
         {
-        //#endif
-            return new MIDPImage( (MIDPImage)src, x, y, width, height,
-                rotationDegree, flippingFlag );
-        //#ifdef __SPUKMK2ME_DEBUG
+            MIDPImageResource test = (MIDPImageResource)imgResource;
         } catch ( ClassCastException e ) {
-            System.out.println( "You are creating a regional image from an " +
-                "image that wasn't created by this driver." );
-            e.printStackTrace();
+            Logger.Log( "This isn't image resource created by MIDP driver" );
         }
-
-        return null;
         //#endif
+        return MIDPSubImage.CreateSubImagesFromResource(
+            (MIDPImageResource)imgResource, width, height );
     }
-    
+
     private static final long   MAX_TIME_PER_STEP = 100;
 
     private Graphics        m_g;

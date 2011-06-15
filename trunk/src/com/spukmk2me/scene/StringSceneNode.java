@@ -95,6 +95,30 @@ public final class StringSceneNode extends ITopLeftOriginSceneNode
     }
 
     /**
+     *  Get the current font.
+     *  @return Current font.
+     */
+    public ICFont GetFont()
+    {
+        return m_font;
+    }
+    
+    public byte[] GetProperties()
+    {
+        return m_properties;
+    }
+    
+    public byte GetAlignment()
+    {
+        return m_alignment;
+    }
+    
+    public boolean IsTruncated()
+    {
+        return m_truncate;
+    }
+
+    /**
      *  Get the current string.
      *  @return The current string.
      */

@@ -19,6 +19,8 @@
 package com.spukmk2me.video;
 
 import java.io.IOException;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
 
 /**
  *  Interface for video driver, an essential part of SPUKMK2ME engine.
@@ -104,25 +106,20 @@ public interface IVideoDriver
      * screen must be Displayable. Of course you must put a Displayable object
      * to your screen via javax.microedition.lcdui.Display.setCurrent().
      *  @return The representative MIDP Displayable object or null if an
-     * instance of javax.microedition.lcdui.Displayable. You can return
-     * something similar to Displayable if you're using the implemented driver
-     * for platforms other than J2ME.
+     * instance of javax.microedition.lcdui.Displayable cannot be returned.
      */
-    public Object GetMIDPDisplayable();
+    public Displayable GetMIDPDisplayable();
 
     /**
      *  Get the Graphics for manual drawing.
      *  \details SPUKMK2ME engine isn't completed, even if it's completed,
      * sometimes we must do some manual drawing.
      *  @return The Graphics object to draw to the screen or null if an
-     * instance of javax.microedition.lcdui.Graphics cannot be returned (or
-     * don't need to be returned, or both, e.g. in the scene editor written for
-     * running on PC).
+     * instance of javax.microedition.lcdui.Graphics cannot be returned.
      */
-    public Object GetMIDPGraphics();
+    public Graphics GetMIDPGraphics();
 
     /**
-     *
      *
      */
     public Object GetOtherRenderingAPI();
@@ -134,11 +131,6 @@ public interface IVideoDriver
     public ICFontRenderer GetFontRenderer();
 
     public RenderInfo GetRenderInfo();
-
-    /**
-     *  Render an image to the screen at current raster position.
-     */
-    public void RenderImage( IImage image );
 
     /**
      *  Get the width of screen, in pixel.
@@ -183,63 +175,15 @@ public interface IVideoDriver
      */
     public long GetClipping();
 
-    /**
-     *  Load an image.
-     *  \details Depend on the API used, the content of any image must be
-     * suitable to that rendering API and vary from an API to another API.
-     * Example: OpenGL ES developers may to use 16-bit RGB/RGBA/BGRA or
-     * 8-bit indexed format instead of the familiar 32-bit ARGB format. So the
-     * video driver should be the one who decide how images are stored.
-     *  @param filename The image filename.
-     *  @return The image.
-     *  @throws IOException If the loading sequence fails due to I/O problem.
-     */
-    public IImage LoadImage( String filename ) throws IOException;
-
-    /**
-     *  Load a set of image.
-     *  \details The data of returned images are acquired by loading a large
-     * image, and then divide it into smaller pieces. If the divisions have
-     * remainders, then redundant parts are ignored; e.g you have a 55 x 47
-     * image, and you want to divide them into 10 x 10 pieces, so you have
-     * 5 x 4 = 20 pieces, the last 5 columns and the last 7 lines are not
-     * extracted.\n
-     *  Why you should load images via video driver? See LoadImage() for more
-     * details.
-     *  @param filename The image filename.
-     *  @param width The width of an image.
-     *  @param height The height of an image.
-     *  @return
-     *  @throws IOException If the loading sequence fails due to I/O problem.
-     *  @see LoadImage()
-     */
-    public IImage[] LoadImages( String filename, short width, short height )
+    public IImageResource CreateImageResource( String filename )
         throws IOException;
 
-    /**
-     *  Create a sub-image from a source image.
-     *  \details If the desired sub-image is not valid or can't be created,
-     * e.g user wants to create a image width negative size, this function will
-     * return a null value.\n
-     *  Rotation and flipping is considered as a "patch" for image
-     * transformation.
-     *  @param source The source image.
-     *  @param x The X coordinate of sub-image.
-     *  @param y The Y coordinate of sub-image.
-     *  @param width The width of sub-image.
-     *  @param height The height of sub-image.
-     *  @param rotationDegree The rotation, measured in degree. The positive
-     * direction is counter-clockwise. rotationDegree must be presented as a
-     * 16-16 fixed-point number. Rotation is applied after flipping.
-     *  @param flippingFlag Flipping option. See the constants for more
-     * information. Zero value for no flipping. Flipping is applied before
-     * rotation.
-     *  @return The desired sub-image, or null if the sub-image cannot be
-     * created.
-     */
-    public IImage CreateRegionalImage( IImage source,
-        short x, short y, short width, short height, int rotationDegree,
-        byte flippingFlag );
+    public ISubImage CreateSubImage( IImageResource imgResource,
+        short x, short y, short width, short height,
+        int rotationDegree, byte flippingFlag );
+
+    public ISubImage[] CreateSubImages( IImageResource imgResource,
+        short width, short height );
 
     public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
     public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.

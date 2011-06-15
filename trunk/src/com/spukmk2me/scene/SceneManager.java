@@ -64,10 +64,18 @@ public final class SceneManager
         }
 
         // Rendering initialisation
-        m_stack     = new ISceneNode[ STACK_SIZE ];
-        m_finish    = new ISceneNode[ STACK_SIZE ];
-        m_stackX    = new short[ STACK_SIZE ];
-        m_stackY    = new short[ STACK_SIZE ];
+        m_stack     = new ISceneNode[ DEFAULT_STACK_SIZE ];
+        m_finish    = new ISceneNode[ DEFAULT_STACK_SIZE ];
+        m_stackX    = new short[ DEFAULT_STACK_SIZE ];
+        m_stackY    = new short[ DEFAULT_STACK_SIZE ];
+    }
+
+    public void ChangeStackSize( int newStackSize )
+    {
+        m_stack     = new ISceneNode[ newStackSize ];
+        m_finish    = new ISceneNode[ newStackSize ];
+        m_stackX    = new short[ newStackSize ];
+        m_stackY    = new short[ newStackSize ];
     }
 
     /**
@@ -219,7 +227,7 @@ public final class SceneManager
         }
     }
 
-    private static final int STACK_SIZE = 20;
+    private static final int DEFAULT_STACK_SIZE = 20;
 
     private IVideoDriver    m_vdriver;
     private ISceneNode      m_rootNode, m_animatorRootNode;

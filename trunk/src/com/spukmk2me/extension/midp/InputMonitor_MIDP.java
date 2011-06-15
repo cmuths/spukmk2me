@@ -21,6 +21,9 @@ package com.spukmk2me.extension.midp;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.game.GameCanvas;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.Logger;
+//#endif
 import com.spukmk2me.input.IInputMonitor;
 
 public abstract class InputMonitor_MIDP extends GameCanvas
@@ -30,8 +33,12 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     {
         super( false );
         DetectExternalKeyCodes();
-        m_actionBitPattern  = IInputMonitor.ACT_NONE;
-        m_pointerPosition   = 0xFFFFFFFF;
+        m_actionBitPattern      = IInputMonitor.ACT_NONE;
+        m_pointerPosition       = 0xFFFFFFFF;
+        m_behaviourList         = new byte[ 32 ];
+        m_touchSKNotExecuted    = true;
+        m_touchHolding          = false;
+        m_touchSimulatedActions = 0;
     }
 
     public final int GetActionBitPattern()
@@ -46,13 +53,18 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( m_keyCooldown == 0 )
         {
+            PostTouchProcess();
+
             if ( m_actionBitPattern != 0 )
             {
                 if ( m_keyCooldown < m_keyLatency )
                     m_keyCooldown = m_keyLatency;
             }
 
-            return m_actionBitPattern;
+            int ret = m_actionBitPattern;
+
+            RescanInputAction();
+            return ret;
         }
         else
             return ACT_NONE;
@@ -72,6 +84,37 @@ public abstract class InputMonitor_MIDP extends GameCanvas
             m_actionBitPattern  = ACT_NONE;
             m_pointerPosition   = 0xFFFFFFFF;
         }
+    }
+
+    public final int GetInputCapability()
+    {
+        int inputCapability = INPUTMODE_KEY;
+
+        if ( this.hasPointerEvents() )
+            inputCapability |= INPUTMODE_TOUCH;
+
+        return inputCapability;
+    }
+
+    public final void SetInputBehaviour( int action, byte behaviour )
+    {
+        //#ifdef __SPUKMK2ME_DEBUG
+        if ( action == 0 )
+        {
+            Logger.Log( "Inputed action is 0." );
+            return;
+        }
+        //#endif
+
+        int index = 0;
+
+        while ( (action & 0x00000001) == 0 )
+        {
+            ++index;
+            action >>= 1;
+        }
+
+        m_behaviourList[ index ] = behaviour;
     }
 
     public final void SetLatency( long latency )
@@ -166,13 +209,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
 
         if ( keyCode == m_softleftKeyCode )
             m_actionBitPattern |= ACT_LSOFT;
-        else if(keyCode == m_softrightKeyCode)
+        else if( keyCode == m_softrightKeyCode )
             m_actionBitPattern |= ACT_RSOFT;
-    }
-
-    protected void keyRepeated( int keyCode )
-    {
-        this.keyPressed( keyCode );
     }
 
     protected void keyReleased( int keyCode )
@@ -183,81 +221,86 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         switch ( keyCode )
         {
             case Canvas.KEY_NUM0:
-                m_actionBitPattern &= ~ACT_NUM0;
+                ApplyKeyReleasing( ACT_NUM0 );
                 return;
 
             case Canvas.KEY_NUM1:
-                m_actionBitPattern &= ~ACT_NUM1;
+                ApplyKeyReleasing( ACT_NUM1 );
                 return;
 
             case Canvas.KEY_NUM2:
-                m_actionBitPattern &= ~(ACT_UP | ACT_NUM2);
+                ApplyKeyReleasing( ACT_UP );
+                ApplyKeyReleasing( ACT_NUM2 );
                 return;
 
             case Canvas.KEY_NUM3:
-                m_actionBitPattern &= ~ACT_NUM3;
+                ApplyKeyReleasing( ACT_NUM3 );
                 return;
 
             case Canvas.KEY_NUM4:
-                m_actionBitPattern &= ~(ACT_LEFT | ACT_NUM4);
+                ApplyKeyReleasing( ACT_LEFT );
+                ApplyKeyReleasing( ACT_NUM4 );
                 return;
 
             case Canvas.KEY_NUM5:
-                m_actionBitPattern &= ~(ACT_FIRE | ACT_NUM5);
+                ApplyKeyReleasing( ACT_FIRE );
+                ApplyKeyReleasing( ACT_NUM5 );
                 return;
 
             case Canvas.KEY_NUM6:
-                m_actionBitPattern &= ~(ACT_RIGHT | ACT_NUM6);
+                ApplyKeyReleasing( ACT_RIGHT );
+                ApplyKeyReleasing( ACT_NUM6 );
                 return;
 
             case Canvas.KEY_NUM7:
-                m_actionBitPattern &= ~ACT_NUM7;
+                ApplyKeyReleasing( ACT_NUM7 );
                 return;
 
             case Canvas.KEY_NUM8:
-                m_actionBitPattern &= ~(ACT_DOWN | ACT_NUM8);
+                ApplyKeyReleasing( ACT_DOWN );
+                ApplyKeyReleasing( ACT_NUM8 );
                 return;
 
             case Canvas.KEY_NUM9:
-                m_actionBitPattern &= ~ACT_NUM9;
+                ApplyKeyReleasing( ACT_NUM9 );
                 return;
 
             case Canvas.KEY_POUND:
-                m_actionBitPattern &= ~ACT_NUMPND;
+                ApplyKeyReleasing( ACT_NUMPND );
                 return;
 
             case Canvas.KEY_STAR:
-                m_actionBitPattern &= ~ACT_NUMSTAR;
+                ApplyKeyReleasing( ACT_NUMSTAR );
                 return;
         }
 
         switch ( this.getGameAction( keyCode ) )
         {
             case Canvas.UP:
-                m_actionBitPattern &= ~ACT_UP;
+                ApplyKeyReleasing( ACT_UP );
                 return;
 
             case Canvas.LEFT:
-                m_actionBitPattern &= ~ACT_LEFT;
+                ApplyKeyReleasing( ACT_LEFT );
                 return;
 
             case Canvas.DOWN:
-                m_actionBitPattern &= ~ACT_DOWN;
+                ApplyKeyReleasing( ACT_DOWN );
                 return;
 
             case Canvas.RIGHT:
-                m_actionBitPattern &= ~ACT_RIGHT;
+                ApplyKeyReleasing( ACT_RIGHT );
                 return;
 
             case Canvas.FIRE:
-                m_actionBitPattern &= ~ACT_FIRE;
+                ApplyKeyReleasing( ACT_FIRE );
                 return;
         }
 
         if ( keyCode == m_softleftKeyCode )
-            m_actionBitPattern &= ~ACT_LSOFT;
+            ApplyKeyReleasing( ACT_LSOFT );
         else if( keyCode == m_softrightKeyCode )
-            m_actionBitPattern &= ~ACT_RSOFT;
+            ApplyKeyReleasing( ACT_RSOFT );
     }
 
     protected void pointerPressed( int x, int y )
@@ -265,8 +308,81 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         if ( (m_inputMode & INPUTMODE_TOUCH) == 0 )
             return;
 
-        m_actionBitPattern |= IInputMonitor.ACT_FIRE;
         m_pointerPosition   = ((short)x << 16) | (short)y;
+        m_pressedX          = (short)x;
+        m_pressedY          = (short)y;
+
+        if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
+        {
+            m_touchHoldLastTime = System.currentTimeMillis();
+            m_touchHolding      = true;
+        }
+
+        if ( (m_inputMode & INPUTMODE_TOUCH_SK_FIX_NOKIAS40) != 0 )
+        {
+            if ( y >= this.getHeight() - 48 )
+            {
+                int buttonSize = this.getWidth() / 3;
+
+                if ( x <= buttonSize )
+                {
+                    m_actionBitPattern |= ACT_LSOFT;
+                    ApplyKeyReleasing( ACT_LSOFT );
+                }
+                else if ( x <= (buttonSize << 1) )
+                {
+                    m_actionBitPattern |= ACT_FIRE;
+                    ApplyKeyReleasing( ACT_FIRE );
+                }
+                else
+                {
+                    m_actionBitPattern |= ACT_RSOFT;
+                    ApplyKeyReleasing( ACT_RSOFT );
+                }
+            }
+        }
+    }
+
+    protected void pointerDragged( int x, int y )
+    {
+        if ( (m_inputMode & INPUTMODE_TOUCH) == 0 )
+            return;
+
+        m_pointerPosition = ((short)x << 16) | (short)y;
+
+        if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
+        {
+            m_touchHolding = false;
+
+            if ( m_touchSKNotExecuted )
+            {
+                if ( x - m_pressedX > 20 )
+                {
+                    m_actionBitPattern         |= ACT_RIGHT;
+                    m_touchSimulatedActions    |= ACT_RIGHT;
+                    m_touchSKNotExecuted        = false;
+                }
+                else if ( x - m_pressedX < -20 )
+                {
+                    m_actionBitPattern         |= ACT_LEFT;
+                    m_touchSimulatedActions    |= ACT_LEFT;
+                    m_touchSKNotExecuted        = false;
+                }
+
+                if ( y - m_pressedY > 20 )
+                {
+                    m_actionBitPattern         |= ACT_DOWN;
+                    m_touchSimulatedActions    |= ACT_DOWN;
+                    m_touchSKNotExecuted        = false;
+                }
+                else if ( y - m_pressedY < -20 )
+                {
+                    m_actionBitPattern         |= ACT_UP;
+                    m_touchSimulatedActions    |= ACT_UP;
+                    m_touchSKNotExecuted        = false;
+                }
+            }
+        }
     }
 
     protected void pointerReleased( int x, int y )
@@ -274,8 +390,82 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         if ( (m_inputMode & INPUTMODE_TOUCH) == 0 )
             return;
 
-        m_actionBitPattern &= ~IInputMonitor.ACT_FIRE;
-        m_pointerPosition   = 0xFFFFFFFF;
+        m_pointerPosition = 0xFFFFFFFF;
+        
+        if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
+        {
+            m_touchHolding = false;
+
+            int action = 1;
+
+            for ( int i = 32; i != 0; --i )
+            {
+                if ( (m_touchSimulatedActions & 0x00000001) != 0 )
+                    ApplyKeyReleasing( action );
+
+                action <<= 1;
+                m_touchSimulatedActions >>= 1;
+            }
+            
+            m_touchSimulatedActions = 0;
+            m_touchSKNotExecuted    = true;
+        }
+    }
+
+    private void ApplyKeyReleasing( int action )
+    {
+        int index = 0;
+        
+        while ( (action & 0x00000001) == 0 )
+        {
+            ++index;
+            action >>= 1;
+        }
+
+        action  &= 0x00000001;
+        action <<= index;
+
+        if ( m_behaviourList[ index ] != BHV_FIX_DOUBLE_SIGNAL_PR )
+            m_actionBitPattern &= ~action;
+    }
+
+    private void PostTouchProcess()
+    {
+        if ( (m_inputMode & INPUTMODE_TOUCH_SK) != 0 )
+        {
+            if ( m_touchSKNotExecuted && m_touchHolding )
+            {
+                if ( System.currentTimeMillis() - m_touchHoldLastTime > 750 )
+                {
+                    m_actionBitPattern |= ACT_FIRE;
+                    m_touchSimulatedActions |= ACT_FIRE;
+                    m_touchSKNotExecuted = false;
+                }
+            }
+        }
+    }
+
+    private void RescanInputAction()
+    {
+        if ( m_actionBitPattern == 0 )
+            return;
+
+        int index   = 0;
+        int action  = m_actionBitPattern;
+        int mask    = 0x00000001;
+
+        while ( index != 32 )
+        {
+            if ( (action & 0x00000001) != 0 )
+            {
+                if ( m_behaviourList[ index ] != BHV_ENABLE_WHEN_HOLDING )
+                    m_actionBitPattern &= ~mask;
+            }
+
+            ++index;
+            mask      <<= 1;
+            action    >>= 1;
+        }
     }
 
     // This function detect key codes for keys which aren't standardised in
@@ -486,9 +676,17 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     private static final int KEY_DEFAULT_SOFTLEFT   = -6;
     private static final int KEY_DEFAULT_SOFTRIGHT  = -7;
 
-    private long    m_keyCooldown, m_keyLatency, m_keyLastTime;
-    private int     m_actionBitPattern, m_pointerPosition;
+    private byte[]  m_behaviourList;
+
+    private long    m_keyCooldown, m_keyLatency, m_keyLastTime,
+                    m_touchHoldLastTime;    // Last time holding touch without
+                                            // moving or releasing.
+    private int     m_actionBitPattern, m_pointerPosition,
+                    m_touchSimulatedActions;
     private int     m_softleftKeyCode, m_softrightKeyCode;
     private int     m_inputMode;
+    private short   m_pressedX, m_pressedY;
+    private boolean m_touchSKNotExecuted,
+                    m_touchHolding; // User touchs without dragging.
     private byte    m_platform;
 }
