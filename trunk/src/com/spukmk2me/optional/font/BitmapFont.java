@@ -24,8 +24,12 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+//#ifdef __SPUKMK2ME_SCENEEDITOR
+//# import com.spukmk2me.video.IResourceCreationData;
+//#endif
+
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.SPUKMK2meException;
+//# import com.spukmk2me.debug.Logger;
 //#endif
 
 /**
@@ -121,12 +125,11 @@ public final class BitmapFont extends ICFont
     public int GetCharWidth( char ch )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( !IsSupported( ch ) )
-        {
-            new SPUKMK2meException( "No such character stored in this font:" +
-                ch ).printStackTrace();
-            return -1;
-        }
+//#         if ( !IsSupported( ch ) )
+//#         {
+//#             Logger.Log( "No such character stored in this font:" + ch );
+//#             return -1;
+//#         }
         //#endif
 
         return (( ch == ' ' )? m_space : m_charWidth[ GetIndex( ch ) ]) +
@@ -400,15 +403,47 @@ public final class BitmapFont extends ICFont
         }
     }
 
+    //#ifdef __SPUKMK2ME_SCENEEDITOR
+//#     public void SetCreationData( IResourceCreationData creationData )
+//#     {
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         if ( !(creationData instanceof BitmapFontCreationData) )
+//#         {
+//#             Logger.Log( "This isn't creation data for ICFont" );
+//#         }
+        //#endif
+//#         m_creationData = creationData;
+//#     }
+//# 
+//#     public IResourceCreationData GetCreationData()
+//#     {
+//#         return m_creationData;
+//#     }
+    //#endif
+
     public static final byte STYLE_PLAIN        = 0x00;
     public static final byte STYLE_BOLD         = 0x01;
     public static final byte STYLE_ITALIC       = 0x02;
     public static final byte STYLE_UNDERLINE    = 0x04;
 
+    //#ifdef __SPUKMK2ME_SCENEEDITOR
+//#     IResourceCreationData m_creationData;
+    //#endif
     private int[]   m_extraCharMap, m_charWidth, m_buffer, m_preprocessedData;
     private byte[]  m_data;
     
     private int m_nChar, m_width, m_height, m_space, m_charDistance,
                 m_bytesPerLine, m_bytesPerChar, m_yUnderline, m_italicStride;
     private int m_style, m_additionalCharWidth, m_color, m_bufferWidth;
+
+
+    //#ifdef __SPUKMK2ME_SCENEEDITOR
+//#     public final class BitmapFontCreationData extends
+//#         IResourceCreationData
+//#     {
+//#         public BitmapFontCreationData() {}
+//# 
+//#         public String c_path;
+//#     }
+    //#endif
 }

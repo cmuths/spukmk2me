@@ -6,13 +6,13 @@ import java.io.IOException;
 
 import com.spukmk2me.DoublyLinkedList;
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.Logger;
+//# import com.spukmk2me.debug.Logger;
 //#endif
 import com.spukmk2me.video.IVideoDriver;
+import com.spukmk2me.video.IResource;
 import com.spukmk2me.video.IImageResource;
 import com.spukmk2me.video.ISubImage;
 import com.spukmk2me.video.ICFont;
-import com.spukmk2me.optional.font.BitmapFont;
 
 /**
  *  Memory-optimized resource manager, for loading only.
@@ -25,56 +25,55 @@ public final class MinimizedResourceLoader
         m_resourceLists     = new DoublyLinkedList[ 3 ];
 
         for ( int i = 0; i != 3; ++i )
-            m_resourceLists[ i ]        = new DoublyLinkedList();
+            m_resourceLists[ i ] = new DoublyLinkedList();
     }
     
-    public void AddResource( Object resource, String proxyName, byte type )
+    public void AddResource( IResource resource, byte type )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( (type < 0) || (type > 2) )
-            Logger.Log( "Unknown resource type: " + type );
-        
-        switch ( type )
-        {
-            case RT_IMAGERESOURCE:
-                if ( !(resource instanceof IImageResource) )
-                    Logger.Log( "Resource must be image resource." );
-
-                break;
-
-            case RT_IMAGE:
-                if ( !(resource instanceof ISubImage) )
-                    Logger.Log( "Resource must be image." );
-
-                break;
-
-            case RT_FONT:
-                if ( !(resource instanceof ICFont) )
-                    Logger.Log( "Resource must be font." );
-
-                break;
-        }
+//#         if ( (type < 0) || (type > 2) )
+//#             Logger.Log( "Unknown resource type: " + type );
+//#         
+//#         switch ( type )
+//#         {
+//#             case RT_IMAGERESOURCE:
+//#                 if ( !(resource instanceof IImageResource) )
+//#                     Logger.Log( "Resource must be image resource." );
+//# 
+//#                 break;
+//# 
+//#             case RT_IMAGE:
+//#                 if ( !(resource instanceof ISubImage) )
+//#                     Logger.Log( "Resource must be image." );
+//# 
+//#                 break;
+//# 
+//#             case RT_FONT:
+//#                 if ( !(resource instanceof ICFont) )
+//#                     Logger.Log( "Resource must be font." );
+//# 
+//#                 break;
+//#         }
         //#endif
 
-        ResourceWrapper wrapper =
-            new ResourceWrapper( resource, proxyName );
-        m_resourceLists[ type ].Push_Back( wrapper );
+        m_resourceLists[ type ].push_back( resource );
     }
 
-    public Object GetResource( String proxyName, byte type )
+    public IResource GetResource( String proxyName, byte type )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( (type < 0) || (type > 2) )
-            Logger.Log( "Unknown resource type: " + type );
+//#         if ( (type < 0) || (type > 2) )
+//#             Logger.Log( "Unknown resource type: " + type );
         //#endif
 
-        DoublyLinkedList.Iterator i     = m_resourceLists[ type ].Begin();
-        DoublyLinkedList.Iterator end   = m_resourceLists[ type ].End();
+        DoublyLinkedList.Iterator i     = m_resourceLists[ type ].first();
+        DoublyLinkedList.Iterator end   = m_resourceLists[ type ].end();
 
-        for ( ; !i.equals( end ); i.Next() )
+        for ( ; !i.equals( end ); i.fwrd() )
         {
-            if ( ((ResourceWrapper)i.Get()).c_proxyName.equals( proxyName ) )
-                return ((ResourceWrapper)i.Get()).c_data;
+            if ( ((IResource)i.data()).GetCreationData().c_proxyName.
+                equals( proxyName ) )
+                return (IResource)i.data();
         }
 
         return null;
@@ -82,7 +81,7 @@ public final class MinimizedResourceLoader
 
     public Object GetResource( int index, byte type )
     {
-        return m_resourceLists[ type ].Get( index );
+        return m_resourceLists[ type ].get( index );
     }
 
     /**
@@ -94,70 +93,44 @@ public final class MinimizedResourceLoader
     {
         Clear();
 
-        DataInputStream     dis = new DataInputStream( is );
-        DoublyLinkedList    list;
+        DataInputStream dis     = new DataInputStream( is );
+        StandardResourceLoader  defaultLoader =
+            new StandardResourceLoader( m_vdriver );
+        ResourceProducer        producer =
+            new ResourceProducer( defaultLoader );
+        
+        // IImageResource
+        int n = dis.readInt();
+        IImageResource[] imgResources = new IImageResource[ n ];
 
-        int i;
-        String filename, proxyName;
-
-        // Image resource
-        list = m_resourceLists[ 0 ];
-
-        for ( i = dis.readInt(); i != 0; --i )
+        for ( int i = 0; i != n; ++i )
         {
-            filename    = dis.readUTF();
-            proxyName   = dis.readUTF();
-            list.Push_Back( new ResourceWrapper(
-                m_vdriver.CreateImageResource( filename ), proxyName ) );
+            imgResources[ i ] =
+                (IImageResource)producer.LoadCreationDataAndConstruct( is );
+            m_resourceLists[ 0 ].push_back( imgResources[ i ] );
         }
 
-        // Image
-        list        = m_resourceLists[ 1 ];
+        defaultLoader.SetImageResources( imgResources );
 
-        int     rotationDegree, imgResIndex;
-        short   x, y, w, h;
-        byte    flippingFlags;
-
-        for ( i = dis.readInt(); i != 0; --i )
+        // ISubImages
+        for ( int i = dis.readInt(); i != 0; --i )
         {
-            rotationDegree  = dis.readInt();
-            x               = dis.readShort();
-            y               = dis.readShort();
-            w               = dis.readShort();
-            h               = dis.readShort();
-            imgResIndex     = dis.readUnsignedShort();
-            flippingFlags   = dis.readByte();
-            proxyName       = dis.readUTF();
-
-            DoublyLinkedList.Iterator itr = m_resourceLists[ 0 ].Begin();
-
-            while ( imgResIndex-- != 0 )
-                itr.Next();
-
-            list.Push_Back( new ResourceWrapper(
-                m_vdriver.CreateSubImage(
-                    (IImageResource)itr.Get(),
-                    x, y, w, h, rotationDegree, flippingFlags ), proxyName ) );
+            m_resourceLists[ 1 ].push_back(
+                producer.LoadCreationDataAndConstruct( is ) );
         }
 
-        // Font
-        list = m_resourceLists[ 2 ];
-
-        for ( i = dis.readInt(); i != 0; --i )
+        // BitmapFont
+        for ( int i = dis.readInt(); i != 0; --i )
         {
-            filename    = dis.readUTF();
-            proxyName   = dis.readUTF();
-            list.Push_Back( new ResourceWrapper(
-                new BitmapFont(
-                    this.getClass().getResourceAsStream( filename ) ),
-                proxyName ) );
+            m_resourceLists[ 2 ].push_back(
+                producer.LoadCreationDataAndConstruct( is ) );
         }
     }
 
     private void Clear()
     {
         for ( int i = 0; i != 3; ++i )
-            m_resourceLists[ i ].Clear();
+            m_resourceLists[ i ].clear();
     }
 
     public static final byte RT_IMAGERESOURCE   = 0;

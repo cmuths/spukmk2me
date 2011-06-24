@@ -30,46 +30,78 @@ public final class SceneTreeLoader
         return null;
     }
 
-    void Load( InputStream is ) throws IOException
-    {
-        LoadHeader( is );
-        m_resourceManager.LoadResources( is );
-        LoadNodeNamesMappingTable( is );
-        ConstructSceneTree( is );
-    }
-
-    private void LoadHeader( InputStream is ) throws IOException
-    {
-    }
-
-    private void LoadNodeNamesMappingTable( InputStream is ) throws IOException
-    {
-    }
-
-    private void ConstructSceneTree( InputStream is ) throws IOException
+    boolean Load( InputStream is ) throws IOException
     {
         DataInputStream dis = new DataInputStream( is );
 
-        // Load traversal data
-        int     nTraversalBits   = dis.readInt() << 1;
+        if ( !CheckHeader( dis ) )
+            return false;
 
-        // Empty tree
-        if ( nTraversalBits == 0 )
-            return;
+        m_resourceManager.LoadResources( dis );
+        LoadNodeNamesMappingTable( dis );
+        ConstructSceneTree( dis );
 
+        return true;
+    }
+
+    private boolean CheckHeader( DataInputStream dis ) throws IOException
+    {
+        // Skip "SPUKMK2me_SCENE-FILE_0.1"
+        dis.skipBytes( 24 );
+        return true;
+    }
+
+    private void LoadNodeNamesMappingTable( DataInputStream dis )
+        throws IOException
+    {
+        int nExportedNodes = dis.readInt();
+
+        // Load exported node indexes
+        {
+            m_exportedNodeIndexes = new int[ nExportedNodes ];
+
+            for ( int i = 0; i != nExportedNodes; ++i )
+                m_exportedNodeIndexes[ i ] = dis.readInt();
+        }
+
+        // Load proxy names
+        {
+            m_exportedNodeNames = new String[ nExportedNodes ];
+
+            for ( int i = 0; i != nExportedNodes; ++i )
+                m_exportedNodeNames[ i ] = dis.readUTF();
+        }
+    }
+
+    private void ConstructSceneTree( DataInputStream dis ) throws IOException
+    {
         byte[]  traversalData;
 
-        if ( (nTraversalBits & 0x00000007) == 0 )
-            traversalData = new byte[ nTraversalBits >> 3 ];
-        else
-            traversalData = new byte[ (nTraversalBits >> 3) + 1 ];
+        // Load traversal data
+        {
+            int nNodes = dis.readInt();
 
+            // Empty tree
+            if ( nNodes == 1 )
+                return;
+
+            int nTraversalBits = (nNodes - 1 << 1) + 1;
+
+            if ( (nTraversalBits & 0x00000007) == 0 )
+                traversalData = new byte[ nTraversalBits >> 3 ];
+            else
+                traversalData = new byte[ (nTraversalBits >> 3) + 1 ];
+
+            dis.read( traversalData );
+        }
+
+        // Tree construction sequence
         int     prefetchedIndex = 0, direction = 0;
         int     exportedIndex = 0, currentNodeIndex = 0;
         byte    bitCounter = 0, nodeType;
         
         // Construct stack with the size equal to tree height.
-        ISceneNode[]    stack = new ISceneNode[ dis.readShort() ];
+        ISceneNode[]    stack = new ISceneNode[ dis.readUnsignedShort() ];
         int             topStack = 0;
 
         stack[ 0 ] = m_root = new NullSceneNode();
@@ -82,7 +114,7 @@ public final class SceneTreeLoader
                 direction   = traversalData[ prefetchedIndex++ ];
             }
 
-            if ( (direction & 0x00000001) == 0 )
+            if ( (direction & 0x80) == 0 )
                 stack[ topStack-- ] = null;
             else
             {
@@ -236,9 +268,11 @@ public final class SceneTreeLoader
         if ( nProperties == 0 )
             properties = null;
         else
+        {
             properties = new byte[ nProperties ];
-
-        dis.read( properties );
+            dis.read( properties );
+        }
+        
         flags = dis.readByte();
 
         StringSceneNode node = new StringSceneNode();

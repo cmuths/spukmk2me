@@ -1,17 +1,21 @@
 package com.spukmk2me;
 
+//#ifdef __SPUKMK2ME_DEBUG
+import com.spukmk2me.debug.Logger;
+//#endif
+
 public final class DoublyLinkedList
 {
     private final class Element
     {
         public Element() {}
 
-        public void Drop()
+        public void drop()
         {
             //#ifdef __SPUKMK2ME_DEBUG
             if ( (c_prev == null) || (c_next == null) )
             {
-
+                Logger.Log( "Dropping unassigned element." );
             }
             //#endif
 
@@ -31,29 +35,34 @@ public final class DoublyLinkedList
             m_element = element;
         }
 
-        public void Next()
+        public void fwrd()
         {
             m_element = m_element.c_next;
         }
 
-        public void Prev()
+        public void back()
         {
             m_element = m_element.c_prev;
         }
 
-        public Object Get()
+        public Object data()
         {
             return m_element.c_data;
         }
 
-        public Iterator Clone()
+        public void drop()
+        {
+            m_element.drop();
+        }
+
+        private Iterator clone()
         {
             return new Iterator( m_element );
         }
 
         public boolean equals( Iterator iterator )
         {
-            return m_element.c_data == iterator.Get();
+            return m_element.c_data == iterator.data();
         }
         
         private Element m_element;
@@ -63,17 +72,17 @@ public final class DoublyLinkedList
     {
         m_ffe = new Element();
         m_ffi = new Iterator( m_ffe );
-        Clear();
+        clear();
     }
 
-    public void Clear()
+    public void clear()
     {
         m_ffe.c_next = m_ffe.c_prev = m_ffe;
         m_ffe.c_data = null;
         m_nElement  = 0;
     }
 
-    public void Push_Back( Object data )
+    public void push_back( Object data )
     {
         Element newElement = new Element();
 
@@ -85,35 +94,98 @@ public final class DoublyLinkedList
         ++m_nElement;
     }
 
-    public Iterator Begin()
+    public void push_front( Object data )
     {
-        Iterator ret = m_ffi.Clone();
+        Element newElement = new Element();
+
+        newElement.c_data   = data;
+        newElement.c_prev   = m_ffe;
+        newElement.c_next   = m_ffe.c_next;
+        m_ffe.c_next.c_prev = newElement;
+        m_ffe.c_next        = newElement;
+        ++m_nElement;
+    }
+
+    public Object pop_back()
+    {
+        if ( m_nElement == 0 )
+            return null;
+
+        Element removedElement = m_ffe.c_prev;
+
+        removedElement.drop();
+
+        return removedElement.c_data;
+    }
+
+    public Object pop_front()
+    {
+        if ( m_nElement == 0 )
+            return null;
+
+        Element removedElement = m_ffe.c_next;
+
+        removedElement.drop();
+
+        return removedElement.c_data;
+    }
+
+    public Iterator first()
+    {
+        if ( m_nElement == 0 )
+            return m_ffi;
+
+        Iterator ret = m_ffi.clone();
+
+        ret.fwrd();
         return ret;
     }
 
-    public Iterator End()
+    public Iterator last()
+    {
+        if ( m_nElement == 0 )
+            return m_ffi;
+
+        Iterator ret = m_ffi.clone();
+
+        ret.back();
+        return ret;
+    }
+
+    public Iterator end()
     {
         return m_ffi;
     }
 
-    public void Remove( Iterator iterator )
-    {
-        iterator.m_element.Drop();
-    }
-
-    public int Length()
+    public int length()
     {
         return m_nElement;
     }
 
-    public Object Get( int index )
+    public Object get( int index )
     {
-        Iterator i = Begin();
+        if ( (index < 0) || (index >= m_nElement) )
+            return null;
+
+        Iterator i = first();
 
         while ( index-- != 0 )
-            i.Next();
+            i.fwrd();
 
-        return i.Get();
+        return i.data();
+    }
+
+    public void erase( int index )
+    {
+        if ( (index < 0) || (index >= m_nElement) )
+            return;
+
+        Iterator i = first();
+
+        while ( index-- != 0 )
+            i.fwrd();
+
+        i.drop();
     }
 
     private final Iterator  m_ffi;

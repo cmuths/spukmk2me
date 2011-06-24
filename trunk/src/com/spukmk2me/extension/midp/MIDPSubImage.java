@@ -27,7 +27,12 @@ import com.spukmk2me.video.IImageResource;
 /**
  *  An implement of ISubImage for MIDP video driver.
  */
-final class MIDPSubImage implements ISubImage
+final class MIDPSubImage
+    //#ifdef __SPUKMK2ME_SCENEEDITOR
+//#     extends ISubImage
+    //#else
+    implements ISubImage
+    //#endif
 {
     public MIDPSubImage( MIDPImageResource imageResource,
         short x, short y, short width, short height,
@@ -146,9 +151,9 @@ final class MIDPSubImage implements ISubImage
         MIDPImageResource imageResource, short width, short height )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        System.out.print(
-            "Creating image batch from " + imageResource.GetSource() +
-            ", w = " + width + ", h = " + height + "..." );
+//#         System.out.print(
+//#             "Creating image batch from " + imageResource.GetSource() +
+//#             ", w = " + width + ", h = " + height + "..." );
         //#endif
 
         int imgWidth    = imageResource.GetWidth();
@@ -181,7 +186,7 @@ final class MIDPSubImage implements ISubImage
         }
 
         //#ifdef __SPUKMK2ME_DEBUG
-        System.out.println( "Created." );
+//#         System.out.println( "Created." );
         //#endif
 
         return images;

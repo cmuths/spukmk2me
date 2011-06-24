@@ -32,6 +32,9 @@ package com.spukmk2me.video;
  * character.
  */
 public abstract class ICFont
+    //#ifdef __SPUKMK2ME_SCENEEDITOR
+//#     implements IResource
+    //#endif
 {
     /**
      *  Get the render data type of this font.
