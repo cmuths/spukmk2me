@@ -23,7 +23,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.Logger;
+//# import com.spukmk2me.debug.Logger;
 //#endif
 
 import com.spukmk2me.video.IVideoDriver;
@@ -90,22 +90,22 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         long deltaMilliseconds )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        long fpsDeltaTime = System.currentTimeMillis() - m_fpsLastTime;
-
-        m_fpsLastTime = System.currentTimeMillis();
-
-        if ( fpsDeltaTime <= 0 )
-            m_fpsString[ 5 ] = m_fpsString[ 6 ] =
-                m_fpsString[ 8 ] = m_fpsString[ 9 ] = '-';
-        else
-        {
-            fpsDeltaTime = 100000 / fpsDeltaTime;
-            m_fpsString[ 5 ] = (char)(fpsDeltaTime / 1000 + 0x30);
-            m_fpsString[ 6 ] = (char)(fpsDeltaTime % 1000 / 100 + 0x30);
-            fpsDeltaTime %= 100;
-            m_fpsString[ 8 ] = (char)(fpsDeltaTime / 10 + 0x30);
-            m_fpsString[ 9 ] = (char)(fpsDeltaTime % 10 + 0x30);
-        }
+//#         long fpsDeltaTime = System.currentTimeMillis() - m_fpsLastTime;
+//# 
+//#         m_fpsLastTime = System.currentTimeMillis();
+//# 
+//#         if ( fpsDeltaTime <= 0 )
+//#             m_fpsString[ 5 ] = m_fpsString[ 6 ] =
+//#                 m_fpsString[ 8 ] = m_fpsString[ 9 ] = '-';
+//#         else
+//#         {
+//#             fpsDeltaTime = 100000 / fpsDeltaTime;
+//#             m_fpsString[ 5 ] = (char)(fpsDeltaTime / 1000 + 0x30);
+//#             m_fpsString[ 6 ] = (char)(fpsDeltaTime % 1000 / 100 + 0x30);
+//#             fpsDeltaTime %= 100;
+//#             m_fpsString[ 8 ] = (char)(fpsDeltaTime / 10 + 0x30);
+//#             m_fpsString[ 9 ] = (char)(fpsDeltaTime % 10 + 0x30);
+//#         }
         //#endif
 
         if ( clearScreen )
@@ -135,9 +135,9 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     public void FinishRendering()
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        m_g.setColor( 0xFF7F7F7F );
-        m_g.drawChars( m_fpsString, 0, 10, 0, 0,
-            Graphics.TOP | Graphics.LEFT );
+//#         m_g.setColor( 0xFF7F7F7F );
+//#         m_g.drawChars( m_fpsString, 0, 10, m_x0, m_y0,
+//#             Graphics.TOP | Graphics.LEFT );
         //#endif
 
         this.flushGraphics();        
@@ -195,9 +195,9 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         m_x0 = m_y0 = m_renderInfo.c_rasterX = m_renderInfo.c_rasterY = 0;
 
         //#ifdef __SPUKMK2ME_DEBUG
-        m_fpsLastTime   = 0;
-        m_fpsString     = new char[]{
-            'F', 'P', 'S', ':', ' ', '-', '-', '.', '-', '-' };
+//#         m_fpsLastTime   = 0;
+//#         m_fpsString     = new char[]{
+//#             'F', 'P', 'S', ':', ' ', '-', '-', '.', '-', '-' };
         //#endif
 
         SetClipping( (short)0, (short)0,
@@ -217,20 +217,20 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         int rotationDegree, byte flippingFlag )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
-        {
-            Logger.Log( "MIDP driver currently does not support " +
-                "non-90-degree rotation, rotation degree will be reset to 0.");
-            rotationDegree = 0;
-
-            try
-            {
-                MIDPImageResource test = (MIDPImageResource)imgResource;
-            } catch ( ClassCastException e ) {
-                Logger.Log( "This isn't image resource created by MIDP driver"
-                    );
-            }
-        }
+//#         if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
+//#         {
+//#             Logger.Log( "MIDP driver currently does not support " +
+//#                 "non-90-degree rotation, rotation degree will be reset to 0.");
+//#             rotationDegree = 0;
+//# 
+//#             try
+//#             {
+//#                 MIDPImageResource test = (MIDPImageResource)imgResource;
+//#             } catch ( ClassCastException e ) {
+//#                 Logger.Log( "This isn't image resource created by MIDP driver"
+//#                     );
+//#             }
+//#         }
         //#endif
 
         return new MIDPSubImage( (MIDPImageResource)imgResource,
@@ -241,12 +241,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         short width, short height )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        try
-        {
-            MIDPImageResource test = (MIDPImageResource)imgResource;
-        } catch ( ClassCastException e ) {
-            Logger.Log( "This isn't image resource created by MIDP driver" );
-        }
+//#         try
+//#         {
+//#             MIDPImageResource test = (MIDPImageResource)imgResource;
+//#         } catch ( ClassCastException e ) {
+//#             Logger.Log( "This isn't image resource created by MIDP driver" );
+//#         }
         //#endif
         return MIDPSubImage.CreateSubImagesFromResource(
             (MIDPImageResource)imgResource, width, height );
@@ -262,7 +262,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
                             m_clipWidth, m_clipHeight;
 
     //#ifdef __SPUKMK2ME_DEBUG
-    private char[]      m_fpsString;
-    private long        m_fpsLastTime;
+//#     private char[]      m_fpsString;
+//#     private long        m_fpsLastTime;
     //#endif
 }
