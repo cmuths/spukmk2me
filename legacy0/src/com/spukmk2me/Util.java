@@ -169,6 +169,32 @@ public final class Util
     }
 
     /**
+     *  Test if two rectangles intersect.
+     *  \details The first rectangle has two corners: (x11, y11) and
+     * (x12, y12), as the top-left and bottom-right corner respectively.
+     *  Two corners of the second rectangle are: (x21, y21), (x22, y22).
+     *  @return If two rectangles intersect or not.
+     */
+    public static boolean RectIntersect(
+        short x11, short y11, short x12, short y12,
+        short x21, short y21, short x22, short y22 )
+    {
+        if ( x11 > x22 )
+            return false;
+
+        if ( y11 > y22 )
+            return false;
+
+        if ( x21 > x12 )
+            return false;
+
+        if ( y21 > y22 )
+            return false;
+
+        return true;
+    }
+
+    /**
      *  Multiply two fixed-point number.
      *  @param fnumber1 The first number.
      *  @param fnumber2 The seconds number.

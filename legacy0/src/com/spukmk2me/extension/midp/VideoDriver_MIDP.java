@@ -23,7 +23,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.SPUKMK2meException;
+import com.spukmk2me.debug.Logger;
 //#endif
 
 import com.spukmk2me.video.IVideoDriver;
@@ -141,7 +141,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     {
         //#ifdef __SPUKMK2ME_DEBUG
         m_g.setColor( 0xFF7F7F7F );
-        m_g.drawChars( m_fpsString, 0, 10, 0, 0,
+        m_g.drawChars( m_fpsString, 0, 10, m_x0, m_y0,
             Graphics.TOP | Graphics.LEFT );
         //#endif
 
@@ -236,8 +236,9 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         //#ifdef __SPUKMK2ME_DEBUG
         if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
         {
-            new SPUKMK2meException( "MIDP driver currently does not support " +
-                "non-90-degree rotation, rotation degree will be reset to 0.");
+            Logger.Log( "MIDP driver currently does not support " +
+                "non-90-degree rotation, rotation degree will be reset to 0."
+            );
             rotationDegree = 0;
         }
         //#endif
@@ -250,9 +251,8 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
                 rotationDegree, flippingFlag );
         //#ifdef __SPUKMK2ME_DEBUG
         } catch ( ClassCastException e ) {
-            System.out.println( "You are creating a regional image from an " +
+            Logger.Log( "You are creating a regional image from an " +
                 "image that wasn't created by this driver." );
-            e.printStackTrace();
         }
 
         return null;

@@ -18,7 +18,9 @@
 
 package com.spukmk2me.scene.complex;
 
+import com.spukmk2me.Util;
 import com.spukmk2me.video.IVideoDriver;
+import com.spukmk2me.video.RenderInfo;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.scene.ITopLeftOriginSceneNode;
 import com.spukmk2me.scene.NullSceneNode;
@@ -70,15 +72,39 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
     {
         long clippingArea = driver.GetClipping();
         
+        RenderInfo rInfo = driver.GetRenderInfo();
+        short clipX, clipY, clipW, clipH;
+        short oldClipX, oldClipY, oldClipW, oldClipH;
+        
+        oldClipX = (short)(clippingArea >> 48);
+        oldClipY = (short)(clippingArea >> 32 & 0x000000000000FFFFL);
+        oldClipW = (short)(clippingArea >> 16 & 0x000000000000FFFFL);
+        oldClipH = (short)(clippingArea & 0x000000000000FFFFL);
+
+        if ( Util.RectIntersect(
+            oldClipX, oldClipY,
+            (short)(oldClipX + oldClipW - 1),
+            (short)(oldClipY + oldClipH - 1),
+            rInfo.c_rasterX, rInfo.c_rasterY,
+            (short)(rInfo.c_rasterX + m_width - 1),
+            (short)(rInfo.c_rasterY + m_height - 1) ) )
+        {
+            clipX = (short)Math.max( rInfo.c_rasterX, oldClipX );
+            clipY = (short)Math.max( rInfo.c_rasterY, oldClipY );
+            clipW = (short)(Math.min(
+                rInfo.c_rasterX + m_width,
+                oldClipX + oldClipW ) - clipX);
+            clipH = (short)(Math.min(
+                rInfo.c_rasterY + m_height,
+                oldClipY + oldClipH ) - clipY);
+        }
+        else
+            clipX = clipY = clipW = clipH = 0;
+
         driver.SetClipping(
-            driver.GetRenderInfo().c_rasterX,
-            driver.GetRenderInfo().c_rasterY,
-            m_width, m_height );
+            clipX, clipY, clipW, clipH );
         m_unclippingNode.SetClipping(
-            (short)(clippingArea >> 48),
-            (short)(clippingArea >> 32 & 0x000000000000FFFFL),
-            (short)(clippingArea >> 16 & 0x000000000000FFFFL),
-            (short)(clippingArea & 0x000000000000FFFFL) );
+            oldClipX, oldClipY, oldClipW, oldClipH );
     }
     
     public short GetAABBWidth()
