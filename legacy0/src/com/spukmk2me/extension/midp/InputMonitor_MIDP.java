@@ -90,7 +90,7 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     {
         int inputCapability = INPUTMODE_KEY;
 
-        if ( this.hasPointerEvents() )
+        if ( this.hasPointerEvents() && this.hasPointerMotionEvents() )
             inputCapability |= INPUTMODE_TOUCH;
 
         return inputCapability;
