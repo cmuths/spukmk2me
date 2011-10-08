@@ -31,10 +31,7 @@ package com.spukmk2me.video;
  *  There is an exception about space (0x20). Space is considered as a no-glyph
  * character.
  */
-public abstract class ICFont
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
-//#     implements IResource
-    //#endif
+public abstract class ICFont implements IResource
 {
     /**
      *  Get the render data type of this font.

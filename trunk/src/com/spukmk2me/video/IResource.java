@@ -5,7 +5,7 @@ package com.spukmk2me.video;
  */
 public interface IResource
 {
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     public void SetCreationData( IResourceCreationData creationData );
 //#     public IResourceCreationData GetCreationData();
     //#endif

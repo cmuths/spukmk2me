@@ -28,7 +28,7 @@ import com.spukmk2me.video.IImageResource;
  *  An implement of ISubImage for MIDP video driver.
  */
 final class MIDPSubImage
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     extends ISubImage
     //#else
     implements ISubImage

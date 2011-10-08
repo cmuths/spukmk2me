@@ -21,7 +21,7 @@ package com.spukmk2me.scene;
 import com.spukmk2me.video.IVideoDriver;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.SPUKMK2meException;
+//# import com.spukmk2me.debug.SPUKMK2meException;
 //#endif
 
 /**
@@ -113,18 +113,18 @@ public abstract class ISceneNode
     public static void AddSceneNode( ISceneNode node, ISceneNode parent )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( (node.c_next != null) || (node.c_prev != null) ||
-            (node.c_parent != null) )
-        {
-            new SPUKMK2meException( "Adding potentially defected node." ).
-                printStackTrace();
-        }
-
-        /*if (    (parent instanceof ClippingSceneNode) ||
-                (parent instanceof ViewportSceneNode) )
-            new SPUKMK2meException( "You are adding a node directly" +
-             "to a complex node. Did you intend to do that or you forgot" +
-             "to use GetEntryNode()?" ).printStackTrace();*/
+//#         if ( (node.c_next != null) || (node.c_prev != null) ||
+//#             (node.c_parent != null) )
+//#         {
+//#             new SPUKMK2meException( "Adding potentially defected node." ).
+//#                 printStackTrace();
+//#         }
+//# 
+//#         /*if (    (parent instanceof ClippingSceneNode) ||
+//#                 (parent instanceof ViewportSceneNode) )
+//#             new SPUKMK2meException( "You are adding a node directly" +
+//#              "to a complex node. Did you intend to do that or you forgot" +
+//#              "to use GetEntryNode()?" ).printStackTrace();*/
         //#endif
 
         ISceneNode bindingNode;
@@ -171,8 +171,8 @@ public abstract class ISceneNode
         if ( (c_prev == null) || (c_next == null) || (c_parent == null) )
         {
             //#ifdef __SPUKMK2ME_DEBUG
-            new SPUKMK2meException( "WARNING: Dropping unattached node." ).
-                printStackTrace();
+//#             new SPUKMK2meException( "WARNING: Dropping unattached node." ).
+//#                 printStackTrace();
             //#endif
             return;
         }
@@ -257,6 +257,11 @@ public abstract class ISceneNode
     public ISceneNode   c_next;     //!< Next node.
     public ISceneNode   c_children; //!< The fake node of direct children.
     public ISceneNode   c_parent;   //!< The direct father of this node.
+    //#ifdef __SPUKMK2ME_SCENESAVER
+//#     public Object       c_infoData;
+//#     public String       c_proxyName;
+//#     public boolean      c_exportFlag;
+    //#endif
 
     // You can (of course) change the variables below.
     public short        c_x;        //!< X coordinate of this node.

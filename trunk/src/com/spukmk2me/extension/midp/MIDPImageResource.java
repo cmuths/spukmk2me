@@ -9,7 +9,7 @@ import javax.microedition.lcdui.Image;
 import com.spukmk2me.video.IImageResource;
 
 final class MIDPImageResource
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     extends IImageResource
     //#else
     implements IImageResource

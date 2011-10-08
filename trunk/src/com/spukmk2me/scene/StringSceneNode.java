@@ -26,7 +26,7 @@ import com.spukmk2me.video.ICFont;
 /**
  *  A scene node that display string.
  */
-public final class StringSceneNode extends ITopLeftOriginSceneNode
+public final class StringSceneNode extends ISceneNode
 {
     /**
      *  Constructor.
@@ -155,6 +155,16 @@ public final class StringSceneNode extends ITopLeftOriginSceneNode
                 y += m_font.GetLineHeight();
             }
         }
+    }
+
+    public short GetAABBX()
+    {
+        return 0;
+    }
+    
+    public short GetAABBY()
+    {
+        return (short)m_startY;
     }
 
     public short GetAABBWidth()

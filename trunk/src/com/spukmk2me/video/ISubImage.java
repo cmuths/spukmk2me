@@ -18,7 +18,7 @@
 
 package com.spukmk2me.video;
 
-//#if defined ( __SPUKMK2ME_DEBUG ) && defined( __SPUKMK2ME_SCENEEDITOR )
+//#if defined ( __SPUKMK2ME_DEBUG ) && defined( __SPUKMK2ME_SCENESAVER )
 //# import com.spukmk2me.debug.Logger;
 //#endif
 
@@ -26,10 +26,10 @@ package com.spukmk2me.video;
  *  Hold data for sub image, which will be visible to ImageSceneNode.
  *  \details This class is implemented in video driver side.
  */
-//#ifdef __SPUKMK2ME_SCENEEDITOR
+//#ifdef __SPUKMK2ME_SCENESAVER
 //# public abstract class ISubImage implements IResource
 //#else
-public interface ISubImage
+public interface ISubImage extends IResource
 //#endif
 {
     public abstract IImageResource GetImageResource();
@@ -37,7 +37,7 @@ public interface ISubImage
     public abstract short GetWidth();
     public abstract short GetHeight();
 
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     public final void SetCreationData(
 //#         IResourceCreationData creationData )
 //#     {

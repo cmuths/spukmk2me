@@ -1,7 +1,7 @@
 package com.spukmk2me;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.Logger;
+//# import com.spukmk2me.debug.Logger;
 //#endif
 
 public final class DoublyLinkedList
@@ -13,10 +13,10 @@ public final class DoublyLinkedList
         public void drop()
         {
             //#ifdef __SPUKMK2ME_DEBUG
-            if ( (c_prev == null) || (c_next == null) )
-            {
-                Logger.Log( "Dropping unassigned element." );
-            }
+//#             if ( (c_prev == null) || (c_next == null) )
+//#             {
+//#                 Logger.Log( "Dropping unassigned element." );
+//#             }
             //#endif
 
             c_prev.c_next = c_next;
@@ -48,11 +48,6 @@ public final class DoublyLinkedList
         public Object data()
         {
             return m_element.c_data;
-        }
-
-        public void drop()
-        {
-            m_element.drop();
         }
 
         private Iterator clone()
@@ -177,15 +172,32 @@ public final class DoublyLinkedList
 
     public void erase( int index )
     {
-        if ( (index < 0) || (index >= m_nElement) )
-            return;
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         if ( (index < 0) || (index >= m_nElement) )
+//#             Logger.Log( "Index is out of bounds." );
+        //#endif
 
         Iterator i = first();
 
         while ( index-- != 0 )
             i.fwrd();
 
-        i.drop();
+        i.m_element.drop();
+        --m_nElement;
+    }
+
+    public void erase( Object data )
+    {
+        Iterator i = first();
+
+        for ( ; !i.equals( m_ffi ); i.fwrd() )
+        {
+            if ( i.data() == data )
+            {
+                i.m_element.drop();
+                --m_nElement;
+            }
+        }
     }
 
     private final Iterator  m_ffi;

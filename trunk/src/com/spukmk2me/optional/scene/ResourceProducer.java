@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 
-import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IResource;
 
 //#ifdef __SPUKMK2ME_DEBUG
@@ -83,6 +82,132 @@ public final class ResourceProducer
         }
 
         return loader.LoadResource( is, typeID );
+    }
+
+    /**
+     *  Save path format: /aaa/bbb/ccc/
+     *  File path format: /xxx/yyy/zzz
+     *  Output path format: /../../../xxx/yyy/zzz
+     */
+    public static String convertToRelativePath(
+        String absoluteFilePath, String absoluteSavePath,
+        char sourcePlatformPathSeparator, char destPlatformPathSeparator )
+    {
+        int fileLength  = absoluteFilePath.length();
+        int saveLength  = absoluteSavePath.length();
+
+        if ( (fileLength == 0) || (saveLength == 0) )
+            return null;
+
+        char[] _absoluteFilePath = absoluteFilePath.toCharArray();
+        char[] _absoluteSavePath = absoluteSavePath.toCharArray();
+
+        for( int i = 0; i != saveLength; ++i )
+        {
+            if ( _absoluteSavePath[ i ] == sourcePlatformPathSeparator )
+                _absoluteSavePath[ i ] = destPlatformPathSeparator;
+        }
+
+        for( int i = 0; i != fileLength; ++i )
+        {
+            if ( _absoluteFilePath[ i ] == sourcePlatformPathSeparator )
+                _absoluteFilePath[ i ] = destPlatformPathSeparator;
+        }
+
+        absoluteFilePath = new String( _absoluteFilePath );
+        absoluteSavePath = new String( _absoluteSavePath );
+
+        // Search for the first separator
+        int i = 0;
+
+        while ( _absoluteFilePath[ i ] != destPlatformPathSeparator )
+        {
+            ++i;
+
+            if ( (i == fileLength) || (i == saveLength) )
+                return null;
+        }
+        // Done searching for first separator
+
+        if ( !absoluteFilePath.regionMatches( false,
+            0, absoluteSavePath, 0, i + 1 ) )
+            return null;
+
+        int lastMatchedSeparatorIndex = i;
+        
+        ++i;
+
+        while ( (i != fileLength) && (i != saveLength) )
+        {
+            if ( _absoluteFilePath[ i ] != _absoluteSavePath[ i ] )
+                break;
+
+            if ( _absoluteFilePath[ i ] == destPlatformPathSeparator )
+                lastMatchedSeparatorIndex = i;
+
+            ++i;
+        }
+
+        int nUpperDir = 0;
+
+        for ( i = lastMatchedSeparatorIndex; i != saveLength; ++i )
+        {
+            if ( _absoluteSavePath[ i ] == destPlatformPathSeparator )
+                ++nUpperDir;
+        }
+
+        String resultPath = "";
+        String parentPath = ".." + destPlatformPathSeparator;
+
+        for ( i = nUpperDir; i != 0; --i )
+            resultPath += parentPath;
+
+        resultPath += absoluteFilePath.substring(
+            lastMatchedSeparatorIndex + 1 );
+        return resultPath;
+    }
+
+    public static String convertToAbsolutePath( String sceneFilePath,
+        String resFilePath, char srcPathSeparator, char destPathSeparator )
+    {
+        char[] _sceneFilePath   = sceneFilePath.toCharArray();
+        char[] _resFilePath     = resFilePath.toCharArray();
+
+        for ( int i = 0; i != _sceneFilePath.length; ++i )
+        {
+            if ( _sceneFilePath[ i ] == srcPathSeparator )
+                _sceneFilePath[ i ] = destPathSeparator;
+        }
+
+        for ( int i = 0; i != _resFilePath.length; ++i )
+        {
+            if ( _resFilePath[ i ] == srcPathSeparator )
+                _resFilePath[ i ] = destPathSeparator;
+        }
+
+        resFilePath     = new String( _resFilePath );
+        sceneFilePath   = new String( _sceneFilePath );
+
+        String parentPath = ".." + destPathSeparator;
+        int lastParentIndex = -1, nParent = 0, temp;
+
+        while ( (temp = resFilePath.indexOf( parentPath, lastParentIndex + 1 ))
+            != -1 )
+        {
+            lastParentIndex = temp + 2;
+            ++nParent;
+        }
+
+        int sceneTruncatedIndex = sceneFilePath.length() - 1;
+
+        for ( int i = nParent; i != 0; --i )
+        {
+            sceneTruncatedIndex = sceneFilePath.lastIndexOf(
+                destPathSeparator, sceneTruncatedIndex ) - 1;
+        }
+
+        return sceneFilePath.substring( 0, sceneTruncatedIndex + 1 ) +
+            destPathSeparator + resFilePath.substring( lastParentIndex + 1 );
     }
 
     private Hashtable m_loaderTable;

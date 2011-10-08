@@ -7,11 +7,10 @@ import java.io.DataInputStream;
 
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IResource;
-import com.spukmk2me.video.ISubImage;
 import com.spukmk2me.optional.font.BitmapFont;
-//#ifdef __SPUKMK2ME_SCENEEDITOR
+//#ifdef __SPUKMK2ME_SCENESAVER
 //# import com.spukmk2me.video.IImageResource.ImageResourceCreationData;
-//# import com.spukmk2me.video.ISubImage.SubImageCreationData;
+//# import com.spukmk2me.video.ISubImage;
 //# import com.spukmk2me.optional.font.BitmapFont.BitmapFontCreationData;
 //#endif
 
@@ -22,9 +21,12 @@ import com.spukmk2me.optional.font.BitmapFont;
  */
 public final class StandardResourceLoader implements IResourceLoader
 {
-    public StandardResourceLoader( IVideoDriver vdriver )
+    public StandardResourceLoader( IVideoDriver vdriver,
+        String pathToSceneFile, char dstPathSeparator )
     {
-        m_vdriver = vdriver;
+        m_vdriver           = vdriver;
+        m_pathToSceneFile   = pathToSceneFile;
+        m_dstPathSeparator  = dstPathSeparator;
     }
 
     public byte[] GetLoadableResourceID()
@@ -45,14 +47,18 @@ public final class StandardResourceLoader implements IResourceLoader
                     String path         = dis.readUTF();
                     String proxyName    = dis.readUTF();
 
+                    path = ResourceProducer.convertToAbsolutePath(
+                        m_pathToSceneFile, path, '/', m_dstPathSeparator );
+
                     resource = m_vdriver.CreateImageResource( path );
-                    //#ifdef __SPUKMK2ME_SCENEEDITOR
-//#                     ImageResourceCreationData data =
+                    //#ifdef __SPUKMK2ME_SCENESAVER
+//#                     ImageResourceCreationData creationData =
 //#                         ((IImageResource)resource).
 //#                             new ImageResourceCreationData();
 //# 
-//#                     data.c_path         = path;
-//#                     data.c_proxyName    = proxyName;
+//#                     creationData.c_path         = path;
+//#                     creationData.c_proxyName    = proxyName;
+//#                     resource.SetCreationData( creationData );
                     //#endif
                 }
 
@@ -74,11 +80,13 @@ public final class StandardResourceLoader implements IResourceLoader
                     flippingFlags   = dis.readByte();
                     proxyName       = dis.readUTF();
 
+                    System.out.println( "Res index: " + imgResIndex );
+
                     resource = m_vdriver.CreateSubImage(
                         m_imageResources[ imgResIndex ],
                         x, y, w, h, rotationDegree, flippingFlags );
-                    //#ifdef __SPUKMK2ME_SCENEEDITOR
-//#                     SubImageCreationData data =
+                    //#ifdef __SPUKMK2ME_SCENESAVER
+//#                     ISubImage.SubImageCreationData data =
 //#                         ((ISubImage)resource).new SubImageCreationData();
 //# 
 //#                     data.c_rotationDegree   = rotationDegree;
@@ -101,9 +109,12 @@ public final class StandardResourceLoader implements IResourceLoader
                     String path         = dis.readUTF();
                     String proxyName    = dis.readUTF();
 
+                    path = ResourceProducer.convertToAbsolutePath(
+                        m_pathToSceneFile, path, '/', m_dstPathSeparator );
+
                     resource = new BitmapFont(
                         this.getClass().getResourceAsStream( path ) );
-                    //#ifdef __SPUKMK2ME_SCENEEDITOR
+                    //#ifdef __SPUKMK2ME_SCENESAVER
 //#                     BitmapFontCreationData data =
 //#                         ((BitmapFont)resource).new BitmapFontCreationData();
 //# 
@@ -129,4 +140,6 @@ public final class StandardResourceLoader implements IResourceLoader
 
     private IVideoDriver        m_vdriver;
     private IImageResource[]    m_imageResources;
+    private String              m_pathToSceneFile;
+    private char                m_dstPathSeparator;
 }

@@ -18,7 +18,7 @@
 
 package com.spukmk2me.video;
 
-//#if defined( __SPUKMK2ME_DEBUG ) && defined( __SPUKMK2ME_SCENEEDITOR )
+//#if defined( __SPUKMK2ME_DEBUG ) && defined( __SPUKMK2ME_SCENESAVER )
 //# import com.spukmk2me.debug.Logger;
 //#endif
 
@@ -27,16 +27,16 @@ package com.spukmk2me.video;
  * an image that is loaded from somewhere.
  *  \details This class is implemented in video driver side.
  */
-//#ifdef __SPUKMK2ME_SCENEEDITOR
+//#ifdef __SPUKMK2ME_SCENESAVER
 //# public abstract class IImageResource implements IResource
 //#else
-public interface IImageResource
+public interface IImageResource extends IResource
 //#endif
 {
     public abstract short GetWidth();
     public abstract short GetHeight();
 
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     public final void SetCreationData( IResourceCreationData creationData )
 //#     {
 //#         if ( !(creationData instanceof ImageResourceCreationData) )

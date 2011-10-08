@@ -11,14 +11,23 @@ import com.spukmk2me.scene.NullSceneNode;
 import com.spukmk2me.scene.ImageSceneNode;
 import com.spukmk2me.scene.SpriteSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
+import com.spukmk2me.scene.TiledLayerSceneNode;
+//#ifdef __SPUKMK2ME_SCENESAVER
+//# import com.spukmk2me.scene.SpriteSceneNodeInfoData;
+//# import com.spukmk2me.scene.StringSceneNodeInfoData;
+//# import com.spukmk2me.scene.TiledLayerSceneNodeInfoData;
+//#endif
 
 public final class SceneTreeLoader
 {
-    public SceneTreeLoader() {}
+    public SceneTreeLoader( ResourceManager resourceManager )
+    {
+        m_resourceManager = resourceManager;
+    }
 
     public ISceneNode GetSceneNode( String name )
     {
-        if ( name == null )
+        if ( name.equals( ROOTNODE_NAME ) )
             return m_root;
 
         for ( int i = 0; i != m_exportedNodeNames.length; ++i )
@@ -30,14 +39,16 @@ public final class SceneTreeLoader
         return null;
     }
 
-    boolean Load( InputStream is ) throws IOException
+    public boolean Load( InputStream is, String pathToSceneFile,
+        char dstPathSeparator ) throws IOException
     {
         DataInputStream dis = new DataInputStream( is );
 
         if ( !CheckHeader( dis ) )
             return false;
 
-        m_resourceManager.LoadResources( dis );
+        m_resourceManager.LoadResources( dis, pathToSceneFile,
+            dstPathSeparator );
         LoadNodeNamesMappingTable( dis );
         ConstructSceneTree( dis );
 
@@ -46,9 +57,12 @@ public final class SceneTreeLoader
 
     private boolean CheckHeader( DataInputStream dis ) throws IOException
     {
-        // Skip "SPUKMK2me_SCENE-FILE_0.1"
-        dis.skipBytes( 24 );
-        return true;
+        char[] validationString = new char[ 24 ];
+        
+        for ( int i = 0; i != 24; ++i )
+            validationString[ i ] = (char)dis.readByte();
+        
+        return new String( validationString ).equals( VALID_STRING );
     }
 
     private void LoadNodeNamesMappingTable( DataInputStream dis )
@@ -77,6 +91,8 @@ public final class SceneTreeLoader
     {
         byte[]  traversalData;
 
+        m_root = new NullSceneNode();
+
         // Load traversal data
         {
             int nNodes = dis.readInt();
@@ -104,7 +120,7 @@ public final class SceneTreeLoader
         ISceneNode[]    stack = new ISceneNode[ dis.readUnsignedShort() ];
         int             topStack = 0;
 
-        stack[ 0 ] = m_root = new NullSceneNode();
+        stack[ 0 ] = m_root;
 
         while ( topStack != -1 )
         {
@@ -166,6 +182,9 @@ public final class SceneTreeLoader
 
             case 5:
                 return ConstructViewportSceneNode( dis );
+
+            case 6:
+                return ConstructTiledLayerSceneNode( dis );
         }
         
         return null;
@@ -201,7 +220,7 @@ public final class SceneTreeLoader
 
         ImageSceneNode node = new ImageSceneNode(
             (ISubImage)(m_resourceManager.GetResource(
-                imageIndex, MinimizedResourceLoader.RT_IMAGE ) ) );
+                imageIndex, ResourceManager.RT_IMAGE ) ) );
 
         node.SetPosition( x, y );
         node.c_visible  = (flags & 0x80) != 0;
@@ -230,7 +249,7 @@ public final class SceneTreeLoader
         for ( int i = nImages; i != 0; --i )
         {
             images[ i ] = (ISubImage)(m_resourceManager.GetResource(
-                dis.readByte(), MinimizedResourceLoader.RT_IMAGE ) );
+                dis.readByte(), ResourceManager.RT_IMAGE ) );
         }
 
         firstIndex      = dis.readUnsignedByte();
@@ -245,6 +264,20 @@ public final class SceneTreeLoader
         node.SetPosition( x, y );
         node.c_visible  = (flags & 0x80) != 0;
         node.c_enable   = (flags & 0x40) != 0;
+
+        //#ifdef __SPUKMK2ME_SCENESAVER
+//#         SpriteSceneNodeInfoData infoData = new SpriteSceneNodeInfoData();
+//# 
+//#         infoData.c_firstIndex   = firstIndex;
+//#         infoData.c_lastIndex    = lastIndex;
+//#         infoData.c_mode         = mode;
+//#         infoData.c_msPerFrame   = msPerFrame;
+//#         infoData.c_nFrameToStop = nFrameToStop;
+//#         infoData.c_nImages      = nImages;
+//#         infoData.c_images       = images;
+//# 
+//#         node.c_infoData = infoData;
+        //#endif
 
         return node;
     }
@@ -275,17 +308,141 @@ public final class SceneTreeLoader
         
         flags = dis.readByte();
 
-        StringSceneNode node = new StringSceneNode();
+        StringSceneNode node    = new StringSceneNode();
+        String content          = dis.readUTF();
 
         node.SetupString(
             (ICFont)m_resourceManager.GetResource(
-                fontIndex, MinimizedResourceLoader.RT_FONT ),
-            dis.readUTF(), properties, alignment,
+                fontIndex, ResourceManager.RT_FONT ),
+            content, properties, alignment,
             width, height, (flags & 0x01) != 0 );
 
         node.SetPosition( x, y );
         node.c_visible  = (flags & 0x80) != 0;
         node.c_enable   = (flags & 0x40) != 0;
+
+        //#ifdef __SPUKMK2ME_SCENESAVER
+//#         StringSceneNodeInfoData infoData = new StringSceneNodeInfoData();
+//# 
+//#         infoData.c_font         = (ICFont)m_resourceManager.GetResource(
+//#             fontIndex, ResourceManager.RT_FONT );
+//#         infoData.c_alignment    = alignment;
+//#         infoData.c_width        = width;
+//#         infoData.c_height       = height;
+//#         infoData.c_properties   = properties;
+//#         infoData.c_nProperties  = nProperties;
+//#         infoData.c_string       = content;
+//#         infoData.c_truncate     = (flags & 0x01) != 0;
+//# 
+//#         node.c_infoData         = infoData;
+        //#endif
+
+        return node;
+    }
+
+    private ISceneNode ConstructTiledLayerSceneNode( DataInputStream dis )
+        throws IOException
+    {
+        short[]     imageIndexes;
+        short[][]   spriteIndexes;
+        int[]       spriteSpeed;
+        byte[]      terrainData;
+        short       x, y, width, height, startX, startY,
+                    step1X, step1Y, step2X, step2Y;
+        byte        flags;
+
+        // Width, height and steps
+        x       = dis.readShort();
+        y       = dis.readShort();
+        width   = dis.readShort();
+        height  = dis.readShort();
+        startX  = dis.readShort();
+        startY  = dis.readShort();
+        step1X  = dis.readShort();
+        step1Y  = dis.readShort();
+        step2X  = dis.readShort();
+        step2Y  = dis.readShort();
+        flags   = dis.readByte();
+
+        // Terrain data
+        terrainData = new byte[ width * height ];
+        dis.read( terrainData );
+
+        // Images
+        short nSprites, nImages;
+
+        nImages = dis.readShort();
+        imageIndexes    = new short[ nImages ];
+
+        for ( int i = nImages; i != 0; --i )
+            imageIndexes[ i ]   = dis.readShort();
+
+        // Sprites
+        nSprites = dis.readShort();
+        spriteIndexes   = new short[ nSprites ][];
+        spriteSpeed     = new int[ nSprites ];
+
+        short[] sprite;
+
+        for ( int i = 0; i != nSprites; ++i )
+        {
+            sprite = spriteIndexes[ i ] = new short[ dis.readShort() ];
+
+            for ( int j = 0; j != sprite.length; ++j )
+                sprite[ j ] = dis.readShort();
+
+            spriteSpeed[ i ] = dis.readInt();
+        }
+
+        // Construct
+        ISubImage[][]   sprites = new ISubImage[ nSprites ][];
+        ISubImage[]     images  = new ISubImage[ nImages ];
+
+        for ( int i = 0; i != nImages; ++i )
+        {
+            images[ i ] = (ISubImage)m_resourceManager.GetResource(
+                imageIndexes[ i ], ResourceManager.RT_IMAGE );
+        }
+
+        for ( int i = 0; i != nSprites; ++i )
+        {
+            sprite = spriteIndexes[ i ];
+            sprites[ i ] = new ISubImage[ sprite.length ];
+
+            for ( int j = 0; j != sprite.length; ++j )
+            {
+                sprites[ i ][ j ] = (ISubImage)m_resourceManager.
+                    GetResource( sprite[ j ], ResourceManager.RT_IMAGE );
+            }
+        }
+
+        TiledLayerSceneNode node = new TiledLayerSceneNode();
+
+        node.SetupTiledLayer( images, sprites, spriteSpeed, terrainData,
+            startX, startY, width, height, step1X, step1Y, step2X, step2Y );
+
+        node.c_x = x;
+        node.c_y = y;
+        node.c_visible  = (flags & 0x80) != 0;
+        node.c_enable   = (flags & 0x40) != 0;
+
+        //#ifdef __SPUKMK2ME_SCENESAVER
+//#         TiledLayerSceneNodeInfoData infoData =
+//#             new TiledLayerSceneNodeInfoData();
+//# 
+//#         infoData.c_sprites  = sprites;
+//#         infoData.c_images   = images;
+//#         infoData.c_startX   = startX;
+//#         infoData.c_startY   = startY;
+//#         infoData.c_width    = width;
+//#         infoData.c_height   = height;
+//#         infoData.c_step1X   = step1X;
+//#         infoData.c_step1Y   = step1Y;
+//#         infoData.c_step2X   = step1X;
+//#         infoData.c_step2Y   = step1Y;
+//#         infoData.c_spriteSpeed = spriteSpeed;
+//#         infoData.c_terrainData = terrainData;
+        //#endif
 
         return node;
     }
@@ -300,9 +457,12 @@ public final class SceneTreeLoader
         return null;
     }
 
-    private String[]                m_exportedNodeNames;
-    private int[]                   m_exportedNodeIndexes;
-    private ISceneNode[]            m_exportedNodes;
-    private MinimizedResourceLoader m_resourceManager;
-    private ISceneNode              m_root;
+    private static final String ROOTNODE_NAME   = "root";
+    private static final String VALID_STRING    = "SPUKMK2me_SCENE-FILE_0.1";
+
+    private String[]        m_exportedNodeNames;
+    private int[]           m_exportedNodeIndexes;
+    private ISceneNode[]    m_exportedNodes;
+    private ResourceManager m_resourceManager;
+    private ISceneNode      m_root;
 }

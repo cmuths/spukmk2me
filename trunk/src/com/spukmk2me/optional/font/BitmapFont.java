@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-//#ifdef __SPUKMK2ME_SCENEEDITOR
+//#ifdef __SPUKMK2ME_SCENESAVER
 //# import com.spukmk2me.video.IResourceCreationData;
 //#endif
 
@@ -403,7 +403,7 @@ public final class BitmapFont extends ICFont
         }
     }
 
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     public void SetCreationData( IResourceCreationData creationData )
 //#     {
         //#ifdef __SPUKMK2ME_DEBUG
@@ -426,7 +426,7 @@ public final class BitmapFont extends ICFont
     public static final byte STYLE_ITALIC       = 0x02;
     public static final byte STYLE_UNDERLINE    = 0x04;
 
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     IResourceCreationData m_creationData;
     //#endif
     private int[]   m_extraCharMap, m_charWidth, m_buffer, m_preprocessedData;
@@ -437,7 +437,7 @@ public final class BitmapFont extends ICFont
     private int m_style, m_additionalCharWidth, m_color, m_bufferWidth;
 
 
-    //#ifdef __SPUKMK2ME_SCENEEDITOR
+    //#ifdef __SPUKMK2ME_SCENESAVER
 //#     public final class BitmapFontCreationData extends
 //#         IResourceCreationData
 //#     {
