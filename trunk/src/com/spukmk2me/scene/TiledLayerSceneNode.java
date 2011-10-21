@@ -39,7 +39,7 @@ public class TiledLayerSceneNode extends ISceneNode
 
                 if ( data >= 0 )
                     m_images[ data ].Render( driver );
-                else
+                else if ( data != (byte)0xFF ) // -1 means null cell
                 {
                     data = ~data; //data = -1 - data;
                     m_sprites[ data ][ m_spriteIndexes[ data ] ].
@@ -55,6 +55,9 @@ public class TiledLayerSceneNode extends ISceneNode
             ri.c_rasterX = startX;
             ri.c_rasterY = startY;
         }
+
+        ri.c_rasterX = oldX;
+        ri.c_rasterY = oldY;
     }
 
     public short GetAABBX()
