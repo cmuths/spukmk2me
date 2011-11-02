@@ -64,8 +64,8 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
     {
         m_entryNode         = new NullSceneNode();
         m_unclippingNode    = new SubClippingSceneNode();
-        ISceneNode.AddSceneNode( m_entryNode, this );
-        ISceneNode.AddSceneNode( m_unclippingNode, this );
+        AddChild( m_entryNode );
+        AddChild( m_unclippingNode );
     }
     
     public void Render( IVideoDriver driver )

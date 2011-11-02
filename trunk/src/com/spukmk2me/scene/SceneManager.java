@@ -52,7 +52,7 @@ public final class SceneManager
         mark.c_next         = mark.c_prev       = m_rootNode;
 
         m_animatorRootNode = new NullSceneNode();
-        ISceneNode.AddSceneNode( m_animatorRootNode, m_rootNode );
+        m_rootNode.AddChild( m_animatorRootNode );
 
         m_layerNodes = new ISceneNode[ m_nLayer ];
 
@@ -60,7 +60,7 @@ public final class SceneManager
         {
             m_layerNodes[ i ] = new NullSceneNode();
             //m_layerNodes[ i ].c_x   = m_layerNodes[ i ].c_y = 0;
-            ISceneNode.AddSceneNode( m_layerNodes[ i ], m_rootNode );
+            m_rootNode.AddChild( m_layerNodes[ i ] );
         }
 
         // Rendering initialisation
@@ -160,12 +160,12 @@ public final class SceneManager
         boolean renderAtOrigin )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( node == null )
-        {
-            new IllegalArgumentException( "Rendered node is null." ).
-                printStackTrace();
-            return;
-        }
+//#         if ( node == null )
+//#         {
+//#             new IllegalArgumentException( "Rendered node is null." ).
+//#                 printStackTrace();
+//#             return;
+//#         }
         //#endif
 
         ISceneNode  iterator;

@@ -136,8 +136,7 @@ public final class SceneTreeLoader
             {
                 nodeType = dis.readByte();
                 stack[ ++topStack ] = ConstructSceneNode( dis, nodeType );
-                ISceneNode.AddSceneNode(
-                    stack[ topStack ], stack[ topStack - 1 ] );
+                stack[ topStack - 1 ].AddChild( stack[ topStack ] );
 
                 if ( currentNodeIndex ==
                     m_exportedNodeIndexes[ exportedIndex ] )

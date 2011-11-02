@@ -21,7 +21,7 @@ package com.spukmk2me.scene;
 import com.spukmk2me.video.IVideoDriver;
 
 //#ifdef __SPUKMK2ME_DEBUG
-//# import com.spukmk2me.debug.SPUKMK2meException;
+//# import com.spukmk2me.debug.Logger;
 //#endif
 
 /**
@@ -110,39 +110,30 @@ public abstract class ISceneNode
      *  @param node The node which is going to be added.
      *  @param parent The parent of this node, CANNOT be null.
      */
-    public static void AddSceneNode( ISceneNode node, ISceneNode parent )
+    public final void AddChild( ISceneNode node )
     {
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( (node.c_next != null) || (node.c_prev != null) ||
 //#             (node.c_parent != null) )
-//#         {
-//#             new SPUKMK2meException( "Adding potentially defected node." ).
-//#                 printStackTrace();
-//#         }
-//# 
-//#         /*if (    (parent instanceof ClippingSceneNode) ||
-//#                 (parent instanceof ViewportSceneNode) )
-//#             new SPUKMK2meException( "You are adding a node directly" +
-//#              "to a complex node. Did you intend to do that or you forgot" +
-//#              "to use GetEntryNode()?" ).printStackTrace();*/
+//#             Logger.Log( "Adding potentially defected node." );
         //#endif
 
         ISceneNode bindingNode;
 
-        if ( parent.c_children == null )
+        if ( c_children == null )
         {
-            parent.c_children       = bindingNode = new NullSceneNode();
-            bindingNode.c_parent    = parent;
+            c_children              = bindingNode = new NullSceneNode();
+            bindingNode.c_parent    = this;
             bindingNode.c_prev      = bindingNode.c_next = bindingNode;
         }
         else
-            bindingNode = parent.c_children;
+            bindingNode = c_children;
 
         node.c_prev = bindingNode.c_prev;
         node.c_next = bindingNode;
         bindingNode.c_prev.c_next   = node;
         bindingNode.c_prev          = node;
-        node.c_parent               = parent;
+        node.c_parent               = this;
     }
 
     /**
@@ -153,13 +144,13 @@ public abstract class ISceneNode
      *  @param predecessor The node that is supposed to lie right before the
      * added node.
      */
-    public static void InsertAfter( ISceneNode node, ISceneNode predecessor )
+    public final void InsertAfter( ISceneNode predecessor )
     {
-        node.c_prev = predecessor;
-        node.c_next = predecessor.c_next;
-        predecessor.c_next.c_prev   = node;
-        predecessor.c_next          = node;
-        node.c_parent = predecessor.c_parent;
+        c_prev = predecessor;
+        c_next = predecessor.c_next;
+        predecessor.c_next.c_prev   = this;
+        predecessor.c_next          = this;
+        c_parent = predecessor.c_parent;
     }
 
     /**
@@ -171,8 +162,7 @@ public abstract class ISceneNode
         if ( (c_prev == null) || (c_next == null) || (c_parent == null) )
         {
             //#ifdef __SPUKMK2ME_DEBUG
-//#             new SPUKMK2meException( "WARNING: Dropping unattached node." ).
-//#                 printStackTrace();
+//#             Logger.Log( "WARNING: Dropping unattached node." );
             //#endif
             return;
         }

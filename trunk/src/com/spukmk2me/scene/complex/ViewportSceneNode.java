@@ -34,7 +34,7 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
     public ViewportSceneNode()
     {
         m_clippingNode = new ClippingSceneNode();
-        ISceneNode.AddSceneNode( m_clippingNode, this );
+        AddChild( m_clippingNode );
         m_originX = m_originY = 0;
     }
 

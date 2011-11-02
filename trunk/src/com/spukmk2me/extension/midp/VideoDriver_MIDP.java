@@ -188,10 +188,10 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         // Initialise
         m_lastTime  = 0;
 
+        m_g             = this.getGraphics();
         m_fontRenderer  = new FontRenderer_MIDP( this );
         m_renderInfo    = new RenderInfo();
-        m_g             = this.getGraphics();
-
+        
         m_x0 = m_y0 = m_renderInfo.c_rasterX = m_renderInfo.c_rasterY = 0;
 
         //#ifdef __SPUKMK2ME_DEBUG
