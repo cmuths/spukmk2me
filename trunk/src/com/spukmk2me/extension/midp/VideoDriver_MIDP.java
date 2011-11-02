@@ -242,7 +242,8 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         MIDPImageResource resource = new MIDPImageResource( filename );
         
         return new MIDPSubImage( resource,
-            (short)0, (short)0, (short)0, (short)0, 0, (byte)0 );
+            (short)0, (short)0, resource.GetWidth(), resource.GetHeight(),
+            0, (byte)0 );
     }
 
     public ISubImage[] CreateSubImages( IImageResource imgResource,
