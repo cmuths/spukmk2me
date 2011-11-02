@@ -236,6 +236,14 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         return new MIDPSubImage( (MIDPImageResource)imgResource,
             x, y, width, height, rotationDegree, flippingFlag );
     }
+    
+    public ISubImage CreateSubImage( String filename ) throws IOException
+    {
+        MIDPImageResource resource = new MIDPImageResource( filename );
+        
+        return new MIDPSubImage( resource,
+            (short)0, (short)0, (short)0, (short)0, 0, (byte)0 );
+    }
 
     public ISubImage[] CreateSubImages( IImageResource imgResource,
         short width, short height )

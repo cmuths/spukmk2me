@@ -175,16 +175,53 @@ public interface IVideoDriver
      */
     public long GetClipping();
 
+    /**
+     *  Create an image resources from file.
+     *  @param filename Image file name.
+     *  @return Image resource created from file.
+     *  @throws IOException If loading sequence got error.
+     */
     public IImageResource CreateImageResource( String filename )
         throws IOException;
-
+    
+    /**
+     *  Create a regional sub image from image resource.
+     *  @param imgResource Resource data.
+     *  @param x Crop x.
+     *  @param y Crop y
+     *  @param width Crop width.
+     *  @param height Crop height
+     *  @param rotationDegree Rotation degree (16-16 fixed point)
+     *  @param flippingFlag Check the constants.
+     *  @return Created sub image.
+     */
     public ISubImage CreateSubImage( IImageResource imgResource,
         short x, short y, short width, short height,
         int rotationDegree, byte flippingFlag );
-
+    
+    /**
+     *  Create a sub image from file name.
+     *  \details The result can be created equally by creating image resource
+     * explicitly and then create a sub image from it with full size and no
+     * rotation/flipping.
+     *  @param filename File name to load image.
+     *  @return Created sub image.
+     *  @throws IOException If loading sequence got error.
+     */
+    public ISubImage CreateSubImage( String filename ) throws IOException;
+    
+    /**
+     *  Create batch of sub images from an image resources.
+     *  \details This function will create batch of sub images which have
+     * the same width and height, no rotation or flipping is applied. Sub
+     * images will be taken from top to down, left to right.
+     *  @param imgResource Resource to create batch if sub images.
+     *  @param width Width of each sub image.
+     *  @param height Height of each sub image.
+     */
     public ISubImage[] CreateSubImages( IImageResource imgResource,
         short width, short height );
-
+    
     public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
     public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.
 
