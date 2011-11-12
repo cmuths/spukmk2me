@@ -221,30 +221,30 @@ public final class ResourceManager
             }
 
             defaultLoader.SetImageResources( imgResources );
-
-            // ISubImages
-            n = dis.readInt();
-
-            //#ifndef __SPUKMK2ME_SCENESAVER
-            if ( n != 0 )
-            {
-                m_resourceLists[ RT_IMAGE ] = new IResource[ n ];
-                m_proxyNames[ RT_IMAGE ] = new String[ n ];
-            }
-            //#endif
-
-            for ( int i = 0; i != n; ++i )
-            {
-                //#ifdef __SPUKMK2ME_SCENESAVER
-//#                 m_resourceLists[ RT_IMAGE ].push_back(
-//#                     producer.LoadCreationDataAndConstruct( is ) );
-                //#else
-                m_resourceLists[ RT_IMAGE ][ i ] =
-                    producer.LoadCreationDataAndConstruct( is );
-                //#endif
-            }
         }
 
+        // ISubImages
+        n = dis.readInt();
+
+        //#ifndef __SPUKMK2ME_SCENESAVER
+        if ( n != 0 )
+        {
+            m_resourceLists[ RT_IMAGE ] = new IResource[ n ];
+            m_proxyNames[ RT_IMAGE ] = new String[ n ];
+        }
+        //#endif
+
+        for ( int i = 0; i != n; ++i )
+        {
+            //#ifdef __SPUKMK2ME_SCENESAVER
+//#             m_resourceLists[ RT_IMAGE ].push_back(
+//#                 producer.LoadCreationDataAndConstruct( is ) );
+            //#else
+            m_resourceLists[ RT_IMAGE ][ i ] =
+                producer.LoadCreationDataAndConstruct( is );
+            //#endif
+        }
+     
         // BitmapFont
         n = dis.readInt();
 
@@ -291,6 +291,7 @@ public final class ResourceManager
 //#         {
 //#             flusher.FlushResource( (IResource)i.data(), os,
 //#                 sceneFileDirectory, srcPathSeparator );
+//#             i.fwrd();
 //#         }
 //# 
 //#         // ISubImage
@@ -302,6 +303,7 @@ public final class ResourceManager
 //#         {
 //#             flusher.FlushResource( (IResource)i.data(), os,
 //#                 sceneFileDirectory, srcPathSeparator );
+//#             i.fwrd();
 //#         }
 //# 
 //#         // ICFont
@@ -313,6 +315,7 @@ public final class ResourceManager
 //#         {
 //#             flusher.FlushResource( (IResource)i.data(), os,
 //#                 sceneFileDirectory, srcPathSeparator );
+//#             i.fwrd();
 //#         }
 //#     }
 //# 

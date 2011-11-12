@@ -82,8 +82,9 @@ public final class StandardResourceSaver implements IResourceSaver
                     dos.writeShort( creationData.c_width );
                     dos.writeShort( creationData.c_height );
                     creationData.c_imageResIndex =
-                        m_resourceManager.GetResourceIndex( resource,
-                            resourceTypeID );
+                        m_resourceManager.GetResourceIndex(
+                            ((ISubImage)resource).GetImageResource(),
+                            ResourceManager.RT_IMAGERESOURCE );
                     dos.writeShort( creationData.c_imageResIndex );
                     dos.writeByte( creationData.c_flippingFlags );
                     dos.writeUTF( creationData.c_proxyName );

@@ -62,22 +62,22 @@ public class TiledLayerSceneNode extends ISceneNode
 
     public short GetAABBX()
     {
-        return 0;
+        return m_startX;
     }
 
     public short GetAABBY()
     {
-        return 0;
+        return m_startY;
     }
 
     public short GetAABBWidth()
     {
-        return 0;
+        return (short)(m_step1X * m_width);
     }
 
     public short GetAABBHeight()
     {
-        return 0;
+        return (short)(m_step2Y * m_height);
     }
 
     public void SetupTiledLayer( ISubImage[] images, ISubImage[][] sprites,

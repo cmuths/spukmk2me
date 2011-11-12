@@ -1,5 +1,6 @@
 package com.spukmk2me.optional.scene;
 
+import com.spukmk2me.debug.Logger;
 import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -45,7 +46,12 @@ public final class SceneTreeLoader
         DataInputStream dis = new DataInputStream( is );
 
         if ( !CheckHeader( dis ) )
+        {
+            //#ifdef __SPUKMK2ME_DEBUG
+//#             Logger.Log( "Invalid file header" );
+            //#endif
             return false;
+        }
 
         m_resourceManager.LoadResources( dis, pathToSceneFile,
             dstPathSeparator );
@@ -69,21 +75,43 @@ public final class SceneTreeLoader
         throws IOException
     {
         int nExportedNodes = dis.readInt();
+        
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         Logger.Log( "Number of exported nodes: " + nExportedNodes );
+        //#endif
 
         // Load exported node indexes
         {
             m_exportedNodeIndexes = new int[ nExportedNodes ];
+            
+            //#ifdef __SPUKMK2ME_DEBUG
+//#             Logger.Log( "Exported indexes:" );
+            //#endif
 
             for ( int i = 0; i != nExportedNodes; ++i )
+            {
                 m_exportedNodeIndexes[ i ] = dis.readInt();
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( String.valueOf( m_exportedNodeIndexes[ i ] ) );
+                //#endif
+            }
         }
 
         // Load proxy names
         {
             m_exportedNodeNames = new String[ nExportedNodes ];
-
+            
+            //#ifdef __SPUKMK2ME_DEBUG
+//#             Logger.Log( "Exported proxy names:" );
+            //#endif
+            
             for ( int i = 0; i != nExportedNodes; ++i )
+            {
                 m_exportedNodeNames[ i ] = dis.readUTF();
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( m_exportedNodeNames[ i ] );
+                //#endif
+            }
         }
     }
 
@@ -92,10 +120,20 @@ public final class SceneTreeLoader
         byte[]  traversalData;
 
         m_root = new NullSceneNode();
+        
+        //#ifdef __SPUKMK2ME_SCENESAVER
+//#         m_root.c_proxyName = "root";
+//#         m_root.c_exportFlag = true;
+        //#endif
+        m_exportedNodes = new ISceneNode[ m_exportedNodeIndexes.length ];
 
         // Load traversal data
         {
             int nNodes = dis.readInt();
+            
+            //#ifdef __SPUKMK2ME_DEBUG
+//#             Logger.Log( "Number of nodes: " + nNodes );
+            //#endif
 
             // Empty tree
             if ( nNodes == 1 )
@@ -109,15 +147,25 @@ public final class SceneTreeLoader
                 traversalData = new byte[ (nTraversalBits >> 3) + 1 ];
 
             dis.read( traversalData );
+            
+            //#ifdef __SPUKMK2ME_DEBUG
+//#             Logger.Log( "Traversal data:" );
+//#             
+//#             for ( int i = 0; i != traversalData.length; ++i )
+//#                 Logger.Log(
+//#                     Integer.toBinaryString( traversalData[ i ] | 0xFFFFFF00 ).
+//#                     substring( 24 ) );
+            //#endif
         }
 
         // Tree construction sequence
         int     prefetchedIndex = 0, direction = 0;
         int     exportedIndex = 0, currentNodeIndex = 0;
+        short   treeHeight = (short)dis.readUnsignedShort();
         byte    bitCounter = 0, nodeType;
         
         // Construct stack with the size equal to tree height.
-        ISceneNode[]    stack = new ISceneNode[ dis.readUnsignedShort() ];
+        ISceneNode[]    stack = new ISceneNode[ treeHeight ];
         int             topStack = 0;
 
         stack[ 0 ] = m_root;
@@ -131,17 +179,34 @@ public final class SceneTreeLoader
             }
 
             if ( (direction & 0x80) == 0 )
+            {
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Goes up." );
+                //#endif
                 stack[ topStack-- ] = null;
+            }
             else
             {
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Goes down." );
+                //#endif
+                
                 nodeType = dis.readByte();
                 stack[ ++topStack ] = ConstructSceneNode( dis, nodeType );
                 stack[ topStack - 1 ].AddChild( stack[ topStack ] );
 
-                if ( currentNodeIndex ==
-                    m_exportedNodeIndexes[ exportedIndex ] )
+                if ( exportedIndex < m_exportedNodeIndexes.length )
                 {
-                    m_exportedNodes[ exportedIndex++ ] = stack[ topStack ];
+                    if ( currentNodeIndex ==
+                        m_exportedNodeIndexes[ exportedIndex ] )
+                    {
+                        //#ifdef __SPUKMK2ME_SCENESAVER
+//#                         stack[ topStack ].c_proxyName =
+//#                             m_exportedNodeNames[ exportedIndex ];
+//#                         stack[ topStack ].c_exportFlag = true;
+                        //#endif
+                        m_exportedNodes[ exportedIndex++ ] = stack[ topStack ];
+                    }
                 }
 
                 ++currentNodeIndex;
@@ -165,25 +230,48 @@ public final class SceneTreeLoader
         switch ( nodeType )
         {
             case 0:
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Constructing NullSceneNode..." );
+                //#endif
                 return ConstructNullSceneNode( dis );
 
             case 1:
                 return ConstructImageSceneNode( dis );
 
             case 2:
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Constructing SpriteSceneNode..." );
+                //#endif
                 return ConstructSpriteSceneNode( dis );
 
             case 3:
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Constructing StringSceneNode..." );
+                //#endif
                 return ConstructStringSceneNode( dis );
-
+                
             case 4:
-                return ConstructClippingSceneNode( dis );
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Constructing TiledLayerSceneNode..." );
+                //#endif
+                return ConstructTiledLayerSceneNode( dis );
 
             case 5:
-                return ConstructViewportSceneNode( dis );
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Constructing ClippingSceneNode..." );
+                //#endif
+                return ConstructClippingSceneNode( dis );
 
             case 6:
-                return ConstructTiledLayerSceneNode( dis );
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Log( "Constructing ViewportSceneNode..." );
+                //#endif
+                return ConstructViewportSceneNode( dis );
+
+            //#ifdef __SPUKMK2ME_DEBUG
+//#             default:
+//#                 Logger.Log( "Unknown node type." );
+            //#endif
         }
         
         return null;
@@ -208,6 +296,10 @@ public final class SceneTreeLoader
     private ImageSceneNode ConstructImageSceneNode( DataInputStream dis )
         throws IOException
     {
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         Logger.Log( "Constructing ImageSceneNode..." );
+        //#endif
+        
         int     imageIndex;
         short   x, y;
         byte    flags;
@@ -224,7 +316,13 @@ public final class SceneTreeLoader
         node.SetPosition( x, y );
         node.c_visible  = (flags & 0x80) != 0;
         node.c_enable   = (flags & 0x40) != 0;
-
+        
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         Logger.Log( "X, Y, index, flags: " + x + ' ' + y + ' ' + imageIndex + 
+//#             ' ' + Integer.toBinaryString( flags ).substring( 24 ) );
+//#         Logger.Log( "Done." );
+        //#endif
+        
         return node;
     }
 
@@ -294,7 +392,7 @@ public final class SceneTreeLoader
         y           = dis.readShort();
         width       = dis.readShort();
         height      = dis.readShort();
-        fontIndex   = dis.readUnsignedByte();
+        fontIndex   = dis.readByte();
         nProperties = dis.readUnsignedByte();
 
         if ( nProperties == 0 )
@@ -309,10 +407,17 @@ public final class SceneTreeLoader
 
         StringSceneNode node    = new StringSceneNode();
         String content          = dis.readUTF();
+        ICFont font;
+        
+        if ( fontIndex == -1 )
+            font = null;
+        else
+        {
+            font = (ICFont)m_resourceManager.GetResource(
+                fontIndex, ResourceManager.RT_FONT );
+        }
 
-        node.SetupString(
-            (ICFont)m_resourceManager.GetResource(
-                fontIndex, ResourceManager.RT_FONT ),
+        node.SetupString( font,
             content, properties, alignment,
             width, height, (flags & 0x01) != 0 );
 
@@ -323,8 +428,7 @@ public final class SceneTreeLoader
         //#ifdef __SPUKMK2ME_SCENESAVER
 //#         StringSceneNodeInfoData infoData = new StringSceneNodeInfoData();
 //# 
-//#         infoData.c_font         = (ICFont)m_resourceManager.GetResource(
-//#             fontIndex, ResourceManager.RT_FONT );
+//#         infoData.c_font         = font;
 //#         infoData.c_alignment    = alignment;
 //#         infoData.c_width        = width;
 //#         infoData.c_height       = height;
@@ -373,8 +477,8 @@ public final class SceneTreeLoader
         nImages = dis.readShort();
         imageIndexes    = new short[ nImages ];
 
-        for ( int i = nImages; i != 0; --i )
-            imageIndexes[ i ]   = dis.readShort();
+        for ( int i = 0; i != nImages; ++i )
+            imageIndexes[ i ] = dis.readShort();
 
         // Sprites
         nSprites = dis.readShort();
@@ -437,10 +541,12 @@ public final class SceneTreeLoader
 //#         infoData.c_height   = height;
 //#         infoData.c_step1X   = step1X;
 //#         infoData.c_step1Y   = step1Y;
-//#         infoData.c_step2X   = step1X;
-//#         infoData.c_step2Y   = step1Y;
+//#         infoData.c_step2X   = step2X;
+//#         infoData.c_step2Y   = step2Y;
 //#         infoData.c_spriteSpeed = spriteSpeed;
 //#         infoData.c_terrainData = terrainData;
+//#         
+//#         node.c_infoData = infoData;
         //#endif
 
         return node;

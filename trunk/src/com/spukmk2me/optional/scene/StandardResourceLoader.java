@@ -80,8 +80,6 @@ public final class StandardResourceLoader implements IResourceLoader
                     flippingFlags   = dis.readByte();
                     proxyName       = dis.readUTF();
 
-                    System.out.println( "Res index: " + imgResIndex );
-
                     resource = m_vdriver.CreateSubImage(
                         m_imageResources[ imgResIndex ],
                         x, y, w, h, rotationDegree, flippingFlags );

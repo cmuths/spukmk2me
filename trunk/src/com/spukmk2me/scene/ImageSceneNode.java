@@ -39,17 +39,18 @@ public final class ImageSceneNode extends ITopLeftOriginSceneNode
 
     public void Render( IVideoDriver driver )
     {
-        m_image.Render( driver );
+        if ( m_image != null )
+            m_image.Render( driver );
     }
 
     public short GetAABBWidth()
     {
-        return m_image.GetWidth();
+        return ( m_image == null )? 0 : m_image.GetWidth();
     }
 
     public short GetAABBHeight()
     {
-        return m_image.GetHeight();
+        return ( m_image == null )? 0 : m_image.GetHeight();
     }
 
     /**

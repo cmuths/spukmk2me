@@ -16,6 +16,6 @@ public class DefaultMessageExporter implements MessageExporter
 
     public void ExportMessage( String message )
     {
-        new SPUKMK2meException( message ).printStackTrace();
+        System.out.println( message );
     }
 }

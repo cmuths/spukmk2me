@@ -72,6 +72,15 @@ public final class StringSceneNode extends ISceneNode
     }
     
     /**
+     *  Temporary function -.-.
+     */
+    public void Replace( ICFont font, String s, byte[] properties )
+    {
+        SetupString( font, s, properties, m_alignment,
+            m_width, m_height, m_truncate);
+    }
+    
+    /**
      *  Set the string.
      *  @param s The new string to display.
      */
@@ -92,39 +101,6 @@ public final class StringSceneNode extends ISceneNode
     private void SetString( String s, boolean duplicate )
     {
         SetString( (s == null)? (char[])null : s.toCharArray(), duplicate );
-    }
-
-    /**
-     *  Get the current font.
-     *  @return Current font.
-     */
-    public ICFont GetFont()
-    {
-        return m_font;
-    }
-    
-    public byte[] GetProperties()
-    {
-        return m_properties;
-    }
-    
-    public byte GetAlignment()
-    {
-        return m_alignment;
-    }
-    
-    public boolean IsTruncated()
-    {
-        return m_truncate;
-    }
-
-    /**
-     *  Get the current string.
-     *  @return The current string.
-     */
-    public char[] GetString()
-    {
-        return m_str;
     }
 
     public void Render( IVideoDriver driver )
@@ -355,6 +331,9 @@ public final class StringSceneNode extends ISceneNode
         m_width         = width;
         m_height        = height;
         m_truncate      = truncate;
+        
+        if ( m_font == null )
+            return;
 
         if ( duplicate )
             PreprocessString();
