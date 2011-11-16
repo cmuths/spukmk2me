@@ -33,43 +33,37 @@ import java.io.IOException;
 //#endif
 
 /**
- *  One-bit resolution font; save memory, but has moderate rendering overhead.
- *  \details Properties of bitmap font consist of five bytes: the first four
- * bytes is the alpha, red, green, blue channel of text's color,
- * respectively. The fifth byte is the "style" of the text. See the constants
+ *  1/2/4/8 bit resolution font; save memory, but has moderate rendering
+ * overhead.
+ *  \details Properties of bitmap font consist of (4 * 2 ^ bit depth + 1)
+ * bytes. The first 4 bytes contain color data (ARGB value of color),
+ * channels for the color of underline. The next 4 bytes contains color data
+ * of the first color, next 4 bytes contains color data of the second color,
+ * and so on... The last byte is the "style" of the text. See the constants
  * for more information.\n
- *  @note Current implement only allow fonts with the maximum sum of character
- * width and italic stride value is 32 pixels.
+ *  @note Current implement only allows fonts with maximum value of
+ * (character width + italic stride) * 2 ^ bit depth value is 32 bits.
  */
 public final class BitmapFont extends ICFont
 {
-    /**
-     * Currently this function only supports file format version 0.1.
-     *  \details Write once, run everywhere huh? Stop throwing trash and
-     * putting nonsense into media. I've had enough of your garbage. Just see
-     * what you can do about opening stream between two of your own platforms.
-     *  @param is User must provide their own input stream. Don't ask me why I
-     * removed constructor with filename, ask Sun Microsystem.
-     *  @param source Don't ask me, ask Java suck.
-     *  @throws IOException If there is an IO error.
-     */
     public BitmapFont( InputStream is ) throws IOException
     {
         DataInputStream dis = new DataInputStream( is );
 
         // Header
-        // Skip the first two bytes, and "SPUKMK2me_BITMAPFONT_0.1"
+        // Skip the first two bytes, and "SPUKMK2me_BITMAPFONT_1.0"
         // Assume that the bit/little endian mode is compatible
         dis.skipBytes( 26 );
         m_nChar         = dis.readUnsignedShort();
+        m_bitDepth      = dis.readUnsignedShort();
         m_width         = dis.readUnsignedShort();
         m_height        = dis.readUnsignedShort();
         m_charDistance  = dis.readUnsignedShort();
         m_space         = dis.readUnsignedShort();
         m_yUnderline    = dis.readUnsignedShort();
         m_italicStride  = dis.readUnsignedShort();
-        // Skip 120 reserved bytes
-        dis.skip( 120 );
+        // Skip 128 reserved bytes
+        dis.skip( 128 );
 
         // Trunk
         if ( m_nChar > 94 )
@@ -79,26 +73,26 @@ public final class BitmapFont extends ICFont
             int charIterator = 0;
 
             for ( int i = m_nChar - 94; i != 0; --i )
-                m_extraCharMap[ charIterator++ ] = dis.readInt();
+                m_extraCharMap[ charIterator++ ] = dis.readUnsignedShort();
         }
 
-        m_bytesPerLine = (byte)(m_width >> 3);
+        m_bytesPerLine = (byte)(m_width * m_bitDepth >> 3);
 
         if ( (m_width & 0x07) != 0 )
             ++m_bytesPerLine;
 
-        m_charWidth = new int[ m_nChar ];
+        m_charWidth = new short[ m_nChar ];
 
         m_data = new byte[ m_nChar * m_bytesPerLine * m_height ];
         dis.read( m_data );
-        dis.close();
 
-        FindCharactersWidth();
+        CalculateCharactersWidth();
 
         m_bytesPerChar      = m_bytesPerLine * m_height;
         m_bufferWidth       = m_width + 1 + m_italicStride;
         m_buffer            = new int[ m_bufferWidth * m_height ];
         m_preprocessedData  = new int[ m_bytesPerChar ];
+        m_colors            = new int[ 1 << m_bitDepth ];
     }
 
     public byte GetRenderDataType()
@@ -127,7 +121,7 @@ public final class BitmapFont extends ICFont
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( !IsSupported( ch ) )
 //#         {
-//#             Logger.Log( "No such character stored in this font:" + ch );
+//#             Logger.Trace( "No such character stored in this font:" + ch );
 //#             return -1;
 //#         }
         //#endif
@@ -171,13 +165,22 @@ public final class BitmapFont extends ICFont
 
     public void PresetProperties( byte[] properties )
     {
-        m_color =   properties[ 0 ] << 24   | properties[ 1 ] << 16 |
-                    properties[ 2 ] << 8    | properties[ 3 ];
-        m_style =   properties[ 4 ];
+        int nColor = 1 << m_bitDepth;
+        int j = 0;
 
-        m_additionalCharWidth   = 0;
+        for ( int i = 0; i != nColor; ++i )
+        {
+            m_colors[ i ] =
+                properties[ j ] << 24 | properties[ j + 1 ] << 16 |
+                properties[ j + 2 ] << 8 | properties[ j + 3 ];
+            j += 4;
+        }
 
-        int masked  = m_style & (STYLE_BOLD | STYLE_ITALIC);
+        m_style = properties[ properties.length - 1 ];
+
+        m_additionalCharWidth = 0;
+
+        int masked = m_style & (STYLE_BOLD | STYLE_ITALIC);
 
         if ( masked != 0 )
         {
@@ -195,15 +198,21 @@ public final class BitmapFont extends ICFont
      *  @param style Style of the text, see the constants for more information.
      *  @return An array represents properties for BitmapFont
      */
-    public static byte[] CreateProperties( int color, byte style )
+    public static byte[] CreateProperties( int[] colors, byte style )
     {
-        byte[] returnedArray = new byte[ 5 ];
+        byte[] returnedArray = new byte[ colors.length * 4 + 1 ];
+        int i = 0, color;
 
-        returnedArray[ 0 ]  = (byte)((color >> 24) & 0x000000FF);
-        returnedArray[ 1 ]  = (byte)((color >> 16) & 0x000000FF);
-        returnedArray[ 2 ]  = (byte)((color >> 8) & 0x000000FF);
-        returnedArray[ 3 ]  = (byte)(color & 0x000000FF);
-        returnedArray[ 4 ]  = style;
+        for ( int j = 0; j != colors.length; ++j )
+        {
+            color = colors[ j ];
+            returnedArray[ i++ ] = (byte)((color >> 24) & 0x000000FF);
+            returnedArray[ i++ ] = (byte)((color >> 16) & 0x000000FF);
+            returnedArray[ i++ ] = (byte)((color >> 8) & 0x000000FF);
+            returnedArray[ i++ ] = (byte)(color & 0x000000FF);
+        }
+
+        returnedArray[ i ]  = style;
 
         return returnedArray;
     }
@@ -211,21 +220,22 @@ public final class BitmapFont extends ICFont
     private void DrawUnderline( int width )
     {
         int index = m_bufferWidth * m_yUnderline;
+        int color = m_colors[ 0 ];
 
         for ( ; width != 0; --width )
-            m_buffer[ index++ ] = m_color;
+            m_buffer[ index++ ] = color;
     }
 
     // Convert bytes to int, perform italic stride.
     private void PreprocessCharacterData( int charIndex )
     {
         int shiftRange, j, fetchedData;
-        int italicStride, italicCountdown, italicStep;
+        int bitStride, italicCountdown, italicStep;
 
         if ( (m_style & STYLE_ITALIC) == 0 )
         {
-            italicStride    = 0;
-            italicStep      = m_height;
+            bitStride   = 0;
+            italicStep  = m_height;
         }
         else
         {
@@ -234,7 +244,7 @@ public final class BitmapFont extends ICFont
             else
                 italicStep = m_height / (m_italicStride + 1) + 1;
 
-            italicStride = m_italicStride;
+            bitStride = m_italicStride * m_bitDepth;
         }
 
         italicCountdown = italicStep;
@@ -253,11 +263,11 @@ public final class BitmapFont extends ICFont
                 shiftRange  -= 8;
             }
 
-            m_preprocessedData[ i++ ] = fetchedData >> italicStride;
+            m_preprocessedData[ i++ ] = fetchedData >>> bitStride;
 
             if ( --italicCountdown == 0 )
             {
-                --italicStride;
+                bitStride -= m_bitDepth;
                 italicCountdown = italicStep;
             }
         }
@@ -265,11 +275,14 @@ public final class BitmapFont extends ICFont
 
     private void ExportPlainCharacterData( int charIndex )
     {
-        int argbIndex, argbFirst, currentInt, i, j, width;
+        int argbIndex, argbFirst, currentInt, i, j, width, intCheck,
+            currentPixel, colorShift;
 
         argbFirst   = 0;
         i           = 0;
-        width       = m_charWidth[ charIndex ];
+        width       = m_charWidth[ charIndex ] + m_additionalCharWidth;
+        intCheck    = ((1 << m_bitDepth) - 1) << (32 - m_bitDepth);
+        colorShift  = 32 - m_bitDepth;
 
         while ( i != m_height )
         {
@@ -278,9 +291,11 @@ public final class BitmapFont extends ICFont
 
             for ( j = width; j != 0; --j )
             {
-                m_buffer[ argbIndex++ ] = ((currentInt & 0x80000000) == 0)?
-                    0x00000000 : m_color;
-                currentInt <<= 1;
+                currentPixel = currentInt & intCheck;
+                
+                m_buffer[ argbIndex++ ] = (currentPixel == 0)?
+                    0 : m_colors[ currentPixel >>> colorShift ];
+                currentInt <<= m_bitDepth;
             }
 
             argbFirst += m_bufferWidth;
@@ -289,13 +304,16 @@ public final class BitmapFont extends ICFont
 
     private void ExportBoldCharacterData( int charIndex )
     {
-        int argbIndex, argbFirst, currentInt, i, j, width;
-        int color;
+        int     argbIndex, argbFirst, currentInt, i, j, width, intCheck,
+                currentPixel, colorShift;
+        int     color;
         boolean isPrevBold;
 
         argbFirst   = 0;
         i           = 0;
         width       = m_charWidth[ charIndex ];
+        intCheck    = ((1 << m_bitDepth) - 1) << (32 - m_bitDepth);
+        colorShift  = 32 - m_bitDepth;
 
         while ( i != m_height )
         {
@@ -305,8 +323,10 @@ public final class BitmapFont extends ICFont
 
             for ( j = width; j != 0; --j )
             {
-                color = ((currentInt & 0x80000000) == 0)? 0x00000000 : m_color;
-                
+                currentPixel = currentInt & intCheck;
+                color = (currentPixel == 0)?
+                    0 : m_colors[ currentPixel >>> colorShift ];
+
                 if ( isPrevBold )
                     m_buffer[ ++argbIndex ] = color;
                 else
@@ -314,59 +334,59 @@ public final class BitmapFont extends ICFont
                     m_buffer[ argbIndex++ ] = color;
                     m_buffer[ argbIndex ]   = color;
                 }
-                    
+
                 isPrevBold = color != 0;
-                currentInt <<= 1;
+                currentInt <<= m_bitDepth;
             }
 
             argbFirst += m_bufferWidth;
         }
     }
 
-    private void FindCharactersWidth()
+    private void CalculateCharactersWidth()
     {
         int     dataIndexFirst = 0, dataIndex;
         int     j, k, bitRemain, tailBitRemain;
-        int     currentWidth, currentByte, maxWidth;
+        short   currentWidth, maxWidth;
         boolean stopLine;
+        byte    currentByte;
+        byte    byteCheck = (byte)((1 << m_bitDepth) - 1);
 
-        tailBitRemain = (byte)(m_width & 0x07);
+        tailBitRemain = (byte)(m_width * m_bitDepth & 0x07);
 
         if ( tailBitRemain == 0 )
             tailBitRemain = 8;
 
-        //c_charWidth[ 0 ] = (byte)(c_space - c_charDistance);
-        
         for ( int i = 0; i != m_nChar; ++i )
         {
-            maxWidth = 0;            
+            maxWidth = 0;
 
             for ( j = m_height; j != 0; --j )
             {
                 bitRemain       = tailBitRemain;
                 dataIndex       = dataIndexFirst + m_bytesPerLine - 1;
                 stopLine        = false;
-                currentWidth    = m_width;
+                currentWidth    = (short)m_width;
 
                 for ( k = m_bytesPerLine; k != 0; --k )
                 {
                     currentByte     = m_data[ dataIndex ];
-                    currentByte   >>= (8 - bitRemain);
+                    currentByte  >>>= (8 - bitRemain);
 
                     while ( bitRemain != 0 )
                     {
-                        if ( (currentByte & 0x01) != 0 )
+                        if ( (currentByte & byteCheck) != 0 )
                         {
                             if ( currentWidth > maxWidth )
                                 maxWidth = currentWidth;
-                        
+
                             stopLine = true;
                             break;
                         }
-                    
+
                         --currentWidth;
-                        --bitRemain;
-                        currentByte >>= 1;
+                        bitRemain -= m_bitDepth;
+                        currentByte >>>= m_bitDepth;
                     }
 
                     if ( stopLine )
@@ -379,7 +399,6 @@ public final class BitmapFont extends ICFont
                 dataIndexFirst += m_bytesPerLine;
             }
 
-            //sSystem.out.println( maxWidth );
             m_charWidth[ i ] = maxWidth;
         }
     }
@@ -414,7 +433,7 @@ public final class BitmapFont extends ICFont
         //#endif
 //#         m_creationData = creationData;
 //#     }
-//# 
+//#
 //#     public IResourceCreationData GetCreationData()
 //#     {
 //#         return m_creationData;
@@ -429,12 +448,15 @@ public final class BitmapFont extends ICFont
     //#ifdef __SPUKMK2ME_SCENESAVER
 //#     IResourceCreationData m_creationData;
     //#endif
-    private int[]   m_extraCharMap, m_charWidth, m_buffer, m_preprocessedData;
+    private int[]   m_extraCharMap, m_buffer, m_preprocessedData,
+                    m_colors;
+    private short[] m_charWidth;
     private byte[]  m_data;
-    
-    private int m_nChar, m_width, m_height, m_space, m_charDistance,
-                m_bytesPerLine, m_bytesPerChar, m_yUnderline, m_italicStride;
-    private int m_style, m_additionalCharWidth, m_color, m_bufferWidth;
+
+    private int m_nChar, m_bitDepth, m_width, m_height, m_space,
+                m_charDistance, m_bytesPerLine, m_bytesPerChar,
+                m_yUnderline, m_italicStride;
+    private int m_style, m_additionalCharWidth, m_bufferWidth;
 
 
     //#ifdef __SPUKMK2ME_SCENESAVER
@@ -442,7 +464,7 @@ public final class BitmapFont extends ICFont
 //#         IResourceCreationData
 //#     {
 //#         public BitmapFontCreationData() {}
-//# 
+//#
 //#         public String c_path;
 //#     }
     //#endif

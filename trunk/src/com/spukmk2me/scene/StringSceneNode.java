@@ -72,11 +72,14 @@ public final class StringSceneNode extends ISceneNode
     }
     
     /**
-     *  Temporary function -.-.
+     *  Replace current content of this node.
+     *  \details All other properties like font, width, height, etc... are
+     * preserved.
+     *  @param s New content of this node.
      */
-    public void Replace( ICFont font, String s, byte[] properties )
+    public void Replace( String s )
     {
-        SetupString( font, s, properties, m_alignment,
+        SetupString( m_font, s, m_properties, m_alignment,
             m_width, m_height, m_truncate);
     }
     

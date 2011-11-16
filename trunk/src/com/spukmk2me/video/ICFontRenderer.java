@@ -18,6 +18,8 @@
 
 package com.spukmk2me.video;
 
+import com.spukmk2me.Util;
+
 /**
  *  Interface for character font renderer.
  */
@@ -94,13 +96,13 @@ public abstract class ICFontRenderer
                 {
                     m_charWidth = (short)font.GetCharWidth( character );
 
-                    if ( RectangleCollide(
+                    if ( Util.RectIntersect(
                             m_rasterX, m_rasterY, m_charWidth, m_charHeight,
                             clipX, clipY, clipW, clipH ) )
                         RenderCharacter( font, character );
 
                     m_rasterX += font.GetSpaceBetweenCharacters() +
-                        font.GetCharWidth( character );
+                        m_charWidth;
                     additionalSpace = true;
                 }
                 else
@@ -128,13 +130,6 @@ public abstract class ICFontRenderer
 
         s.getChars( offset, borderOffset, buffer, 0 );
         RenderString( buffer, font, offset, borderOffset - offset, x, y );
-    }
-
-    private boolean RectangleCollide( short x1, short y1, short w1, short h1,
-        short x2, short y2, short w2, short h2 )
-    {
-        return  (x1 < x2 + w2) && (y1 < y2 + h2) &&
-                (x2 < x1 + w1) && (y2 < y1 + h1);
     }
 
     //! Current video driver.

@@ -38,9 +38,8 @@ public final class FontRenderer_MIDP extends ICFontRenderer
     protected void RenderCharacter( ICFont font, char character )
     {
         m_g.drawRGB( (int[])font.GetBitmapData( character ), 0,
-            font.GetBitmapDataDimension() >> 16,
-            m_rasterX, m_rasterY,
-            font.GetCharWidth( character ), font.GetLineHeight(), true );
+            font.GetBitmapDataDimension() >>> 16,
+            m_rasterX, m_rasterY, m_charWidth, m_charHeight, true );
     }
 
     private Graphics m_g;

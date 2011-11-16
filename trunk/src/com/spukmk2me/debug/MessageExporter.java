@@ -29,4 +29,12 @@ public interface MessageExporter
      *  @param message The message to export.
      */
     public void ExportMessage( String message );
+    
+    /**
+     *  Export a message, and trace the source of error.
+     *  \details This function must work only between the calls to Initialise()
+     * and Finialise().
+     *  @param message The message to export.
+     */
+    public void ExportTracingMessage( String message );
 }

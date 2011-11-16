@@ -44,8 +44,8 @@ public final class ResourceManager
     public IResource GetResource( String proxyName, byte type )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-//#         if ( (type < 0) || (type > 2) )
-//#             Logger.Log( "Unknown resource type: " + type );
+//#         if ( (type < 1) || (type > 3) )
+//#             Logger.Trace( "Unknown resource type: " + type );
         //#endif
 
         //#ifdef __SPUKMK2ME_SCENESAVER
@@ -83,7 +83,7 @@ public final class ResourceManager
 //#     public void AddResource( IResource resource, byte type )
 //#     {
         //#ifdef __SPUKMK2ME_DEBUG
-//#         if ( (type < 0) || (type > 2) )
+//#         if ( (type < 1) || (type > 3) )
 //#             Logger.Log( "Unknown resource type: " + type );
 //# 
 //#         switch ( type )
@@ -114,7 +114,7 @@ public final class ResourceManager
 //#     public void RemoveResource( String proxyName, byte type )
 //#     {
         //#ifdef __SPUKMK2ME_DEBUG
-//#         if ( (type < 0) || (type > 3) )
+//#         if ( (type < 1) || (type > 3) )
 //#         {
 //#             Logger.Log( "Resource type not found." );
 //#         }
@@ -142,7 +142,7 @@ public final class ResourceManager
 //#     public void RemoveResource( int index, byte type )
 //#     {
         //#ifdef __SPUKMK2ME_DEBUG
-//#         if ( (type < 0) || (type > 3) )
+//#         if ( (type < 1) || (type > 3) )
 //#         {
 //#             Logger.Log( "Resource type not found." );
 //#         }
@@ -181,8 +181,8 @@ public final class ResourceManager
      *  This is the optimized version which will be expected to run on low-spec
      * mobile devices.
      */
-    public void LoadResources( InputStream is, String pathToSceneFile,
-        char dstPathSeparator )
+    public void LoadResources( InputStream is,
+        ResourceProducer producer )
         throws IOException
     {
         //#ifdef __SPUKMK2ME_SCENESAVER
@@ -190,11 +190,6 @@ public final class ResourceManager
         //#endif
 
         DataInputStream dis     = new DataInputStream( is );
-        StandardResourceLoader  defaultLoader =
-            new StandardResourceLoader( m_vdriver, pathToSceneFile,
-                dstPathSeparator );
-        ResourceProducer        producer =
-            new ResourceProducer( defaultLoader );
         
         // IImageResource
         int n = dis.readInt();
@@ -220,7 +215,7 @@ public final class ResourceManager
                 //#endif
             }
 
-            defaultLoader.SetImageResources( imgResources );
+            //defaultLoader.SetImageResources( imgResources );
         }
 
         // ISubImages
@@ -256,7 +251,7 @@ public final class ResourceManager
         }
         //#endif
 
-        for ( int i = n; i != 0; --i )
+        for ( int i = 0; i != n; ++i )
         {
             //#ifdef __SPUKMK2ME_SCENESAVER
 //#             m_resourceLists[ RT_FONT ].push_back(

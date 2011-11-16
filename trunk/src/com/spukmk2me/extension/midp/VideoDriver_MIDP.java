@@ -219,7 +219,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
 //#         {
-//#             Logger.Log( "MIDP driver currently does not support " +
+//#             Logger.Trace( "MIDP driver currently does not support " +
 //#                 "non-90-degree rotation, rotation degree will be reset to 0.");
 //#             rotationDegree = 0;
 //# 
@@ -227,8 +227,8 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 //#             {
 //#                 MIDPImageResource test = (MIDPImageResource)imgResource;
 //#             } catch ( ClassCastException e ) {
-//#                 Logger.Log( "This isn't image resource created by MIDP driver"
-//#                     );
+//#                 Logger.Trace(
+//#                     "This isn't image resource created by MIDP driver" );
 //#             }
 //#         }
         //#endif
@@ -254,7 +254,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 //#         {
 //#             MIDPImageResource test = (MIDPImageResource)imgResource;
 //#         } catch ( ClassCastException e ) {
-//#             Logger.Log( "This isn't image resource created by MIDP driver" );
+//#             Logger.Trace( "This isn't image resource created by MIDP driver" );
 //#         }
         //#endif
         return MIDPSubImage.CreateSubImagesFromResource(

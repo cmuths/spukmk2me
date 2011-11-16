@@ -15,7 +15,7 @@ public final class DoublyLinkedList
             //#ifdef __SPUKMK2ME_DEBUG
 //#             if ( (c_prev == null) || (c_next == null) )
 //#             {
-//#                 Logger.Log( "Dropping unassigned element." );
+//#                 Logger.Trace( "Dropping unassigned element." );
 //#             }
             //#endif
 
@@ -174,7 +174,7 @@ public final class DoublyLinkedList
     {
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( (index < 0) || (index >= m_nElement) )
-//#             Logger.Log( "Index is out of bounds." );
+//#             Logger.Trace( "Index is out of bounds." );
         //#endif
 
         Iterator i = first();

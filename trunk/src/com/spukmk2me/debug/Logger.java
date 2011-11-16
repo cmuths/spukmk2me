@@ -33,6 +33,15 @@ public final class Logger
                 CURRENT_EXPORTER.ExportMessage( message );
         }
     }
+    
+    public static void Trace( String message )
+    {
+        if ( !UNINITIALISED )
+        {
+            if ( CURRENT_EXPORTER != null )
+                CURRENT_EXPORTER.ExportTracingMessage( message );
+        }
+    }
 
     public static void FinaliseLoggingSystem()
     {

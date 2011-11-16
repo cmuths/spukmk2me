@@ -19,7 +19,7 @@
 package com.spukmk2me.scene;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.Logger;
+//# import com.spukmk2me.debug.Logger;
 //#endif
 import com.spukmk2me.Util;
 import com.spukmk2me.video.IVideoDriver;
@@ -111,14 +111,14 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
     public void SetFrameIndex( int frameIndex )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( m_images != null )
-        {
-            if ( (frameIndex >= m_images.length) || (frameIndex < 0) )
-            {
-                Logger.Log( "Sprite index was set out of range. Index: " +
-                    frameIndex );
-            }
-        }
+//#         if ( m_images != null )
+//#         {
+//#             if ( (frameIndex >= m_images.length) || (frameIndex < 0) )
+//#             {
+//#                 Logger.Trace( "Sprite index was set out of range. Index: " +
+//#                     frameIndex );
+//#             }
+//#         }
         //#endif
         
         m_currentFrame = frameIndex << 16;

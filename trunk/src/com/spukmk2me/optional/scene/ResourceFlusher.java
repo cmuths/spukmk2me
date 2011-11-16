@@ -26,15 +26,15 @@ public final class ResourceFlusher
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( saver == null )
 //#         {
-//#             Logger.Log( "ERROR: Null saver has been passed." );
+//#             Logger.Trace( "ERROR: Null saver has been passed." );
 //#         }
 //#         else if ( saver.GetSaveableResourceID() == null )
 //#         {
-//#             Logger.Log( "ERROR: ID list of this saver is null." );
+//#             Logger.Trace( "ERROR: ID list of this saver is null." );
 //#         }
 //#         else if ( saver.GetSaveableResourceID().length == 0 )
 //#         {
-//#             Logger.Log( "WARNING: ID list of this saver is empty." );
+//#             Logger.Trace( "WARNING: ID list of this saver is empty." );
 //#         }
         //#endif
 
@@ -49,7 +49,8 @@ public final class ResourceFlusher
             //#ifdef __SPUKMK2ME_DEBUG
 //#             if ( m_saverTable.containsKey( keyObject ) )
 //#             {
-//#                 Logger.Log( "There has been an existed id in previous saver" );
+//#                 Logger.Trace(
+//#                     "There has been an existed id in previous saver" );
 //#             }
             //#endif
             

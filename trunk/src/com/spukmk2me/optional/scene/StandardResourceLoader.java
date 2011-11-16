@@ -22,9 +22,11 @@ import com.spukmk2me.optional.font.BitmapFont;
 public final class StandardResourceLoader implements IResourceLoader
 {
     public StandardResourceLoader( IVideoDriver vdriver,
+        ResourceManager resourceManager,
         String pathToSceneFile, char dstPathSeparator )
     {
         m_vdriver           = vdriver;
+        m_resourceManager   = resourceManager;
         m_pathToSceneFile   = pathToSceneFile;
         m_dstPathSeparator  = dstPathSeparator;
     }
@@ -81,7 +83,8 @@ public final class StandardResourceLoader implements IResourceLoader
                     proxyName       = dis.readUTF();
 
                     resource = m_vdriver.CreateSubImage(
-                        m_imageResources[ imgResIndex ],
+                        (IImageResource)m_resourceManager.GetResource(
+                        imgResIndex, ResourceManager.RT_IMAGERESOURCE ),
                         x, y, w, h, rotationDegree, flippingFlags );
                     //#ifdef __SPUKMK2ME_SCENESAVER
 //#                     ISubImage.SubImageCreationData data =
@@ -110,8 +113,13 @@ public final class StandardResourceLoader implements IResourceLoader
                     path = ResourceProducer.convertToAbsolutePath(
                         m_pathToSceneFile, path, '/', m_dstPathSeparator );
 
-                    resource = new BitmapFont(
-                        this.getClass().getResourceAsStream( path ) );
+                    {
+                        InputStream temp_is =
+                            this.getClass().getResourceAsStream( path );
+                    
+                        resource = new BitmapFont( temp_is );
+                        temp_is.close();
+                    }
                     //#ifdef __SPUKMK2ME_SCENESAVER
 //#                     BitmapFontCreationData data =
 //#                         ((BitmapFont)resource).new BitmapFontCreationData();
@@ -129,15 +137,15 @@ public final class StandardResourceLoader implements IResourceLoader
         return resource;
     }
 
-    public void SetImageResources( IImageResource[] imageResources )
+    /*public void SetImageResources( IImageResource[] imageResources )
     {
         m_imageResources = imageResources;
-    }
+    }*/
 
     private static final byte[] AVAIABLE_ID = { 1, 2, 3 };
 
     private IVideoDriver        m_vdriver;
-    private IImageResource[]    m_imageResources;
+    private ResourceManager     m_resourceManager;
     private String              m_pathToSceneFile;
     private char                m_dstPathSeparator;
 }

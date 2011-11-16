@@ -83,11 +83,10 @@ are called BitmapFont files.
                                     "extra" and the file must point out what
                                     characters they are via Unicode code.
                                     Each four continuous bytes form up a
-                                    Unicode code. For example, 0x00A0 to 0x00A3
+                                    Unicode code. For example, 0x00A0 to 0x00A1
                                     is the Unicode code of the 95th character,
-                                    0x00A4 to 0x00A7 is the Unicode code of the
-                                    96th character. Signed or unsigned isn't
-                                    matter.
+                                    0x00A2 to 0x00A3 is the Unicode code of the
+                                    96th character.
 
         2.2 Trunk specification:
             Trunk part is written right after the header part, so the first

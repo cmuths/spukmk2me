@@ -19,9 +19,9 @@ final class MIDPImageResource
     {
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( filename.charAt( 0 ) != '/' )
-//#             Logger.Log( "Warning: image filename does not start with '." );
+//#             Logger.Trace( "Warning: image filename does not start with '." );
 //# 
-//#         System.out.print( "Loading image: " + filename + "..." );
+//#         Logger.Log( "Loading image: " + filename + "..." );
         //#endif
 
         m_filename  = filename;

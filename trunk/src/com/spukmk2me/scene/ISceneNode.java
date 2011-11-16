@@ -115,7 +115,7 @@ public abstract class ISceneNode
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( (node.c_next != null) || (node.c_prev != null) ||
 //#             (node.c_parent != null) )
-//#             Logger.Log( "Adding potentially defected node." );
+//#             Logger.Trace( "Adding potentially defected node." );
         //#endif
 
         ISceneNode bindingNode;
@@ -162,7 +162,7 @@ public abstract class ISceneNode
         if ( (c_prev == null) || (c_next == null) || (c_parent == null) )
         {
             //#ifdef __SPUKMK2ME_DEBUG
-//#             Logger.Log( "WARNING: Dropping unattached node." );
+//#             Logger.Trace( "WARNING: Dropping unattached node." );
             //#endif
             return;
         }

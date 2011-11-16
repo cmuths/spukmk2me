@@ -22,7 +22,7 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.game.GameCanvas;
 
 //#ifdef __SPUKMK2ME_DEBUG
-import com.spukmk2me.debug.Logger;
+//# import com.spukmk2me.debug.Logger;
 //#endif
 import com.spukmk2me.input.IInputMonitor;
 
@@ -99,11 +99,11 @@ public abstract class InputMonitor_MIDP extends GameCanvas
     public final void SetInputBehaviour( int action, byte behaviour )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-        if ( action == 0 )
-        {
-            Logger.Log( "Inputed action is 0." );
-            return;
-        }
+//#         if ( action == 0 )
+//#         {
+//#             Logger.Trace( "Inputed action is 0. No change is applied" );
+//#             return;
+//#         }
         //#endif
 
         int index = 0;

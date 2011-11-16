@@ -40,21 +40,20 @@ public final class SceneTreeLoader
         return null;
     }
 
-    public boolean Load( InputStream is, String pathToSceneFile,
-        char dstPathSeparator ) throws IOException
+    public boolean Load( InputStream is,
+        ResourceProducer producer ) throws IOException
     {
         DataInputStream dis = new DataInputStream( is );
 
         if ( !CheckHeader( dis ) )
         {
             //#ifdef __SPUKMK2ME_DEBUG
-//#             Logger.Log( "Invalid file header" );
+//#             Logger.Trace( "Invalid file header" );
             //#endif
             return false;
         }
-
-        m_resourceManager.LoadResources( dis, pathToSceneFile,
-            dstPathSeparator );
+        
+        m_resourceManager.LoadResources( dis, producer );
         LoadNodeNamesMappingTable( dis );
         ConstructSceneTree( dis );
 

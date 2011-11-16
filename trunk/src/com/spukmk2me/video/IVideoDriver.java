@@ -51,7 +51,7 @@ public interface IVideoDriver
      *  @return The possibility of using the driver on the current platform.
      */
     public boolean IsSupported();
-
+    
     /**
      *  For initialization.
      *  \details Some API require drawing and initializing must be in the same

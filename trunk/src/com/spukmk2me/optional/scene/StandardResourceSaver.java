@@ -42,7 +42,7 @@ public final class StandardResourceSaver implements IResourceSaver
         }
 
         //#ifdef __SPUKMK2ME_DEBUG
-//#         Logger.Log( "Received unexpected resource type ID." );
+//#         Logger.Trace( "Received unexpected resource type ID." );
         //#endif
 
         return 0;

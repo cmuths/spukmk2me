@@ -29,12 +29,12 @@ public final class ResourceProducer
     {
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( loader == null )
-//#             Logger.Log( "ERROR: Null parameter is passed." );
+//#             Logger.Trace( "ERROR: Null parameter is passed." );
 //# 
 //#         if ( loader.GetLoadableResourceID() == null )
-//#             Logger.Log( "ERROR: No id is specified in this loader." );
+//#             Logger.Trace( "ERROR: No id is specified in this loader." );
 //#         else if ( loader.GetLoadableResourceID().length == 0 )
-//#             Logger.Log( "ERROR: No id is specified in this loader." );
+//#             Logger.Trace( "ERROR: No id is specified in this loader." );
         //#endif
 
         Byte    keyObject;
@@ -42,20 +42,12 @@ public final class ResourceProducer
 
         for ( int i = 0; i != ids.length; ++i )
         {
-            //#ifdef __SPUKMK2ME_DEBUG
-//#             if ( ids[ i ] < 4 ) // Standard ID used
-//#             {
-//#                 Logger.Log(
-//#                     "ERROR: This loader uses standard ID: " + ids[ i ] );
-//#             }
-            //#endif
-
             // What a nice hash table, taking object as key.
             keyObject = new Byte( ids[ i ] );
 
             //#ifdef __SPUKMK2ME_DEBUG
 //#             if ( m_loaderTable.containsKey( keyObject ) )
-//#                 Logger.Log( "ERROR: Duplicated resource ID: " + ids[ i ] );
+//#                 Logger.Trace( "ERROR: Duplicated resource ID: " + ids[ i ] );
             //#endif
 
             m_loaderTable.put( keyObject, loader );

@@ -170,28 +170,22 @@ public final class Util
 
     /**
      *  Test if two rectangles intersect.
-     *  \details The first rectangle has two corners: (x11, y11) and
-     * (x12, y12), as the top-left and bottom-right corner respectively.
-     *  Two corners of the second rectangle are: (x21, y21), (x22, y22).
-     *  @return If two rectangles intersect or not.
+     *  @param x1 X coordinate of top-left point of the first rectangle.
+     *  @param y1 Y coordinate of top-left point of the first rectangle.
+     *  @param w1 Width of the first rectangle.
+     *  @param h1 Height of the first rectangle.
+     *  @param x2 X coordinate of top-left point of the second rectangle.
+     *  @param y2 X coordinate of top-left point of the second rectangle.
+     *  @param w2 Width of the second rectangle.
+     *  @param h2 Height of the second rectangle.
+     *  @return true if two rectangle intersect
      */
     public static boolean RectIntersect(
-        short x11, short y11, short x12, short y12,
-        short x21, short y21, short x22, short y22 )
+        short x1, short y1, short w1, short h1,
+        short x2, short y2, short w2, short h2 )
     {
-        if ( x11 > x22 )
-            return false;
-
-        if ( y11 > y22 )
-            return false;
-
-        if ( x21 > x12 )
-            return false;
-
-        if ( y21 > y22 )
-            return false;
-
-        return true;
+        return  (x1 < x2 + w2) && (y1 < y2 + h2) &&
+                (x2 < x1 + w1) && (y2 < y1 + h1);
     }
 
     /**

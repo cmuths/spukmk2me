@@ -87,21 +87,30 @@ public class TiledLayerSceneNode extends ISceneNode
     {
         //#ifdef __SPUKMK2ME_DEBUG
 //#         if ( (width == 0) || (height == 0)  )
-//#             Logger.Log( "WARNING: TiledLayer: zero dimension." );
+//#             Logger.Trace( "WARNING: TiledLayer: zero dimension." );
 //#         else if ( terrainData == null )
-//#             Logger.Log( "ERROR: TiledLayer: null pointer passed to terrain." );
+//#         {
+//#             Logger.Trace(
+//#                 "ERROR: TiledLayer: null pointer passed to terrain." );
+//#         }
 //#         else if ( terrainData.length != width * height )
-//#             Logger.Log( "WARNING: TiledLayer: terrain size mismatch" );
+//#             Logger.Trace( "WARNING: TiledLayer: terrain size mismatch" );
 //# 
 //#         if ( images == null )
-//#             Logger.Log( "WARNING: null pointer was passed to image data." );
+//#             Logger.Trace( "WARNING: null pointer was passed to image data." );
 //# 
 //#         if ( sprites == null )
-//#             Logger.Log( "WARNING: null pointer was passed to sprite data." );
+//#             Logger.Trace( "WARNING: null pointer was passed to sprite data." );
 //#         else if ( spriteSpeed == null )
-//#             Logger.Log( "WARNING: null pointer was passed to sprite speed." );
+//#         {
+//#             Logger.Trace(
+//#                 "WARNING: null pointer was passed to sprite speed." );
+//#         }
 //#         else if ( sprites.length != spriteSpeed.length )
-//#             Logger.Log( "WARNING: number of sprites/sprite speed mismatch." );
+//#         {
+//#             Logger.Trace(
+//#                 "WARNING: number of sprites/sprite speed mismatch." );
+//#         }
 //# 
         //#endif
 

@@ -82,12 +82,8 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
         oldClipH = (short)(clippingArea & 0x000000000000FFFFL);
 
         if ( Util.RectIntersect(
-            oldClipX, oldClipY,
-            (short)(oldClipX + oldClipW - 1),
-            (short)(oldClipY + oldClipH - 1),
-            rInfo.c_rasterX, rInfo.c_rasterY,
-            (short)(rInfo.c_rasterX + m_width - 1),
-            (short)(rInfo.c_rasterY + m_height - 1) ) )
+                oldClipX, oldClipY, oldClipW, oldClipH,
+                rInfo.c_rasterX, rInfo.c_rasterY, m_width, m_height ) )
         {
             clipX = (short)Math.max( rInfo.c_rasterX, oldClipX );
             clipY = (short)Math.max( rInfo.c_rasterY, oldClipY );

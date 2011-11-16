@@ -86,6 +86,16 @@ public class BluetoothMessageExporter implements MessageExporter,
             e.printStackTrace();
         }
     }
+    
+    public void ExportTracingMessage( String message )
+    {
+        try
+        {
+            m_outputStream.write( message.getBytes() );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+    }
 
     public void deviceDiscovered( RemoteDevice remoteDevice,
         DeviceClass deviceClass )

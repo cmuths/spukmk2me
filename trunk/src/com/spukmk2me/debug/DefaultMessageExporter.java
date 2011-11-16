@@ -18,4 +18,9 @@ public class DefaultMessageExporter implements MessageExporter
     {
         System.out.println( message );
     }
+    
+    public void ExportTracingMessage( String message )
+    {
+        new Exception( message ).printStackTrace();
+    }
 }
