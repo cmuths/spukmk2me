@@ -1,12 +1,14 @@
 package com.spukmk2me.optional.scene;
 
-import com.spukmk2me.video.IImageResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.DataInputStream;
 
+import com.spukmk2me.DoublyLinkedList;
+import com.spukmk2me.debug.Logger;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IResource;
+import com.spukmk2me.video.IImageResource;
 import com.spukmk2me.optional.font.BitmapFont;
 //#ifdef __SPUKMK2ME_SCENESAVER
 //# import com.spukmk2me.video.IImageResource.ImageResourceCreationData;
@@ -29,6 +31,15 @@ public final class StandardResourceLoader implements IResourceLoader
         m_resourceManager   = resourceManager;
         m_pathToSceneFile   = pathToSceneFile;
         m_dstPathSeparator  = dstPathSeparator;
+        
+        m_preloadedResources    = new DoublyLinkedList[ 4 ];
+        m_preloadedResNames     = new DoublyLinkedList[ 4 ];
+        
+        for ( int i = 1; i != 4; ++i )
+        {
+            m_preloadedResources[ i ]   = new DoublyLinkedList();
+            m_preloadedResNames[ i ]    = new DoublyLinkedList();
+        }
     }
 
     public byte[] GetLoadableResourceID()
@@ -48,11 +59,16 @@ public final class StandardResourceLoader implements IResourceLoader
                 {
                     String path         = dis.readUTF();
                     String proxyName    = dis.readUTF();
+                    
+                    resource = CheckPreloadedResources( proxyName, (byte)1 );
+                    
+                    if ( resource == null )
+                    {
+                        path = ResourceProducer.convertToAbsolutePath(
+                            m_pathToSceneFile, path, '/', m_dstPathSeparator );
 
-                    path = ResourceProducer.convertToAbsolutePath(
-                        m_pathToSceneFile, path, '/', m_dstPathSeparator );
-
-                    resource = m_vdriver.CreateImageResource( path );
+                        resource = m_vdriver.CreateImageResource( path );
+                    }
                     //#ifdef __SPUKMK2ME_SCENESAVER
 //#                     ImageResourceCreationData creationData =
 //#                         ((IImageResource)resource).
@@ -81,11 +97,16 @@ public final class StandardResourceLoader implements IResourceLoader
                     imgResIndex     = dis.readUnsignedShort();
                     flippingFlags   = dis.readByte();
                     proxyName       = dis.readUTF();
-
-                    resource = m_vdriver.CreateSubImage(
-                        (IImageResource)m_resourceManager.GetResource(
-                        imgResIndex, ResourceManager.RT_IMAGERESOURCE ),
-                        x, y, w, h, rotationDegree, flippingFlags );
+                    
+                    resource = CheckPreloadedResources( proxyName, (byte)2 );
+                    
+                    if ( resource == null )
+                    {
+                        resource = m_vdriver.CreateSubImage(
+                            (IImageResource)m_resourceManager.GetResource(
+                            imgResIndex, ResourceManager.RT_IMAGERESOURCE ),
+                            x, y, w, h, rotationDegree, flippingFlags );
+                    }
                     //#ifdef __SPUKMK2ME_SCENESAVER
 //#                     ISubImage.SubImageCreationData data =
 //#                         ((ISubImage)resource).new SubImageCreationData();
@@ -109,16 +130,21 @@ public final class StandardResourceLoader implements IResourceLoader
                 {
                     String path         = dis.readUTF();
                     String proxyName    = dis.readUTF();
-
-                    path = ResourceProducer.convertToAbsolutePath(
-                        m_pathToSceneFile, path, '/', m_dstPathSeparator );
-
-                    {
-                        InputStream temp_is =
-                            this.getClass().getResourceAsStream( path );
                     
-                        resource = new BitmapFont( temp_is );
-                        temp_is.close();
+                    resource = CheckPreloadedResources( proxyName, (byte)3 );
+
+                    if ( resource == null )
+                    {
+                        path = ResourceProducer.convertToAbsolutePath(
+                            m_pathToSceneFile, path, '/', m_dstPathSeparator );
+
+                        {
+                            InputStream temp_is =
+                                this.getClass().getResourceAsStream( path );
+
+                            resource = new BitmapFont( temp_is );
+                            temp_is.close();
+                        }
                     }
                     //#ifdef __SPUKMK2ME_SCENESAVER
 //#                     BitmapFontCreationData data =
@@ -137,15 +163,48 @@ public final class StandardResourceLoader implements IResourceLoader
         return resource;
     }
 
-    /*public void SetImageResources( IImageResource[] imageResources )
+    public void AddPreloadedResources( IResource resource,
+        String proxyName, byte resourceType )
     {
-        m_imageResources = imageResources;
-    }*/
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         if ( (resourceType < 1) || (resourceType > 3) )
+//#         {
+//#             Logger.Trace( "Cannot accept this type of resources" );
+//#             return;
+//#         }
+        //#endif
+        
+        m_preloadedResources[ resourceType ].push_back( resource );
+        m_preloadedResNames[ resourceType ].push_back( proxyName );
+    }
+    
+    private IResource CheckPreloadedResources( String proxyName,
+        byte resourceType )
+    {
+        DoublyLinkedList.Iterator i =
+            m_preloadedResNames[ resourceType ].first();
+        DoublyLinkedList.Iterator end =
+            m_preloadedResNames[ resourceType ].end();
+        DoublyLinkedList.Iterator resI =
+            m_preloadedResources[ resourceType ].first();
+        
+        for ( ; !i.equals( end ); i.fwrd() )
+        {
+            if ( proxyName.equals( i.data() ) )
+                return (IResource)resI.data();
+            
+            resI.fwrd();
+        }
+        
+        return null;
+    }
 
     private static final byte[] AVAIABLE_ID = { 1, 2, 3 };
 
     private IVideoDriver        m_vdriver;
     private ResourceManager     m_resourceManager;
+    private DoublyLinkedList[]  m_preloadedResources;
+    private DoublyLinkedList[]  m_preloadedResNames;
     private String              m_pathToSceneFile;
     private char                m_dstPathSeparator;
 }
