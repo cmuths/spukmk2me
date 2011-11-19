@@ -171,8 +171,10 @@ public final class BitmapFont extends ICFont
         for ( int i = 0; i != nColor; ++i )
         {
             m_colors[ i ] =
-                properties[ j ] << 24 | properties[ j + 1 ] << 16 |
-                properties[ j + 2 ] << 8 | properties[ j + 3 ];
+                properties[ j ] << 24 |
+                ((properties[ j + 1 ] << 16) & 0x00FF0000) |
+                ((properties[ j + 2 ] << 8) & 0x0000FF00) |
+                (properties[ j + 3 ] & 0x000000FF);
             j += 4;
         }
 

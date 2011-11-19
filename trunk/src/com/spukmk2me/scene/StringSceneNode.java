@@ -82,6 +82,18 @@ public final class StringSceneNode extends ISceneNode
         SetupString( m_font, s, m_properties, m_alignment,
             m_width, m_height, m_truncate);
     }
+
+    /**
+     *  Replace current content of this node.
+     *  \details All other properties like font, width, height, etc... are
+     * preserved.
+     *  @param s New content of this node.
+     */
+    public void Replace( byte[] properties )
+    {
+        SetupString( m_font, m_str, properties, m_alignment,
+            m_width, m_height, m_truncate);
+    }
     
     /**
      *  Set the string.

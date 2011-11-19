@@ -76,7 +76,7 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
         short clipX, clipY, clipW, clipH;
         short oldClipX, oldClipY, oldClipW, oldClipH;
 
-        oldClipX = (short)(clippingArea >> 48);
+        oldClipX = (short)(clippingArea >>> 48);
         oldClipY = (short)(clippingArea >> 32 & 0x000000000000FFFFL);
         oldClipW = (short)(clippingArea >> 16 & 0x000000000000FFFFL);
         oldClipH = (short)(clippingArea & 0x000000000000FFFFL);
