@@ -26,7 +26,12 @@ public final class SceneTreeLoader
         m_resourceManager = resourceManager;
     }
 
-    public ISceneNode GetSceneNode( String name )
+    /**
+     *  Get the scene node associated with specified proxy name.
+     *  @param name Proxy name
+     *  @return The corresponding node, null if there's no such node.
+     */
+    public ISceneNode Get( String name )
     {
         if ( name.equals( ROOTNODE_NAME ) )
             return m_root;
