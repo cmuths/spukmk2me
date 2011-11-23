@@ -18,6 +18,7 @@
 
 package com.spukmk2me.extension.midp;
 
+import com.spukmk2me.debug.Logger;
 import javax.microedition.lcdui.Graphics;
 
 import com.spukmk2me.video.IVideoDriver;
@@ -151,8 +152,8 @@ final class MIDPSubImage
         MIDPImageResource imageResource, short width, short height )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-//#         System.out.print(
-//#             "Creating image batch from " + imageResource.GetSource() +
+//#         Logger.Log(
+//#             "Creating image batch from " + imageResource.toString() +
 //#             ", w = " + width + ", h = " + height + "..." );
         //#endif
 
@@ -186,7 +187,7 @@ final class MIDPSubImage
         }
 
         //#ifdef __SPUKMK2ME_DEBUG
-//#         System.out.println( "Created." );
+//#         Logger.Log( "Created.\n" );
         //#endif
 
         return images;

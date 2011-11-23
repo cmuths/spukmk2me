@@ -1,5 +1,6 @@
 package com.spukmk2me.extension.midp;
 
+import java.io.InputStream;
 import java.io.IOException;
 import javax.microedition.lcdui.Image;
 
@@ -15,26 +16,9 @@ final class MIDPImageResource
     implements IImageResource
     //#endif
 {
-    public MIDPImageResource( String filename ) throws IOException
+    public MIDPImageResource( InputStream is ) throws IOException
     {
-        //#ifdef __SPUKMK2ME_DEBUG
-//#         if ( filename.charAt( 0 ) != '/' )
-//#             Logger.Trace( "Warning: image filename does not start with '." );
-//# 
-//#         Logger.Log( "Loading image: " + filename + "..." );
-        //#endif
-
-        m_filename  = filename;
-        m_image     = Image.createImage( filename );
-
-        //#ifdef __SPUKMK2ME_DEBUG
-//#         System.out.println( " Loaded." );
-        //#endif
-    }
-
-    public String GetSource()
-    {
-        return m_filename;
+        m_image = Image.createImage( is );
     }
 
     public short GetWidth()
@@ -52,6 +36,5 @@ final class MIDPImageResource
         return m_image;
     }
 
-    private final Image     m_image;
-    private final String    m_filename;
+    private final Image m_image;
 }

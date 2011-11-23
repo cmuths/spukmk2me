@@ -18,6 +18,7 @@
 
 package com.spukmk2me.extension.midp;
 
+import java.io.InputStream;
 import java.io.IOException;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
@@ -26,6 +27,7 @@ import javax.microedition.lcdui.Graphics;
 //# import com.spukmk2me.debug.Logger;
 //#endif
 
+import com.spukmk2me.io.IFileSystem;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.ICFontRenderer;
 import com.spukmk2me.video.RenderInfo;
@@ -40,8 +42,9 @@ import com.spukmk2me.video.IImageResource;
 public final class VideoDriver_MIDP extends InputMonitor_MIDP
     implements IVideoDriver
 {
-    public VideoDriver_MIDP()
+    public VideoDriver_MIDP( IFileSystem fileSystem )
     {
+        m_fileSystem = fileSystem;
         this.setFullScreenMode( true );
     }
 
@@ -205,11 +208,34 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     }
     
     public void CleanupRenderingContext() {}
+    
+    public IImageResource CreateImageResource( InputStream inputStream )
+        throws IOException
+    {
+        return new MIDPImageResource( inputStream );
+    }
 
     public IImageResource CreateImageResource( String filename )
         throws IOException
     {
-        return new MIDPImageResource( filename );
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         if ( filename.charAt( 0 ) != '/' )
+//#             Logger.Trace( "Warning: image filename does not start with '." );
+//# 
+//#         Logger.Log( "Loading image: " + filename + "..." );
+        //#endif
+        
+        InputStream is =
+            m_fileSystem.OpenFile( filename, IFileSystem.FILETYPE_INTERNAL );
+        IImageResource res = new MIDPImageResource( is );
+        
+        is.close();
+        
+        //#ifdef __SPUKMK2ME_DEBUG
+//#         Logger.Log( " Loaded.\n" );
+        //#endif
+        
+        return res;
     }
 
     public ISubImage CreateSubImage( IImageResource imgResource,
@@ -239,7 +265,8 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     
     public ISubImage CreateSubImage( String filename ) throws IOException
     {
-        MIDPImageResource resource = new MIDPImageResource( filename );
+        MIDPImageResource resource =
+            (MIDPImageResource)CreateImageResource( filename );
         
         return new MIDPSubImage( resource,
             (short)0, (short)0, resource.GetWidth(), resource.GetHeight(),
@@ -263,6 +290,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 
     private static final long   MAX_TIME_PER_STEP = 100;
 
+    private IFileSystem     m_fileSystem;
     private Graphics        m_g;
     private ICFontRenderer  m_fontRenderer;
     private RenderInfo      m_renderInfo;

@@ -29,7 +29,7 @@ import com.spukmk2me.input.IInputMonitor;
 
 public final class GameThread extends Thread
 {
-    public GameThread( GameMIDlet owner, IGameProcessor gameProcessor,
+    public GameThread( EntryPoint owner, IGameProcessor gameProcessor,
         ConfigData configData )
     {
         m_owner                 = owner;
@@ -52,9 +52,7 @@ public final class GameThread extends Thread
             this.start();
             m_firstActivatedTime = false;
         }
-
-        Display.getDisplay( m_owner ).setCurrent(
-            (Displayable)m_vdriver.GetMIDPDisplayable() );
+        
         m_working = true;
     }
 
@@ -113,7 +111,7 @@ public final class GameThread extends Thread
                         Thread.sleep( waitTime );
                     } catch ( InterruptedException e ) {
                         //#ifdef __SPUKMK2ME_DEBUG
-                        e.printStackTrace();
+//#                         e.printStackTrace();
                         //#endif
                     }
                 }
@@ -130,7 +128,7 @@ public final class GameThread extends Thread
                 } catch ( InterruptedException e )
                 {
                     //#ifdef __SPUKMK2ME_DEBUG
-                    e.printStackTrace();
+//#                     e.printStackTrace();
                     //#endif
                 }
 
@@ -152,7 +150,7 @@ public final class GameThread extends Thread
     private IInputMonitor   m_imonitor;
     private SceneManager    m_scene;
 
-    private GameMIDlet      m_owner;
+    private EntryPoint      m_owner;
     private IGameProcessor  m_gameProcessor;
     private ConfigData      m_configData;
 

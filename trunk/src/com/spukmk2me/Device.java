@@ -18,10 +18,12 @@
 
 package com.spukmk2me;
 
+import com.spukmk2me.io.IFileSystem;
 import com.spukmk2me.input.IInputMonitor;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.sound.ISoundMonitor;
 import com.spukmk2me.scene.SceneManager;
+import com.spukmk2me.extension.midp.FileSystem_MIDP;
 //#ifdef __SPUKMK2ME_MIDP
 //# import com.spukmk2me.extension.midp.VideoDriver_MIDP;
 //# import com.spukmk2me.extension.midp.SoundMonitor_MIDP;
@@ -86,12 +88,13 @@ import com.spukmk2me.scene.SceneManager;
 public final class Device
 {
     private Device( IVideoDriver vdriver, ISoundMonitor smonitor,
-        IInputMonitor inputMonitor, SceneManager scene )
+        IInputMonitor inputMonitor, IFileSystem fileSystem, SceneManager scene )
     {
         m_soundMonitor  = smonitor;
         m_videoDriver   = vdriver;
         m_inputMonitor  = inputMonitor;
         m_sceneManager  = scene;
+        m_fileSystem    = fileSystem;
     }
 
     /**
@@ -104,24 +107,33 @@ public final class Device
      * if the desired modules cannot be initialised.
      */
     public static Device CreateSPUKMK2meDevice( byte videoDriverID,
-        byte soundMonitorID, byte inputMonitorID, int numberOfLayers )
+        byte soundMonitorID, byte inputMonitorID, byte fileSystemID,
+        int numberOfLayers )
     {
         IVideoDriver    vdriver     = null;
         ISoundMonitor   smonitor    = null;
         IInputMonitor   imonitor    = null;
+        IFileSystem     fsystem     = null;
         SceneManager    scene       = null;
+        
+        switch ( fileSystemID )
+        {
+            // There hasn't been any choice for input monitor.
+            default:
+                fsystem = new FileSystem_MIDP();
+        }
 
         switch ( videoDriverID )
         {
             //#ifdef __SPUKMK2ME_MIDP
 //#             case IVideoDriver.VIDEODRIVER_MIDP:
-//#                 vdriver = new VideoDriver_MIDP();
-//#
+//#                 vdriver = new VideoDriver_MIDP( fsystem );
+//# 
 //#                 if ( vdriver.IsSupported() )
 //#                     imonitor = (IInputMonitor)vdriver;
 //#                 else
 //#                     vdriver = null;
-//#
+//# 
 //#                 break;
             //#endif
 
@@ -140,7 +152,7 @@ public final class Device
                 //#ifdef __SPUKMK2ME_GLES
 //#                     vdriver     = new VideoDriver_GLES10();
                 //#elifdef __SPUKMK2ME_MIDP
-//#                     vdriver     = new VideoDriver_MIDP();
+//#                     vdriver     = new VideoDriver_MIDP( fsystem );
                 //#else
                     vdriver = null;
                 //#endif
@@ -148,7 +160,7 @@ public final class Device
                 if ( vdriver != null )
                 {
                     if ( vdriver.IsSupported() )
-                        imonitor    = (IInputMonitor)vdriver;
+                        imonitor = (IInputMonitor)vdriver;
                     else
                         vdriver = null;
                 }
@@ -174,13 +186,13 @@ public final class Device
         {
             // There hasn't been any choice for input monitor.
         }
-
+        
         scene = new SceneManager( vdriver, numberOfLayers );
 
         if ( (vdriver == null) || (smonitor == null) || (imonitor == null) )
             return null;
 
-        return new Device( vdriver, smonitor, imonitor, scene );
+        return new Device( vdriver, smonitor, imonitor, fsystem, scene );
     }
 
     /**
@@ -195,9 +207,9 @@ public final class Device
      */
     public static Device CreateSPUKMK2meDevice(
         IVideoDriver vdriver, ISoundMonitor smonitor,
-        IInputMonitor imonitor, SceneManager scene )
+        IInputMonitor imonitor, IFileSystem fsystem, SceneManager scene )
     {
-        return new Device( vdriver, smonitor, imonitor, scene );
+        return new Device( vdriver, smonitor, imonitor, fsystem, scene );
     }
 
     /**
@@ -225,6 +237,15 @@ public final class Device
     public IInputMonitor GetInputMonitor()
     {
         return m_inputMonitor;
+    }
+    
+    /**
+     *  Get the current file system.
+     *  @return The current file system.
+     */
+    public IFileSystem GetFileSystem()
+    {
+        return m_fileSystem;
     }
 
     /**
@@ -258,4 +279,5 @@ public final class Device
     private SceneManager    m_sceneManager;
     private IInputMonitor   m_inputMonitor;
     private ISoundMonitor   m_soundMonitor;
+    private IFileSystem     m_fileSystem;
 }

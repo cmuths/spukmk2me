@@ -16,7 +16,7 @@ public class DefaultMessageExporter implements MessageExporter
 
     public void ExportMessage( String message )
     {
-        System.out.println( message );
+        System.out.print( message );
     }
     
     public void ExportTracingMessage( String message )

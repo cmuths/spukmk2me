@@ -18,6 +18,7 @@
 
 package com.spukmk2me.video;
 
+import java.io.InputStream;
 import java.io.IOException;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
@@ -176,10 +177,21 @@ public interface IVideoDriver
     public long GetClipping();
 
     /**
+     *  Create an image resources from an input stream.
+     *  @param inputStream Image file name.
+     *  @return Image resource created from file.
+     *  @throws IOException If loading sequence got error.
+     */
+    public IImageResource CreateImageResource( InputStream inputStream )
+        throws IOException;
+    
+    /**
      *  Create an image resources from file.
      *  @param filename Image file name.
      *  @return Image resource created from file.
      *  @throws IOException If loading sequence got error.
+     *  @deprecated This function is deprecated due to the ambiguity of
+     * "filename". 
      */
     public IImageResource CreateImageResource( String filename )
         throws IOException;
@@ -207,6 +219,8 @@ public interface IVideoDriver
      *  @param filename File name to load image.
      *  @return Created sub image.
      *  @throws IOException If loading sequence got error.
+     *  @deprecated This function is deprecated due to the ambiguity of
+     * "filename". 
      */
     public ISubImage CreateSubImage( String filename ) throws IOException;
     
