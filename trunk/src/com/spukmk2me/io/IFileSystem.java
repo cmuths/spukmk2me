@@ -9,24 +9,27 @@ public interface IFileSystem
     /**
      *  Open a stream to read file.
      *  @param filename Filename of file to be read.
+     *  @param location Location to read file.
      *  @return An InputStream object. Can be null if opening process fails.
      *  @throws IOException If there's any I/O exception occurred.
      */
-    public InputStream OpenFile( String filename, byte filetype )
+    public InputStream OpenFile( String filename, byte location )
         throws IOException;
 
     /**
      *  Open a stream to write file, overwrite if file exists.
      *  @param filename Filename of file to be written.
+     *  @param location Location of file to be read.
      *  @return An OutputStream object. Can be null if stream creating process
      * fails.
      *  @throws IOException If there's any I/O exception occurred.
      */
-    public OutputStream WriteFile( String filename, byte filetype )
+    public OutputStream WriteFile( String filename, byte location )
         throws IOException;
     
     // Standard file type
-    public static final byte FILETYPE_INTERNAL      = 0;
-    public static final byte FILETYPE_EXTERNAL      = 1;
-    public static final byte FILETYPE_URL           = 2;
+    public static final byte LOCATION_DEFAULT       = -1;
+    public static final byte LOCATION_INTERNAL      = 0;
+    public static final byte LOCATION_EXTERNAL      = 1;
+    public static final byte LOCATION_URL           = 2;
 }

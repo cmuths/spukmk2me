@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.DataInputStream;
 
+import com.spukmk2me.Util;
 import com.spukmk2me.DoublyLinkedList;
 import com.spukmk2me.debug.Logger;
+import com.spukmk2me.io.IFileSystem;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.IResource;
 import com.spukmk2me.video.IImageResource;
@@ -24,10 +26,11 @@ import com.spukmk2me.optional.font.BitmapFont;
 public final class StandardResourceLoader implements IResourceLoader
 {
     public StandardResourceLoader( IVideoDriver vdriver,
-        ResourceManager resourceManager,
+        ResourceManager resourceManager, IFileSystem fsystem,
         String pathToSceneFile, char dstPathSeparator )
     {
         m_vdriver           = vdriver;
+        m_fileSystem        = fsystem;
         m_resourceManager   = resourceManager;
         m_pathToSceneFile   = pathToSceneFile;
         m_dstPathSeparator  = dstPathSeparator;
@@ -64,7 +67,7 @@ public final class StandardResourceLoader implements IResourceLoader
                     
                     if ( resource == null )
                     {
-                        path = ResourceProducer.convertToAbsolutePath(
+                        path = Util.ConvertToAbsolutePath(
                             m_pathToSceneFile, path, '/', m_dstPathSeparator );
 
                         resource = m_vdriver.CreateImageResource( path );
@@ -135,12 +138,12 @@ public final class StandardResourceLoader implements IResourceLoader
 
                     if ( resource == null )
                     {
-                        path = ResourceProducer.convertToAbsolutePath(
+                        path = Util.ConvertToAbsolutePath(
                             m_pathToSceneFile, path, '/', m_dstPathSeparator );
 
                         {
-                            InputStream temp_is =
-                                this.getClass().getResourceAsStream( path );
+                            InputStream temp_is = m_fileSystem.OpenFile(
+                                path, IFileSystem.LOCATION_DEFAULT );
 
                             resource = new BitmapFont( temp_is );
                             temp_is.close();
@@ -202,6 +205,7 @@ public final class StandardResourceLoader implements IResourceLoader
     private static final byte[] AVAIABLE_ID = { 1, 2, 3 };
 
     private IVideoDriver        m_vdriver;
+    private IFileSystem         m_fileSystem;
     private ResourceManager     m_resourceManager;
     private DoublyLinkedList[]  m_preloadedResources;
     private DoublyLinkedList[]  m_preloadedResNames;

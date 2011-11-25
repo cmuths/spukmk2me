@@ -130,7 +130,7 @@ final class MIDPSubImage
 
     public void Render( IVideoDriver driver )
     {
-        driver.GetMIDPGraphics().drawRegion(
+        ((VideoDriver_MIDP)driver).GetMIDPGraphics().drawRegion(
             m_imageResource.GetMIDPImage(),
             m_x, m_y, m_width, m_height,
             m_midpTransformationFlag,

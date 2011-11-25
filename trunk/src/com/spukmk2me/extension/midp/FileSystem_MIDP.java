@@ -17,21 +17,24 @@ public final class FileSystem_MIDP implements IFileSystem
 {
     public FileSystem_MIDP() {}
 
-    public InputStream OpenFile( String filename, byte filetype )
+    public InputStream OpenFile( String filename, byte location )
         throws IOException
     {
-        if ( filetype == IFileSystem.FILETYPE_INTERNAL )
-            return this.getClass().getResourceAsStream( filename );
-        //#ifdef __SPUKMK2ME_DEBUG
-//#         else
-//#         {
-//#             Logger.Trace( "Unsupported file type." );
-//#             return null;
-//#         }
-        //#endif
+        switch ( location )
+        {
+            case IFileSystem.LOCATION_INTERNAL:
+            case IFileSystem.LOCATION_DEFAULT:
+                return this.getClass().getResourceAsStream( filename );
+                
+            default:
+                //#ifdef __SPUKMK2ME_DEBUG
+//#                 Logger.Trace( "Unsupported file type." );
+                //#endif
+                return null;
+        }
     }
 
-    public OutputStream WriteFile( String filename, byte filetype )
+    public OutputStream WriteFile( String filename, byte location )
         throws IOException
     {
         return null;

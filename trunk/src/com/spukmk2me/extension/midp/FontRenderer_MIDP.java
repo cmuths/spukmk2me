@@ -32,7 +32,7 @@ public final class FontRenderer_MIDP extends ICFontRenderer
     public FontRenderer_MIDP( IVideoDriver vdriver )
     {
         super( vdriver );
-        m_g = (Graphics)vdriver.GetMIDPGraphics();
+        m_g = ((VideoDriver_MIDP)vdriver).GetMIDPGraphics();
     }
 
     protected void RenderCharacter( ICFont font, char character )

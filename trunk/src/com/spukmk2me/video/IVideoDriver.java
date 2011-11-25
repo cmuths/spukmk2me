@@ -29,7 +29,7 @@ import javax.microedition.lcdui.Graphics;
  * responsibility for rendering.\n
  *  A video driver can be unusable before the call to
  * PrepareRenderingContext(). The constructor of any video driver must only do
- * platform-independent work to ensure the stability of SPUKMK2ME engine. After
+ * platform-independent work to ensure the stability of SPUKMK2me engine. After
  * construction, user can check if the driver is supported on the current
  * platform or not.
  *  A video driver must create it's suitable font renderer for rendering.\n\n
@@ -102,28 +102,13 @@ public interface IVideoDriver
     public void FinishRendering();
 
     /**
-     *  Get the displayable to display.
-     *  \details Since MIDP API relies on Displayable, all things are put to
-     * screen must be Displayable. Of course you must put a Displayable object
-     * to your screen via javax.microedition.lcdui.Display.setCurrent().
-     *  @return The representative MIDP Displayable object or null if an
-     * instance of javax.microedition.lcdui.Displayable cannot be returned.
+     *  Get a platform-dependent property.
+     *  \details More details can be seen in each dependent implement
+     * if IVideoDriver.
+     *  @param propertyName Name of property.
+     *  @return Object represent property name.
      */
-    public Displayable GetMIDPDisplayable();
-
-    /**
-     *  Get the Graphics for manual drawing.
-     *  \details SPUKMK2ME engine isn't completed, even if it's completed,
-     * sometimes we must do some manual drawing.
-     *  @return The Graphics object to draw to the screen or null if an
-     * instance of javax.microedition.lcdui.Graphics cannot be returned.
-     */
-    public Graphics GetMIDPGraphics();
-
-    /**
-     *
-     */
-    public Object GetOtherRenderingAPI();
+    public Object GetProperty( String propertyName );
 
     /**
      *  Get the font renderer associated with this video driver.

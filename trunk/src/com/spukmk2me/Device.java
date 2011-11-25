@@ -23,8 +23,8 @@ import com.spukmk2me.input.IInputMonitor;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.sound.ISoundMonitor;
 import com.spukmk2me.scene.SceneManager;
-import com.spukmk2me.extension.midp.FileSystem_MIDP;
 //#ifdef __SPUKMK2ME_MIDP
+//# import com.spukmk2me.extension.midp.FileSystem_MIDP;
 //# import com.spukmk2me.extension.midp.VideoDriver_MIDP;
 //# import com.spukmk2me.extension.midp.SoundMonitor_MIDP;
 //#endif
@@ -120,7 +120,11 @@ public final class Device
         {
             // There hasn't been any choice for input monitor.
             default:
-                fsystem = new FileSystem_MIDP();
+                //#ifdef __SPUKMK2ME_MIDP
+//#                 fsystem = new FileSystem_MIDP();
+                //#else
+                fsystem = null;
+                //#endif
         }
 
         switch ( videoDriverID )

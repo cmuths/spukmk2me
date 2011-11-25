@@ -323,6 +323,146 @@ public final class Util
     {
         return 0;
     }
+    
+    /**
+     *  Convert from absolute path to relative path.
+     *  @param absoluteFilePath The absolute path to be converted.
+     *  @param absoluteBasePath The absolute path of directory to create
+     * relative path to file path.
+     *  @param sourcePlatformPathSeparator Path separator used in
+     * absoluteFilePath and absoluteBasePath.
+     *  @param destPlatformPathSeparator Path separator used in result.
+     *  @result Relative path from base path to file path.
+     */
+    public static String ConvertToRelativePath(
+        String absoluteFilePath, String absoluteBasePath,
+        char sourcePlatformPathSeparator, char destPlatformPathSeparator )
+    {
+        int fileLength  = absoluteFilePath.length();
+        int saveLength  = absoluteBasePath.length();
+
+        if ( (fileLength == 0) || (saveLength == 0) )
+            return null;
+
+        char[] _absoluteFilePath = absoluteFilePath.toCharArray();
+        char[] _absoluteBasePath = absoluteBasePath.toCharArray();
+
+        for( int i = 0; i != saveLength; ++i )
+        {
+            if ( _absoluteBasePath[ i ] == sourcePlatformPathSeparator )
+                _absoluteBasePath[ i ] = destPlatformPathSeparator;
+        }
+
+        for( int i = 0; i != fileLength; ++i )
+        {
+            if ( _absoluteFilePath[ i ] == sourcePlatformPathSeparator )
+                _absoluteFilePath[ i ] = destPlatformPathSeparator;
+        }
+
+        absoluteFilePath = new String( _absoluteFilePath );
+        absoluteBasePath = new String( _absoluteBasePath );
+
+        // Search for the first separator
+        int i = 0;
+
+        while ( _absoluteFilePath[ i ] != destPlatformPathSeparator )
+        {
+            ++i;
+
+            if ( (i == fileLength) || (i == saveLength) )
+                return null;
+        }
+        // Done searching for first separator
+
+        if ( !absoluteFilePath.regionMatches( false,
+            0, absoluteBasePath, 0, i + 1 ) )
+            return null;
+
+        int lastMatchedSeparatorIndex = i;
+        
+        ++i;
+
+        while ( (i != fileLength) && (i != saveLength) )
+        {
+            if ( _absoluteFilePath[ i ] != _absoluteBasePath[ i ] )
+                break;
+
+            if ( _absoluteFilePath[ i ] == destPlatformPathSeparator )
+                lastMatchedSeparatorIndex = i;
+
+            ++i;
+        }
+
+        int nUpperDir = 0;
+
+        for ( i = lastMatchedSeparatorIndex; i != saveLength; ++i )
+        {
+            if ( _absoluteBasePath[ i ] == destPlatformPathSeparator )
+                ++nUpperDir;
+        }
+
+        String resultPath = "";
+        String parentPath = ".." + destPlatformPathSeparator;
+
+        for ( i = nUpperDir; i != 0; --i )
+            resultPath += parentPath;
+
+        resultPath += absoluteFilePath.substring(
+            lastMatchedSeparatorIndex + 1 );
+        return resultPath;
+    }
+
+    /**
+     *  Convert from relative path to absolute path.
+     *  @param basePath The base directory.
+     *  @param relativePath Relative path to base directory.
+     *  @param srcPathSeparator Path separator used in basePath and
+     * relativePath.
+     *  @param destPathSeparator Path separator used in result.
+     *  @return 
+     */
+    public static String ConvertToAbsolutePath( String basePath,
+        String relativePath, char srcPathSeparator, char destPathSeparator )
+    {
+        char[] _basePath        = basePath.toCharArray();
+        char[] _relativePath    = relativePath.toCharArray();
+
+        for ( int i = 0; i != _basePath.length; ++i )
+        {
+            if ( _basePath[ i ] == srcPathSeparator )
+                _basePath[ i ] = destPathSeparator;
+        }
+
+        for ( int i = 0; i != _relativePath.length; ++i )
+        {
+            if ( _relativePath[ i ] == srcPathSeparator )
+                _relativePath[ i ] = destPathSeparator;
+        }
+
+        relativePath     = new String( _relativePath );
+        basePath   = new String( _basePath );
+
+        String parentPath = ".." + destPathSeparator;
+        int lastParentIndex = -1, nParent = 0, temp;
+
+        while ( (temp = relativePath.indexOf( parentPath, lastParentIndex + 1 ))
+            != -1 )
+        {
+            lastParentIndex = temp + 2;
+            ++nParent;
+        }
+
+        int sceneTruncatedIndex = basePath.length() - 1;
+
+        for ( int i = nParent; i != 0; --i )
+        {
+            sceneTruncatedIndex = basePath.lastIndexOf(
+                destPathSeparator, sceneTruncatedIndex ) - 1;
+        }
+
+        return basePath.substring( 0, sceneTruncatedIndex + 1 ) +
+            destPathSeparator + relativePath.substring( lastParentIndex + 1 );
+    }
 
     public static final int PI = 0;
 

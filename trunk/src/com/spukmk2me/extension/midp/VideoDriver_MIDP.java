@@ -145,20 +145,31 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 
         this.flushGraphics();        
     }
-
-    public Displayable GetMIDPDisplayable()
+    
+    /**
+     *  Get a MIDP-dependent property.
+     *  @param propertyName Can be PROPERTY_MIDPGRAPHICS or
+     * PROPERTY_MIDPDISPLAYABLE.
+     *  @return A Graphics object or a Displayable object (in
+     * javax.microedition.lcdui package).
+     */
+    public Object GetProperty( String propertyName )
     {
-        return this;
+        if ( propertyName.equals( PROPERTY_MIDPGRAPHICS ) )
+            return m_g;
+        else if ( propertyName.equals( PROPERTY_MIDPDISPLAYABLE ) )
+            return this;
+        
+        return null;
     }
-
-    public Graphics GetMIDPGraphics()
+    
+    /**
+     *  Specific function made for MIDP driver internal use.
+     *  @return A Graphics object used for drawing.
+     */
+    Graphics GetMIDPGraphics()
     {
         return m_g;
-    }
-
-    public Object GetOtherRenderingAPI()
-    {
-        return null;
     }
 
     public ICFontRenderer GetFontRenderer()
@@ -226,7 +237,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         //#endif
         
         InputStream is =
-            m_fileSystem.OpenFile( filename, IFileSystem.FILETYPE_INTERNAL );
+            m_fileSystem.OpenFile( filename, IFileSystem.LOCATION_DEFAULT );
         IImageResource res = new MIDPImageResource( is );
         
         is.close();
@@ -287,6 +298,9 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         return MIDPSubImage.CreateSubImagesFromResource(
             (MIDPImageResource)imgResource, width, height );
     }
+    
+    public static final String PROPERTY_MIDPGRAPHICS    = "midp_graphics";
+    public static final String PROPERTY_MIDPDISPLAYABLE = "midp_displayable";
 
     private static final long   MAX_TIME_PER_STEP = 100;
 
