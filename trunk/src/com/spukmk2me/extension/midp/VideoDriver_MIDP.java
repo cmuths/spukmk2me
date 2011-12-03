@@ -20,7 +20,6 @@ package com.spukmk2me.extension.midp;
 
 import java.io.InputStream;
 import java.io.IOException;
-import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Graphics;
 
 //#ifdef __SPUKMK2ME_DEBUG

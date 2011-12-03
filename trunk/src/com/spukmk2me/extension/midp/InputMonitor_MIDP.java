@@ -37,11 +37,12 @@ public abstract class InputMonitor_MIDP extends GameCanvas
         m_pointerPosition       = 0xFFFFFFFF;
         m_behaviourList         = new byte[ 32 ];
         m_touchSKNotExecuted    = true;
-        m_touchHolding          = false;
+        /* m_touchHolding          = false;
         m_touchSimulatedActions = 0;
+        m_producedActions       = 0; */
     }
 
-    public final int GetActionBitPattern()
+    public final int GetInputStates()
     {
         long currentTime = System.currentTimeMillis();
 
@@ -61,13 +62,19 @@ public abstract class InputMonitor_MIDP extends GameCanvas
                     m_keyCooldown = m_keyLatency;
             }
 
-            int ret = m_actionBitPattern;
+            m_producedActions = m_actionBitPattern;
 
             RescanInputAction();
-            return ret;
         }
         else
-            return ACT_NONE;
+            m_producedActions = 0;
+        
+        return m_producedActions;
+    }
+    
+    public final boolean Acted( int inputAction )
+    {
+        return (m_producedActions & inputAction) != 0;
     }
 
     public final int GetTouchingPosition()
@@ -682,7 +689,8 @@ public abstract class InputMonitor_MIDP extends GameCanvas
                     m_touchHoldLastTime;    // Last time holding touch without
                                             // moving or releasing.
     private int     m_actionBitPattern, m_pointerPosition,
-                    m_touchSimulatedActions;
+                    m_touchSimulatedActions,
+                    m_producedActions;
     private int     m_softleftKeyCode, m_softrightKeyCode;
     private int     m_inputMode;
     private short   m_pressedX, m_pressedY;

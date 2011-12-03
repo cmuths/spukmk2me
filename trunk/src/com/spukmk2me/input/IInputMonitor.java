@@ -50,14 +50,25 @@ public interface IInputMonitor
     public void SetInputBehaviour( int action, byte behaviour );
 
     /**
-     *  Get the bit pattern for actions.
-     *  \details The key waiting time will be reseted to the maximum value (the
-     * value passed to SetLatency())
+     *  Get input states at the current moment.
+     *  \details After this call, states of all actions will be changed
+     * according to the input behaviour of each action.
      *  @return The bit pattern for actions. See the constants list for more
      * details.
      */
-    public int GetActionBitPattern();
-
+    public int GetInputStates();
+    
+    /**
+     *  Check if the specific action is enabled.
+     *  \details This function uses data from the last call to GetInputState()
+     * to check. If there's no GetInputState() call prior to this function,
+     * every actions are assumed to not happen.
+     *  @param action Action to check.
+     *  @return true if the specific action is enabled, otherwise return
+     * false.
+     */
+    public boolean Acted( int action );
+    
     /**
      *  Get the touch position.
      *  \details The X coordinate will be stored at the higher word of returned

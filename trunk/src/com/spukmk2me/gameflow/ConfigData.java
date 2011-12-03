@@ -27,6 +27,5 @@ public final class ConfigData
 
     public long    MS_PER_FRAME            = 50L;
     public long    MAX_MS_PER_FRAME        = 100L;
-    public int     INPUT_ACTION            = 0;
     public boolean AUTO_VIDEO_OUTPUT       = true;
 }

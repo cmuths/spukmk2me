@@ -87,8 +87,7 @@ public final class GameThread extends Thread
                         ( waitTime > m_configData.MAX_MS_PER_FRAME )?
                         m_configData.MAX_MS_PER_FRAME : waitTime;
                     
-                    m_configData.INPUT_ACTION =
-                        m_imonitor.GetActionBitPattern();
+                    m_imonitor.GetInputStates();
 
                     m_gameProcessor.ProcessGame( timeToProcess );
 
