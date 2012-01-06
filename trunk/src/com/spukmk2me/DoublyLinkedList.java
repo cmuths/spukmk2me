@@ -109,6 +109,7 @@ public final class DoublyLinkedList
         Element removedElement = m_ffe.c_prev;
 
         removedElement.drop();
+        --m_nElement;
 
         return removedElement.c_data;
     }
@@ -121,8 +122,19 @@ public final class DoublyLinkedList
         Element removedElement = m_ffe.c_next;
 
         removedElement.drop();
+        --m_nElement;
 
         return removedElement.c_data;
+    }
+
+    public Object peek_back()
+    {
+        return m_ffe.c_prev.c_data;
+    }
+
+    public Object peek_front()
+    {
+        return m_ffe.c_next.c_data;
     }
 
     public Iterator first()

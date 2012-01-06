@@ -18,6 +18,7 @@
 
 package com.spukmk2me.scene;
 
+import com.spukmk2me.DoublyLinkedList;
 import com.spukmk2me.video.IVideoDriver;
 
 //#ifdef __SPUKMK2ME_DEBUG
@@ -239,6 +240,79 @@ public abstract class ISceneNode
         // everything to int without my permission. Imagine what'll happen if
         // y is a negative value and you'll see.
         return ( x << 16 ) | (y & 0x0000FFFF);
+    }
+
+    /**
+     *  Get the hierarchical bounding rectangle of this node and its child.
+     *  \details
+     *  @return A long value 0xaaaabbbbccccdddd that indicates the bounding
+     * rectangle, as follow:\n
+     *  - 0xaaaa is the X coordinate for the top-left corner.
+     *  - 0xbbbb is the Y coordinate for the top-left corner.
+     *  - 0xcccc is the width of rectangle.
+     *  - 0xdddd is the heights of rectangle.
+     */
+    public final long GetHierarchicalBoundingRect()
+    {
+        DoublyLinkedList stack = new DoublyLinkedList();
+        DoublyLinkedList finish = new DoublyLinkedList();
+        ISceneNode node;
+        short x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+        short tx1, ty1, tx2, ty2;
+        short curX = (short)-c_x, curY = (short)-c_y;
+
+        stack.push_back( this );
+        finish.push_back( c_next );
+
+        while ( stack.length() != 0 )
+        {
+            node = (ISceneNode)stack.pop_back();
+
+            // Reached all the nodes
+            if ( node == finish.peek_back() )
+            {
+                finish.pop_back();
+
+                if ( stack.length() != 0 )
+                {
+                    node = node.c_parent;
+                    curX -= node.c_x;
+                    curY -= node.c_y;
+                }
+            }
+            else
+            {
+                tx1 = (short)(curX + node.c_x + node.GetAABBX());
+                ty1 = (short)(curY + node.c_y + node.GetAABBY());
+                tx2 = (short)(tx1 + node.GetAABBWidth() - 1);
+                ty2 = (short)(ty1 + node.GetAABBHeight() - 1);
+
+                if ( x1 > tx1 )
+                    x1 = tx1;
+
+                if ( y1 > ty1 )
+                    y1 = ty1;
+
+                if ( x2 < tx2 )
+                    x2 = tx2;
+
+                if ( y2 < ty2 )
+                    y2 = ty2;
+
+                stack.push_back( node.c_next );
+                
+                if ( node.c_children != null )
+                {
+                    curX += node.c_x;
+                    curY += node.c_y;
+                    stack.push_back( node.c_children.c_next );
+                    finish.push_back( node.c_children );
+                }
+            }
+        }
+
+        return ((long)x1 << 48) | ((long)y1 << 32) |
+                ((long)(x2 - x1 + 1) << 16) | (long)(y2 - y1 + 1);
     }
 
     // These variables are managed by the engine, DO NOT change it manually

@@ -1,5 +1,6 @@
 package com.spukmk2me.optional.scene;
 
+import com.spukmk2me.Util;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.DataOutputStream;
@@ -62,7 +63,7 @@ public final class StandardResourceSaver implements IResourceSaver
                         GetCreationData();
 
                     dos.writeUTF(
-                        ResourceProducer.convertToRelativePath(
+                        Util.ConvertToRelativePath(
                             creationData.c_path, m_pathToSceneFile,
                             m_srcPathSeparator, '/' ) );
                     dos.writeUTF( creationData.c_proxyName );
@@ -99,7 +100,7 @@ public final class StandardResourceSaver implements IResourceSaver
                             GetCreationData();
 
                     dos.writeUTF(
-                        ResourceProducer.convertToRelativePath(
+                        Util.ConvertToRelativePath(
                             creationData.c_path, m_pathToSceneFile,
                             m_srcPathSeparator, '/' ) );
                     dos.writeUTF( creationData.c_proxyName );

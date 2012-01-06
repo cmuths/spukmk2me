@@ -9,91 +9,97 @@ import com.spukmk2me.video.ISubImage;
 //# import com.spukmk2me.debug.Logger;
 //#endif
 
-public class TiledLayerSceneNode extends ISceneNode
+public class TiledLayerSceneNode extends ITopLeftOriginSceneNode
 {
-    public TiledLayerSceneNode()
-    {
-    }
+    public TiledLayerSceneNode() {}
 
     public void Render( IVideoDriver driver )
     {
         RenderInfo ri = driver.GetRenderInfo();
-
-        if ( m_sprites != null )
-            CalculateSprites( ri.c_passedTime );
-
-        int i, j, index, data;
         short oldX = ri.c_rasterX;
         short oldY = ri.c_rasterY;
-        short startX = oldX, startY = oldY;
-
-        ri.c_rasterX   += m_startX;
-        ri.c_rasterY   += m_startY;
-        index           = 0;
-
-        for ( i = 0; i != m_height; ++i )
+        
+        if ( m_sprites != null )
+            CalculateSprites( driver.GetRenderInfo().c_passedTime );
+        
+        if ( m_repeatedView )
         {
-            for ( j = 0; j != m_width; ++j )
+            long oldClip = driver.GetClipping();
+            int nX, nY;
+            int displayW = m_stepX * m_tableWidth;
+            int displayH = m_stepY * m_tableHeight;
+            
             {
-                data = m_terrainData[ index++ ];
+                int rangeX = m_viewWidth - m_viewX;
 
-                if ( data >= 0 )
-                    m_images[ data ].Render( driver );
-                else if ( data != (byte)0xFF ) // -1 means null cell
-                {
-                    data = ~data; //data = -1 - data;
-                    m_sprites[ data ][ m_spriteIndexes[ data ] ].
-                        Render( driver );
-                }
+                nX = rangeX / displayW;
 
-                ri.c_rasterX += m_step1X;
-                ri.c_rasterY += m_step1Y;
+                if ( rangeX % displayW != 0 )
+                    ++nX;
             }
+            
+            {
+                int rangeY = m_viewHeight - m_viewY;
 
-            startX += m_step2X;
-            startY += m_step2Y;
-            ri.c_rasterX = startX;
-            ri.c_rasterY = startY;
+                nY = rangeY / displayH;
+
+                if ( rangeY % displayH != 0 )
+                    ++nY;
+            }
+            
+            driver.SetClipping( oldX, oldY, m_viewWidth, m_viewHeight );
+            
+            short x, y = (short)(m_viewY + oldY);
+            
+            for ( ; nY != 0; --nY )
+            {
+                x = (short)(m_viewX + oldX);
+                
+                for ( int i = nX; i != 0; --i )
+                {
+                    RenderOnce( driver, x, y );
+                    x += displayW;
+                }
+                
+                y += displayH;
+            }
+            
+            driver.SetClipping(
+                (short)(oldClip >>> 48), (short)(oldClip >>> 32),
+                (short)(oldClip >>> 16), (short)oldClip );
         }
-
+        else
+            RenderOnce( driver, oldX, oldY );
+        
         ri.c_rasterX = oldX;
         ri.c_rasterY = oldY;
     }
 
-    public short GetAABBX()
-    {
-        return m_startX;
-    }
-
-    public short GetAABBY()
-    {
-        return m_startY;
-    }
-
     public short GetAABBWidth()
     {
-        return (short)(m_step1X * m_width);
+        return ( m_repeatedView )?
+            m_viewWidth : (short)(m_stepX * m_tableWidth);
     }
 
     public short GetAABBHeight()
     {
-        return (short)(m_step2Y * m_height);
+        return ( m_repeatedView )?
+            m_viewHeight : (short)(m_stepY * m_tableHeight);
     }
 
     public void SetupTiledLayer( ISubImage[] images, ISubImage[][] sprites,
         int[] spriteSpeed, byte[] terrainData,
-        short startX, short startY, short width, short height,
-        short step1X, short step1Y, short step2X, short step2Y )
+        short tableWidth, short tableHeight, short stepX, short stepY )
     {
         //#ifdef __SPUKMK2ME_DEBUG
-//#         if ( (width == 0) || (height == 0)  )
+//#         if ( (tableWidth == 0) || (tableHeight == 0)  )
 //#             Logger.Trace( "WARNING: TiledLayer: zero dimension." );
 //#         else if ( terrainData == null )
 //#         {
 //#             Logger.Trace(
 //#                 "ERROR: TiledLayer: null pointer passed to terrain." );
 //#         }
-//#         else if ( terrainData.length != width * height )
+//#         else if ( terrainData.length != tableWidth * tableHeight )
 //#             Logger.Trace( "WARNING: TiledLayer: terrain size mismatch" );
 //# 
 //#         if ( images == null )
@@ -118,19 +124,76 @@ public class TiledLayerSceneNode extends ISceneNode
         m_sprites       = sprites;
         m_spriteSpeed   = spriteSpeed;
         m_terrainData   = terrainData;
-        m_startX        = startX;
-        m_startY        = startY;
-        m_width         = width;
-        m_height        = height;
-        m_step1X        = step1X;
-        m_step1Y        = step1Y;
-        m_step2X        = step2X;
-        m_step2Y        = step2Y;
+        m_tableWidth    = tableWidth;
+        m_tableHeight   = tableHeight;
+        m_stepX         = stepX;
+        m_stepY         = stepY;
 
         if ( m_sprites != null )
         {
             m_spriteRealIndexes = new int[ m_sprites.length ];
             m_spriteIndexes     = new int[ m_sprites.length ];
+        }
+    }
+    
+    public void SetupRepeatedView( short startX, short startY,
+        short width, short height, boolean repeatedView )
+    {
+        if ( m_repeatedView = repeatedView )
+        {
+            m_viewWidth     = width;
+            m_viewHeight    = height;
+            // viewX, viewY are modified to become negative values
+            
+            short w = (short)(m_stepX * m_tableWidth);
+            short h = (short)(m_stepY * m_tableHeight);
+            
+            m_viewX = startX;
+            m_viewY = startY;
+            
+            while ( m_viewX > 0 )
+                m_viewX -= w;
+            
+            while ( m_viewX <= -w )
+                m_viewX += w;
+            
+            while ( m_viewY > 0 )
+                m_viewY -= h;
+            
+            while ( m_viewY <= -h )
+                m_viewY += h;
+        }
+    }
+    
+    private void RenderOnce( IVideoDriver driver, short x, short y )
+    {
+        RenderInfo ri = driver.GetRenderInfo();
+        int i, j, index, data;
+
+        index = 0;
+
+        for ( i = 0; i != m_tableHeight; ++i )
+        {
+            ri.c_rasterX = x;
+            ri.c_rasterY = y;
+            
+            for ( j = 0; j != m_tableWidth; ++j )
+            {
+                data = m_terrainData[ index++ ];
+
+                if ( data >= 0 )
+                    m_images[ data ].Render( driver );
+                else if ( data != (byte)0xFF ) // -1 means null cell
+                {
+                    data = ~data; //data = -1 - data;
+                    m_sprites[ data ][ m_spriteIndexes[ data ] ].
+                        Render( driver );
+                }
+
+                ri.c_rasterX += m_stepX;
+            }
+
+            y += m_stepY;
         }
     }
     
@@ -152,8 +215,10 @@ public class TiledLayerSceneNode extends ISceneNode
     private ISubImage[]     m_images;
     private int[]           m_spriteSpeed;
     private byte[]          m_terrainData;
-    private short           m_width, m_height, m_startX, m_startY,
-                            m_step1X, m_step1Y, m_step2X, m_step2Y;
+    private short           m_tableWidth, m_tableHeight, m_stepX, m_stepY;
+    private short           m_viewX, m_viewY,
+                            m_viewWidth, m_viewHeight;
+    private boolean         m_repeatedView;
 
     private int[]           m_spriteRealIndexes;
     private int[]           m_spriteIndexes;

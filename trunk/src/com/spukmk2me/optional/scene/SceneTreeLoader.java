@@ -44,6 +44,21 @@ public final class SceneTreeLoader
 
         return null;
     }
+    
+    /**
+     *  Get all exported names, except "root".
+     *  @return An array of exported names. Null if there's no name exported.
+     */
+    public String[] GetExportedNames()
+    {
+        if ( m_exportedNodeNames.length == 0 )
+            return null;
+        
+        String[] ret = new String[ m_exportedNodeNames.length ];
+        System.arraycopy( m_exportedNodeNames, 0, ret, 0, ret.length );
+        
+        return ret;
+    }
 
     public boolean Load( InputStream is,
         ResourceProducer producer ) throws IOException
@@ -454,22 +469,22 @@ public final class SceneTreeLoader
         short[][]   spriteIndexes;
         int[]       spriteSpeed;
         byte[]      terrainData;
-        short       x, y, width, height, startX, startY,
-                    step1X, step1Y, step2X, step2Y;
+        short       x, y, width, height, stepX, stepY,
+                    viewWidth, viewHeight, viewX, viewY;
         byte        flags;
 
         // Width, height and steps
-        x       = dis.readShort();
-        y       = dis.readShort();
-        width   = dis.readShort();
-        height  = dis.readShort();
-        startX  = dis.readShort();
-        startY  = dis.readShort();
-        step1X  = dis.readShort();
-        step1Y  = dis.readShort();
-        step2X  = dis.readShort();
-        step2Y  = dis.readShort();
-        flags   = dis.readByte();
+        x           = dis.readShort();
+        y           = dis.readShort();
+        width       = dis.readShort();
+        height      = dis.readShort();
+        stepX       = dis.readShort();
+        stepY       = dis.readShort();
+        viewWidth   = dis.readShort();
+        viewHeight  = dis.readShort();
+        viewX       = dis.readShort();
+        viewY       = dis.readShort();
+        flags       = dis.readByte();
 
         // Terrain data
         terrainData = new byte[ width * height ];
@@ -526,7 +541,9 @@ public final class SceneTreeLoader
         TiledLayerSceneNode node = new TiledLayerSceneNode();
 
         node.SetupTiledLayer( images, sprites, spriteSpeed, terrainData,
-            startX, startY, width, height, step1X, step1Y, step2X, step2Y );
+            width, height, stepX, stepY );
+        node.SetupRepeatedView( viewX, viewY, viewWidth, viewHeight,
+            (flags & 0x20) != 0 );
 
         node.c_x = x;
         node.c_y = y;
@@ -537,18 +554,19 @@ public final class SceneTreeLoader
 //#         TiledLayerSceneNodeInfoData infoData =
 //#             new TiledLayerSceneNodeInfoData();
 //# 
-//#         infoData.c_sprites  = sprites;
-//#         infoData.c_images   = images;
-//#         infoData.c_startX   = startX;
-//#         infoData.c_startY   = startY;
-//#         infoData.c_width    = width;
-//#         infoData.c_height   = height;
-//#         infoData.c_step1X   = step1X;
-//#         infoData.c_step1Y   = step1Y;
-//#         infoData.c_step2X   = step2X;
-//#         infoData.c_step2Y   = step2Y;
-//#         infoData.c_spriteSpeed = spriteSpeed;
-//#         infoData.c_terrainData = terrainData;
+//#         infoData.c_sprites      = sprites;
+//#         infoData.c_images       = images;
+//#         infoData.c_tableWidth   = width;
+//#         infoData.c_tableHeight  = height;
+//#         infoData.c_stepX        = stepX;
+//#         infoData.c_stepY        = stepY;
+//#         infoData.c_viewWidth    = viewWidth;
+//#         infoData.c_viewHeight   = viewHeight;
+//#         infoData.c_viewX        = viewX;
+//#         infoData.c_viewY        = viewY;
+//#         infoData.c_repeatedView = (flags & 0x20) != 0;
+//#         infoData.c_spriteSpeed  = spriteSpeed;
+//#         infoData.c_terrainData  = terrainData;
 //#         
 //#         node.c_infoData = infoData;
         //#endif
