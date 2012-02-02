@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<project name="SPUKMK2meJ2ME" default="debug" basedir=".">
+    <!-- Sets variables which can later be used. -->
+    <!-- The value of a property is accessed via ${} -->
+    <property name="src" value="./../src" />
+    <property name="bin" value="./../bin" />
+	<property name="temp" value="./temp" />
+	<property name="commoncploption" value="-source 1.3 -encoding UTF-8 -target 1.3 -verbose" />
+
+    <!-- Clean -->
+	<target name="clean">
+		<delete verbose="true" includeemptydirs="true">
+			<fileset dir="${bin}" includes="**/*" />
+			<fileset dir="${temp}" includes="**/*" />
+		</delete>
+	</target>
+	
+	<target name="makedir">
+		<mkdir dir="${temp}/${JARNAME}" />
+		<mkdir dir="${temp}/${JARNAME}/sources" />
+		<mkdir dir="${temp}/${JARNAME}/classes" />
+	</target>
+	
+	<target name="preprocess" description="preprocessor">
+        <preprocess indir="${src}" outdir="${temp}/${JARNAME}/sources" out="replace">
+			<var name="SPUKMK2ME_DEBUG" value="${debug}"/>
+			<var name="SPUKMK2ME_SCENESAVER" value="${scenedetails}"/>
+            <filetype commentend="*/" commentbegin="/*" extensions="java"/>
+        </preprocess>
+    </target>
+	
+	<!-- Compiles the java code -->
+    <target name="compile">
+		<path id="lib.path.ref">
+			<fileset dir="./../lib" includes="cldc_1.0.jar, midp_2.0.jar, ${LIBUSE}.jar"/>
+		</path>
+        <javac srcdir="${temp}/${JARNAME}/sources" destdir="${temp}/${JARNAME}/classes"
+			encoding="UTF-8" debug="${DEBUGOPTION}" source="1.3" target="1.3" verbose="no"
+			classpath="${src}" optimize="${OPTIMIZE}" >
+			<compilerarg value="-Xbootclasspath/p:${toString:lib.path.ref}"/>
+		</javac>
+    </target>
+	
+	<!-- Add to jar file -->
+	<target name="makejar">
+		<jar destfile="${bin}/${JARNAME}.jar" basedir="${temp}/${JARNAME}/classes" encoding="UTF-8"
+		compress="true" keepcompression="true" />
+	</target>
+	
+	<target name="debug">
+		<property name="DEBUGOPTION" value="on" />
+		<property name="JARNAME" value="SPUKMK2meJ2MEExtDebug" />
+		<property name="OPTIMIZE" value="off" />
+		<property name="LIBUSE" value="SPUKMK2meCoreDebug" />
+		<property name="debug" value="true" />
+		<property name="scenedetails" value="false" />
+		<antcall target="makedir"/>
+		<antcall target="preprocess"/>
+		<antcall target="compile"/>
+		<antcall target="makejar"/>
+	</target>
+	
+	<target name="release">
+		<property name="DEBUGOPTION" value="off" />
+		<property name="JARNAME" value="SPUKMK2meJ2MEExtRelease" />
+		<property name="OPTIMIZE" value="on" />
+		<property name="LIBUSE" value="SPUKMK2meCoreRelease" />
+		<property name="debug" value="false" />
+		<property name="scenedetails" value="false" />
+		<antcall target="makedir"/>
+		<antcall target="preprocess"/>
+		<antcall target="compile"/>
+		<antcall target="makejar"/>
+	</target>
+</project>

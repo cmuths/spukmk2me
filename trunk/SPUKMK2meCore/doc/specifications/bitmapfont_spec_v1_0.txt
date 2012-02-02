@@ -1,0 +1,126 @@
+ 
+    BitmapFont file format version 1.0 specification
+    
+    This file is provided along with SPUKMK2me library since version 0.1 as
+a resource for user to create their own font data. This document may contain
+some ambiguos data, please send email to us if you find any.
+ 
+    This file contains the format of data file used by BitmapFont class
+(provided in the package com.spukmk2me.optional.font). The version for this
+format is 1.0.
+ 
+    From now on, files that follow the specification described in this document
+are called BitmapFont files.
+
+
+    TABLE OF CONTENTS
+    
+    1. Overview
+    2. Specification
+        2.1 Header specification
+        2.2 Trunk specification
+    3. Other requirements
+
+    
+    1. Overview
+        This document describes the 2nd version of BitmapFont file format. The
+        changes from last version (0.1) are:
+            - Bit depth can be extended to 1, 2, 4 or 8.
+            - Data for extra characters is reduced to 2 bytes per characters.
+            - Reserved data size is increased to 128.
+
+        Data of BitmapFont file can be divided into two main part:
+            - Header.
+            - Trunk.
+
+        There is no gap between two part, that means the first byte of "Trunk"
+        must be the byte stored right after the last byte of "Header" in
+        BitmapFont file.
+        
+    2. Specification
+        2.1 Header specification:
+            Offset      Size        Data
+            0x0000      2           Zero if the file is stored as big-endian
+                                    style.
+                                    Non zero if the file is stored as
+                                    little-endian style.
+                                    From now on, the data is assumed that
+                                    they are read from a big-endian BitmapFont
+                                    file.
+            
+            0x0002      24          "SPUKMK2me_BITMAPFONT_1.0"
+
+            0x001A      2           The number of character provided by this
+                                    font, must be at least 94 (94 ANSI
+                                    characters, see "3. Other requirements" for
+                                    more information). The number is an
+                                    unsigned number.
+
+            0x001C      2           Bit depth. Only supports 1, 2, 4 and 8.
+
+            0x001E      2           The width of each character, unsigned.
+
+            0x0020      2           The height of each character, unsigned.
+
+            0x0022      2           The distance between two continuous
+                                    characters, in pixels, unsigned.
+
+            0x0024      2           The number of pixels that a "space" (0x20)
+                                    takes, unsigned.
+                                    
+            0x0026      2           The y coordinate to put the underline, in
+                                    pixels, unsigned.
+                                    
+            0x0028      2           The number of extra pixels that each italic
+                                    character requires.
+                                    
+            0x002A      128         Reserved, should be filled by zero.
+            
+            0x00AA      (NCHAR -    The first 94 characters of BitmapFont are
+                         94) * 2    fixed as 94 ANSI characters (see
+                                    "3. Other requirements"). From 95th
+                                    character, the characters are considered
+                                    "extra" and the file must point out what
+                                    characters they are via Unicode code.
+                                    Each four continuous bytes form up a
+                                    Unicode code. For example, 0x00A0 to 0x00A1
+                                    is the Unicode code of the 95th character,
+                                    0x00A2 to 0x00A3 is the Unicode code of the
+                                    96th character.
+
+        2.2 Trunk specification:
+            Trunk part is written right after the header part, so the first
+        byte of trunk part is located in the file offset
+        0x00AA + (NCHAR - 94) * 2. Trunk part contains pixel data for the font
+        which is described as follow:
+
+                - Data of the first character must be written at the trunk
+                offset 0.
+
+                - Each character requires P bytes as the pixel data. And the
+                data of characters are tightly packed, which means after P
+                bytes of ith character must be P bytes of (i + 1)th character.
+                
+                - All data of NCHAR characters must be written.
+
+                - The data of each character is described as follow:
+                    + Each character are considered as an image. If the width W
+                    of that image isn't divisible by 8, the width are extended
+                    to the nearest divisible-by-8 number which is greater than
+                    W.
+                    + Each 8 continuous pixels are converted to 8 * bit depth
+                    bits, respectively. If the pixel is onvisible it will be
+                    converted to 0, otherwise it will be converted to a
+                    non-zero value.
+                    + Combine the converted data from the rows of image
+                    respectively, we have the bitmap data for each character.
+                    + Call the number of bytes in a row is B, and the height of
+                    image is H, we have P = B * H bytes as bitmap data.
+                    
+    3. Other requirements:
+        
+        - Fixed characters:
+            The BitmapFont file must store fixed 94 characters in the ASCII map
+            at the beginning. Those 94 characters are counted from 0x31
+            ('!' character) to 0x7E ('~' character). Since 0x20 (space) and
+            0x7F (DEL) don't have visible glyphs, they are not included.
