@@ -1,0 +1,47 @@
+
+    Scene file format version 0.1 specification
+    
+    This file is provided along with SPUKMK2me library since version 0.1 as
+a resource for reference. This document may contain some ambiguos data, please
+send email to us if you find any.
+ 
+    This file contains the format of data file which contains scene information.
+ The version is 0.1.
+ 
+    TABLE OF CONTENTS
+    
+    1. Overview
+    2. Specifications
+        2.1 Header section
+        2.2 Resource section
+        2.3 Scene tree section
+    
+    
+    1. Overview
+            Creating scene tree by typing them to the source code is a bad
+        idea. To make the developer more convenient, we decided to create a
+        scene editor, and scene file format.
+            Scene file formats have the extension: ssf (SPUKMK2me Scene File).
+            Multi-byte data will be stored as they appear on the memory of
+        big-endian machines.
+        
+            Scene file stores:
+                - Information of all resources used: a file name (if the
+                resource is loaded from file), an unique proxy name (for
+                convenient access) and optional information which are based on
+                specific type of resource.
+                - Currently there are three kinds of resources is stored:
+                    + IImageResource.
+                    + ISubImage.
+                    + BitmapFont.
+                - Data to re-construct the scene tree. Some of important scene
+                node has unique proxy name (not neccessary unique to the
+                resources) so they can be accessed easily.
+                
+
+    2. Specifications
+        2.1 Header section
+                Header contains 24 bytes "SPUKMK2me_SCENE-FILE_0.1".
+                
+        2.2 Resource section
+                

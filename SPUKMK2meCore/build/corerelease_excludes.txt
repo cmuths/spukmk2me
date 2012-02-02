@@ -1,0 +1,7 @@
+com/spukmk2me/optional/scene/StandardResourceSaver.java
+com/spukmk2me/optional/scene/StandardResourceSaver.class
+com/spukmk2me/scene/SceneNodeCreationData.java
+com/spukmk2me/scene/SceneNodeCreationData.class
+com/spukmk2me/debug/*.java
+com/spukmk2me/debug/*.class
+com/spukmk2me/debug

@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<project name="SPUKMK2meCore" default="coredebug" basedir=".">
+    <!-- Sets variables which can later be used. -->
+    <!-- The value of a property is accessed via ${} -->
+    <property name="src" value="./../src" />
+    <property name="bin" value="./../bin" />
+	<property name="temp" value="./temp" />
+	<property name="commoncploption" value="-source 1.3 -encoding UTF-8 -target 1.3 -verbose" />
+
+    <!-- Clean -->
+	<target name="clean">
+		<delete verbose="true" includeemptydirs="true">
+			<fileset dir="${bin}" includes="**/*" />
+			<fileset dir="${temp}" includes="**/*" />
+		</delete>
+	</target>
+	
+	<target name="makedir">
+		<mkdir dir="${temp}/${JARNAME}" />
+		<mkdir dir="${temp}/${JARNAME}/sources" />
+		<mkdir dir="${temp}/${JARNAME}/classes" />
+	</target>
+	
+	<target name="preprocess" description="preprocessor">
+        <preprocess indir="${src}" outdir="${temp}/${JARNAME}/sources" out="replace">
+			<var name="SPUKMK2ME_DEBUG" value="${debug}"/>
+			<var name="SPUKMK2ME_SCENESAVER" value="${scenedetails}"/>
+            <filetype commentend="*/" commentbegin="/*" extensions="java"/>
+        </preprocess>
+    </target>
+	
+	<!-- Compiles the java code -->
+    <target name="compile">
+		<copy todir="${temp}/${JARNAME}/sources"> <fileset dir="${src}"/> </copy>
+        <javac srcdir="${temp}/${JARNAME}/sources" destdir="${temp}/${JARNAME}/classes"
+			encoding="UTF-8" debug="${DEBUGOPTION}" source="1.3" target="1.3" verbose="no"
+			classpath="${src}" excludesfile="${EXCLUDEFILES}" optimize="${OPTIMIZE}" />
+    </target>
+	
+	<!-- Add to jar file -->
+	<target name="makejar">
+		<jar destfile="${bin}/${JARNAME}.jar" basedir="${temp}/${JARNAME}/classes" encoding="UTF-8"
+		compress="true" keepcompression="true" excludesfile="${EXCLUDEFILES}" />
+	</target>
+	
+	<target name="coredebug">
+		<property name="DEBUGOPTION" value="on" />
+		<property name="JARNAME" value="SPUKMK2meCoreDebug" />
+		<property name="EXCLUDEFILES" value="coredebug_excludes.txt" />
+		<property name="OPTIMIZE" value="off" />
+		<property name="debug" value="true" />
+		<property name="scenedetails" value="false" />
+		<antcall target="makedir"/>
+		<antcall target="preprocess"/>
+		<antcall target="compile"/>
+		<antcall target="makejar"/>
+	</target>
+	
+	<target name="corerelease">
+		<property name="DEBUGOPTION" value="off" />
+		<property name="JARNAME" value="SPUKMK2meCoreRelease" />
+		<property name="EXCLUDEFILES" value="corerelease_excludes.txt" />
+		<property name="OPTIMIZE" value="on" />
+		<property name="debug" value="false" />
+		<property name="scenedetails" value="false" />
+		<antcall target="makedir"/>
+		<antcall target="preprocess"/>
+		<antcall target="compile"/>
+		<antcall target="makejar"/>
+	</target>
+	
+	<target name="coredetailsdebug">
+		<property name="DEBUGOPTION" value="on" />
+		<property name="JARNAME" value="SPUKMK2meCoreDetailsDebug" />
+		<property name="EXCLUDEFILES" value="coredetailsdebug_excludes.txt" />
+		<property name="OPTIMIZE" value="off" />
+		<property name="debug" value="true" />
+		<property name="scenedetails" value="true" />
+		<antcall target="makedir"/>
+		<antcall target="preprocess"/>
+		<antcall target="compile"/>
+		<antcall target="makejar"/>
+	</target>
+</project>

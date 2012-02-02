@@ -1,0 +1,42 @@
+Header section:
+
+24-bytes string: "SPUKMK2me_SCENE-FILE_0.1".
+
+Resource section:
+
+NAME        LENGTH          DESCRIPTION                     NOTE
+
+nImage      4               Number of image resources
+imgResInfo  Unknown         Image resource creation data    See Image resource
+                                                            creation data
+                                                            section.
+nSubImage   4               Number of sub images
+subImgInfo  Unknown         Sub image creation data         See Sub image
+                                                            creation data
+                                                            section.
+nFont       4               Number of BitmapFont
+bmFontInfo  Unknown         BitmapFont creation data        See BitmapFont
+                                                            creation data
+                                                            section.
+
+Tree struct section:
+
+NAME        LENGTH          DESCRIPTION                     NOTE
+
+nExpNodes   4               Number of exported nodes        Atleast 1.
+expIndexes  nExpNodes * 4   Indexes of exported nodes
+expNames    Unknown         Proxy names of exported nodes
+nNodes      4               Number of nodes in the tree     Atleast 1.
+treeCtDat   Unknown         Tree creation data              See Tree creation
+                                                            data section.
+
+
+
+Tree creation data (only available if nNodes > 1):
+
+NAME        LENGTH          DESCRIPTION                     NOTE
+trvslData   Unknown         Traversal data                  See Traversal data
+                                                            section.
+treeHeight  2               Height of the tree
+nodeInfo    Unknown         Node creation info              See Node creation
+                                                            data section.
