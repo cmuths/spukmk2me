@@ -31,8 +31,7 @@
 	
 	<!-- Compiles the java code -->
     <target name="compile">
-		<copy todir="${temp}/${JARNAME}/sources"> <fileset dir="${src}"/> </copy>
-        <javac srcdir="${temp}/${JARNAME}/sources" destdir="${temp}/${JARNAME}/classes"
+		<javac srcdir="${temp}/${JARNAME}/sources" destdir="${temp}/${JARNAME}/classes"
 			encoding="UTF-8" debug="${DEBUGOPTION}" source="1.3" target="1.3" verbose="no"
 			classpath="${src}" excludesfile="${EXCLUDEFILES}" optimize="${OPTIMIZE}" />
     </target>
