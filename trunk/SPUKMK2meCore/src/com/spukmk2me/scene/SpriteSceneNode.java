@@ -34,12 +34,6 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
 
     public void Render( IVideoDriver driver )
     {
-        if ( m_autoDrop && !m_animating )
-        {
-            this.Drop();
-            return;
-        }
-        
         if ( m_images == null )
             return;
 
@@ -92,6 +86,9 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
             {
                 m_animating     = false;
                 m_currentFrame  = m_finishFrame << 16;
+				
+				if ( m_autoDrop )
+					this.Drop();
             }
         }
 
@@ -160,7 +157,7 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
 
         if ( m_frameStop )
         {
-            m_remainingFrames   = nFrameToStop << 16;
+            m_remainingFrames = (nFrameToStop << 16) + 0x00007FFF;
             
             if ( m_direction )
             {
