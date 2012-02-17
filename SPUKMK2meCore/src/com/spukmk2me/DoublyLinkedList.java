@@ -208,6 +208,7 @@ public final class DoublyLinkedList
             {
                 i.m_element.drop();
                 --m_nElement;
+				return;
             }
         }
     }
