@@ -187,7 +187,7 @@ public interface IVideoDriver
      *  @param width Crop width.
      *  @param height Crop height
      *  @param rotationDegree Rotation degree (16-16 fixed point)
-     *  @param flippingFlag Check the constants.
+     *  @param flippingFlag Check the constants (flipping is applied before rotation).
      *  @return Created sub image.
      */
     public ISubImage CreateSubImage( IImageResource imgResource,

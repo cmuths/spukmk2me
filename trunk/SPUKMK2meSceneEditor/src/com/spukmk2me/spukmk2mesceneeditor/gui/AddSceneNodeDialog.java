@@ -54,8 +54,8 @@ public final class AddSceneNodeDialog extends JDialog
                 "Sprite scene node",
                 "String scene node",
                 "Tiled scene node",
-                "Viewport scene node",
-                "Clipping scene node"
+                "Clipping scene node",
+                "Viewport scene node"
             };
 
             public int getSize() { return strings.length; }
@@ -150,13 +150,15 @@ public final class AddSceneNodeDialog extends JDialog
                     newNode.c_infoData  = ((TiledLayerSceneNode)newNode).
                         new TiledLayerSceneNodeInfoData();
                     break;
-
+                    
                 case 5:
-                    newNode = new ViewportSceneNode();
+                    newNode             = new ClippingSceneNode();
+                    newNode.c_infoData  = ((ClippingSceneNode)newNode).
+                        new ClippingSceneNodeInfoData();
                     break;
 
                 case 6:
-                    newNode  = new ClippingSceneNode();
+                    newNode = new ViewportSceneNode();
                     break;
             }
 

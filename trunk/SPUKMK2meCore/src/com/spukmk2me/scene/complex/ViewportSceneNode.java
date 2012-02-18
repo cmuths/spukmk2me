@@ -20,13 +20,12 @@ package com.spukmk2me.scene.complex;
 
 import com.spukmk2me.Util;
 import com.spukmk2me.scene.ISceneNode;
-import com.spukmk2me.scene.ITopLeftOriginSceneNode;
 import com.spukmk2me.video.IVideoDriver;
 
 /**
  *  An advanced node built from ClippingSceneNode, acts like a viewport.
  */
-public final class ViewportSceneNode extends ITopLeftOriginSceneNode
+public final class ViewportSceneNode extends ComplexSceneNode
 {
     /**
      *  Constructor.
@@ -36,6 +35,7 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
         m_clippingNode = new ClippingSceneNode();
         AddChild( m_clippingNode );
         m_originX = m_originY = 0;
+        c_visible = true;
     }
 
     public void Render( IVideoDriver driver )
@@ -46,6 +46,16 @@ public final class ViewportSceneNode extends ITopLeftOriginSceneNode
         m_clippingNode.SetClipping(
             Util.FPRound( m_originX ), Util.FPRound( m_originY ),
             m_width, m_height );
+    }
+    
+    public short GetAABBX()
+    {
+        return 0;
+    }
+    
+    public short GetAABBY()
+    {
+        return 0;
     }
 
     public short GetAABBWidth()

@@ -14,6 +14,8 @@ import com.spukmk2me.scene.SpriteSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
 import com.spukmk2me.optional.scene.ResourceManager;
 import com.spukmk2me.scene.TiledLayerSceneNode;
+import com.spukmk2me.scene.complex.ClippingSceneNode;
+import com.spukmk2me.scene.complex.ComplexSceneNode;
 
 /**
  *  Place which holds save functions.
@@ -68,7 +70,13 @@ public final class Saver
                     if ( ((ISceneNode)i.data()).c_exportFlag )
                         ++nExportedNodes;
 
-                    childStop = ((ISceneNode)i.data()).c_children;
+                    if ( i.data() instanceof ComplexSceneNode )
+                    {
+                        childStop = ((ComplexSceneNode)i.data()).
+                            GetEntryNode().c_children;
+                    }
+                    else
+                        childStop = ((ISceneNode)i.data()).c_children;
 
                     if ( childStop != null )
                     {
@@ -119,7 +127,7 @@ public final class Saver
         if ( numberOfNodes != 1 ) // The tree has other nodes except root node
         {
             ISceneNode[]    stack = new ISceneNode[ treeHeight ];
-            ISceneNode      currentNode;
+            ISceneNode      currentNode, currentChild, childNode;
             ISceneNode[]    nextChildren = new ISceneNode[ treeHeight ];
 
             int     topStack = 0, traversalIndex = 0;
@@ -128,6 +136,7 @@ public final class Saver
 
             stack[ 0 ] = rootNode;
             
+            // Root node is always not a complex node
             if ( rootNode.c_children != null )
                 nextChildren[ 0 ] = rootNode.c_children.c_next;
             else
@@ -136,8 +145,16 @@ public final class Saver
             while ( topStack >= 0 )
             {
                 currentNode = stack[ topStack ];
+                
+                if ( currentNode instanceof ComplexSceneNode )
+                {
+                    currentChild = ((ComplexSceneNode)currentNode).
+                        GetEntryNode().c_children;
+                }
+                else
+                    currentChild = currentNode.c_children;
 
-                if ( nextChildren[ topStack ] == currentNode.c_children )
+                if ( nextChildren[ topStack ] == currentChild )
                 {
                     nextChildren[ topStack ]    = null;
                     stack[ topStack-- ]         = null;
@@ -151,13 +168,18 @@ public final class Saver
                     ++topStack;
                     fetchedList.push_back( stack[ topStack ] );
                     
-                    if ( stack[ topStack ].c_children != null )
+                    if ( stack[ topStack ] instanceof ComplexSceneNode )
                     {
-                        nextChildren[ topStack ] =
-                            stack[ topStack ].c_children.c_next;
+                        childNode = ((ComplexSceneNode)stack[ topStack ]).
+                            GetEntryNode().c_children;
                     }
                     else
+                        childNode = stack[ topStack ].c_children;
+                    
+                    if ( childNode == null )
                         nextChildren[ topStack ] = null;
+                    else
+                        nextChildren[ topStack ] = childNode.c_next;
 
                     currentTraversalByte <<= 1;
                     currentTraversalByte |= 0x01;
@@ -411,6 +433,20 @@ public final class Saver
                 }
 
                 break;
+                
+            case NodeTypeChecker.NT_CLIPPING:
+            {
+                ClippingSceneNode clippingNode = (ClippingSceneNode)node;
+                ClippingSceneNode.ClippingSceneNodeInfoData info =
+                    (ClippingSceneNode.ClippingSceneNodeInfoData)clippingNode.c_infoData;
+                
+                dos.writeShort( info.c_x );
+                dos.writeShort( info.c_y );
+                dos.writeShort( info.c_width );
+                dos.writeShort( info.c_height );
+                dos.writeByte( Misc.GetVisibleFlag( clippingNode ) );
+                break;
+            }
         }
     }
 

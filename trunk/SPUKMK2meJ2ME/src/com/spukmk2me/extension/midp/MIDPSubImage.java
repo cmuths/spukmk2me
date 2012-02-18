@@ -37,7 +37,7 @@ final class MIDPSubImage extends ISubImage
         int rotationDegree, byte flippingFlag )
     {
         int     midpTransformationFlag  = 0;
-        boolean hasVerticalFlipping     = false;
+        boolean hasHorizontalFlipping     = false;
 
         if ( flippingFlag != 0 )
         {
@@ -57,7 +57,7 @@ final class MIDPSubImage extends ISubImage
                 if ( (flippingFlag & IVideoDriver.FLIP_VERTICAL) != 0 )
                     rotationDegree += 0x00B40000;
 
-                hasVerticalFlipping = true;
+                hasHorizontalFlipping = true;
             }
         }
 
@@ -68,7 +68,7 @@ final class MIDPSubImage extends ISubImage
             rotationDegree += 0x01680000;
 
         // I don't know why they come up with those Sprite constants.
-        if ( hasVerticalFlipping )
+        if ( hasHorizontalFlipping )
         {
             switch ( rotationDegree )
             {
@@ -118,11 +118,6 @@ final class MIDPSubImage extends ISubImage
         m_width                     = width;
         m_height                    = height;
         m_midpTransformationFlag    = midpTransformationFlag;
-    }
-
-    public IImageResource GetImageResource()
-    {
-        return m_imageResource;
     }
 
     public void Render( IVideoDriver driver )

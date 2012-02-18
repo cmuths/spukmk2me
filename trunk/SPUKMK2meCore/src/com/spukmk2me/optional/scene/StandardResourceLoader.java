@@ -100,10 +100,11 @@ public final class StandardResourceLoader implements IResourceLoader
 
             case 2: // ISubImage
                 {
-                    String  proxyName;
-                    int     rotationDegree, imgResIndex;
-                    short   x, y, w, h;
-                    byte    flippingFlags;
+                    String  		proxyName;
+                    IImageResource	imgRes;
+                    int     		rotationDegree, imgResIndex;
+                    short   		x, y, w, h;
+                    byte    		flippingFlags;
 
                     rotationDegree  = dis.readInt();
                     x               = dis.readShort();
@@ -114,13 +115,15 @@ public final class StandardResourceLoader implements IResourceLoader
                     flippingFlags   = dis.readByte();
                     proxyName       = dis.readUTF();
                     
+                    imgRes 			=
+                        (IImageResource)m_resourceManager.GetResource(
+                        imgResIndex, ResourceManager.RT_IMAGERESOURCE );
+                    
                     resource = CheckPreloadedResources( proxyName, (byte)2 );
                     
                     if ( resource == null )
                     {
-                        resource = m_vdriver.CreateSubImage(
-                            (IImageResource)m_resourceManager.GetResource(
-                            imgResIndex, ResourceManager.RT_IMAGERESOURCE ),
+                        resource = m_vdriver.CreateSubImage( imgRes,
                             x, y, w, h, rotationDegree, flippingFlags );
                     }
                     /* $if SPUKMK2ME_SCENESAVER$ */
@@ -132,7 +135,7 @@ public final class StandardResourceLoader implements IResourceLoader
                     data.c_y                = y;
                     data.c_width            = w;
                     data.c_height           = h;
-                    data.c_imageResIndex    = imgResIndex;
+                    data.c_resource    		= imgRes;
                     data.c_flippingFlags    = flippingFlags;
                     data.c_proxyName        = proxyName;
 

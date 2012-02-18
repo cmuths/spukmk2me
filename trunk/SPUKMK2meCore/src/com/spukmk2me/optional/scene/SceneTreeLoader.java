@@ -15,6 +15,9 @@ import com.spukmk2me.scene.ImageSceneNode;
 import com.spukmk2me.scene.SpriteSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
 import com.spukmk2me.scene.TiledLayerSceneNode;
+import com.spukmk2me.scene.complex.ComplexSceneNode;
+import com.spukmk2me.scene.complex.ClippingSceneNode;
+import com.spukmk2me.scene.complex.ViewportSceneNode;
 
 public final class SceneTreeLoader
 {
@@ -209,7 +212,14 @@ public final class SceneTreeLoader
                 
                 nodeType = dis.readByte();
                 stack[ ++topStack ] = ConstructSceneNode( dis, nodeType );
-                stack[ topStack - 1 ].AddChild( stack[ topStack ] );
+                
+                if ( stack[ topStack - 1 ] instanceof ComplexSceneNode )
+                {
+                	((ComplexSceneNode)stack[ topStack - 1 ]).GetEntryNode().
+                		AddChild( stack[ topStack ] );
+                }
+                else
+                	stack[ topStack - 1 ].AddChild( stack[ topStack ] );
 
                 if ( exportedIndex < m_exportedNodeIndexes.length )
                 {
@@ -238,8 +248,9 @@ public final class SceneTreeLoader
     // 1: Image
     // 2: Sprite
     // 3: String
-    // 4: Clipping
-    // 5: Viewport
+    // 4: Tiled layer
+    // 5: Clipping
+    // 6: Viewport
     private ISceneNode ConstructSceneNode( DataInputStream dis, byte nodeType )
         throws IOException
     {
@@ -573,14 +584,39 @@ public final class SceneTreeLoader
         return node;
     }
 
-    private NullSceneNode ConstructClippingSceneNode( DataInputStream dis )
+    private ISceneNode ConstructClippingSceneNode( DataInputStream dis )
+        throws IOException
     {
-        return null;
+    	short x	        = dis.readShort();
+    	short y         = dis.readShort();
+    	short width	    = dis.readShort();
+    	short height    = dis.readShort();
+    	byte  flags     = dis.readByte(); 
+    	ClippingSceneNode node = new ClippingSceneNode();
+    	
+    	node.c_visible  = (flags & 0x80) != 0;
+        node.c_enable   = (flags & 0x40) != 0;
+    	node.SetClipping( x, y, width, height );
+    	
+    	/* $if SPUKMK2ME_SCENESAVER$ */
+        ClippingSceneNode.ClippingSceneNodeInfoData infoData =
+            node.new ClippingSceneNodeInfoData();
+
+        infoData.c_x        = x;
+        infoData.c_y        = y;
+        infoData.c_width    = width;
+        infoData.c_height   = height;
+        
+        node.c_infoData = infoData;
+        /* $endif$ */
+    	
+        return node;
     }
 
-    private NullSceneNode ConstructViewportSceneNode( DataInputStream dis )
+    private ISceneNode ConstructViewportSceneNode( DataInputStream dis )
+        throws IOException
     {
-        return null;
+    	return null;
     }
 
     private static final String ROOTNODE_NAME   = "root";

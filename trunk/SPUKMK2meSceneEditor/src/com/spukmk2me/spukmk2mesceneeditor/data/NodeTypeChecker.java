@@ -6,6 +6,7 @@ import com.spukmk2me.scene.ImageSceneNode;
 import com.spukmk2me.scene.SpriteSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
 import com.spukmk2me.scene.TiledLayerSceneNode;
+import com.spukmk2me.scene.complex.ClippingSceneNode;
 
 public final class NodeTypeChecker
 {
@@ -30,6 +31,9 @@ public final class NodeTypeChecker
 
         if ( node instanceof TiledLayerSceneNode )
             return NT_TILED;
+        
+        if ( node instanceof ClippingSceneNode )
+            return NT_CLIPPING;
 
         return NT_UNKNOWN;
     }
@@ -40,4 +44,6 @@ public final class NodeTypeChecker
     public static final byte NT_SPRITE      = 2;
     public static final byte NT_STRING      = 3;
     public static final byte NT_TILED       = 4;
+    public static final byte NT_CLIPPING    = 5;
+    public static final byte NT_VIEWPORT    = 6;
 }
