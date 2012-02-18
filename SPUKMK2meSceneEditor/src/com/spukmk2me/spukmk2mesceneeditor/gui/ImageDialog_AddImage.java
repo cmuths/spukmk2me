@@ -359,6 +359,7 @@ public class ImageDialog_AddImage extends JDialog
                 creationData.c_rotationDegree = rotationDegree;
                 // creationData.c_imageResIndex = ///;
                 creationData.c_flippingFlags = flippingFlags;
+                creationData.c_resource = res;
 
                 if ( singleName )
                     creationData.c_proxyName = proxyName;
