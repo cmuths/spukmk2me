@@ -28,7 +28,6 @@ import com.spukmk2me.debug.Logger;
  */
 public abstract class ISubImage implements IResource
 {
-    public abstract IImageResource GetImageResource();
     public abstract void Render( IVideoDriver driver );
     public abstract short GetWidth();
     public abstract short GetHeight();
@@ -62,7 +61,8 @@ public abstract class ISubImage implements IResource
     {
         public SubImageCreationData() {}
 
-        public int      c_rotationDegree, c_imageResIndex;
+        public IImageResource c_resource;
+        public int      c_rotationDegree;
         public short    c_x, c_y, c_width, c_height;
         public byte     c_flippingFlags;
     }

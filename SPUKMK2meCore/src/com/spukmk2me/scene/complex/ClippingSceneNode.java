@@ -28,7 +28,7 @@ import com.spukmk2me.scene.NullSceneNode;
 /**
  *  Scene node which provides clipping feature.
  */
-public final class ClippingSceneNode extends ITopLeftOriginSceneNode
+public final class ClippingSceneNode extends ComplexSceneNode
 {
     private final class SubClippingSceneNode extends ITopLeftOriginSceneNode
     {
@@ -38,15 +38,15 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
         {
             driver.SetClipping( m_x, m_y, m_width, m_height );
         }
-
+        
         public short GetAABBWidth()
         {
-            return m_width;
+            return 0;
         }
 
         public short GetAABBHeight()
         {
-            return m_height;
+            return 0;
         }
 
         private void SetClipping( short x, short y, short width, short height )
@@ -66,6 +66,7 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
         m_unclippingNode    = new SubClippingSceneNode();
         AddChild( m_entryNode );
         AddChild( m_unclippingNode );
+        c_visible = true;
     }
     
     public void Render( IVideoDriver driver )
@@ -96,11 +97,20 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
         }
         else
             clipX = clipY = clipW = clipH = 0;
-
-        driver.SetClipping(
-            clipX, clipY, clipW, clipH );
+            
+        driver.SetClipping( clipX, clipY, clipW, clipH );
         m_unclippingNode.SetClipping(
             oldClipX, oldClipY, oldClipW, oldClipH );
+    }
+    
+    public short GetAABBX()
+    {
+        return 0;
+    }
+    
+    public short GetAABBY()
+    {
+        return 0;
     }
     
     public short GetAABBWidth()
@@ -148,6 +158,13 @@ public final class ClippingSceneNode extends ITopLeftOriginSceneNode
     {
         return m_entryNode;
     }
+    
+    /* $if SPUKMK2ME_SCENESAVER$ */
+    public class ClippingSceneNodeInfoData
+    {
+        public short c_x, c_y, c_width, c_height;
+    }
+    /* $endif$ */
 
     private SubClippingSceneNode    m_unclippingNode;
     private NullSceneNode           m_entryNode;

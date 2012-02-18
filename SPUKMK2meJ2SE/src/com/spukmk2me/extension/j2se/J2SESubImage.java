@@ -1,6 +1,11 @@
 package com.spukmk2me.extension.j2se;
 
-import java.awt.Graphics;
+import java.awt.Panel;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.CropImageFilter;
+import java.awt.image.FilteredImageSource;
+import java.awt.geom.AffineTransform;
 
 import com.spukmk2me.video.ISubImage;
 import com.spukmk2me.video.IVideoDriver;
@@ -12,29 +17,70 @@ final class J2SESubImage extends ISubImage
         short x, short y, short width, short height,
         int rotationDegree, byte flippingFlag )
     {
-        m_imageResource = imageResource;
-        m_x             = x;
-        m_y             = y;
-        m_width         = width;
-        m_height        = height;
-    }
+        CropImageFilter filter = new CropImageFilter( x, y, width, height );
+        
+        m_image = new Panel().createImage( new FilteredImageSource(
+            imageResource.GetJ2SEImage().getSource(), filter ) );
+		
+		boolean hasHorizontalFlipping = false;
+		
+		if ( flippingFlag != 0 )
+        {
+            // Vertical & horizontal flipping
+            if ( (flippingFlag & (IVideoDriver.FLIP_HORIZONTAL |
+                IVideoDriver.FLIP_VERTICAL)) ==
+                (IVideoDriver.FLIP_HORIZONTAL | IVideoDriver.FLIP_VERTICAL) )
+            {
+                flippingFlag = 0;
+                rotationDegree += 0x00B40000;
+            }
+            
+            else
+            {
+                // Vertical flipping only
+                // Vertical flipping = Horizontal flipping + Rotate 180 degree
+                if ( (flippingFlag & IVideoDriver.FLIP_VERTICAL) != 0 )
+                    rotationDegree += 0x00B40000;
 
-    public IImageResource GetImageResource()
-    {
-        return m_imageResource;
+                hasHorizontalFlipping = true;
+            }
+        }
+
+        while ( rotationDegree >= 0x01680000 ) // larger or equal 360
+            rotationDegree -= 0x01680000;
+
+        while ( rotationDegree < 0 )
+            rotationDegree += 0x01680000;
+            
+        double rotationRad = rotationDegree * Math.PI / 0x00B40000;
+            
+        m_transform = new AffineTransform();
+        
+        if ( hasHorizontalFlipping )
+        {
+            m_transform.translate( (double)width / 2, (double)height / 2 );
+            m_transform.scale( -1, 1 );
+            m_transform.translate( -(double)width / 2, -(double)height / 2 );
+        }
+            
+        m_transform.rotate( rotationRad, (double)width / 2, (double)height / 2 );
+        
+        double angle = Math.atan( (double)height/width ) - rotationRad;
+        double d = Math.pow( Math.pow( width, 2 ) + Math.pow( height, 2 ), 0.5 );
+        
+        m_width     = (short)Math.abs( Math.round( d * Math.cos( angle ) ) );
+        m_height    = (short)Math.abs( Math.round( d * Math.sin( angle ) ) );
     }
 
     public void Render( IVideoDriver driver )
     {
+		Graphics2D g = (Graphics2D)driver.GetProperty( J2SEVideoDriver.PROPERTY_GRAPHICS );
         short x = driver.GetRenderInfo().c_rasterX;
         short y = driver.GetRenderInfo().c_rasterY;
-
-        ((Graphics)driver.GetProperty( J2SEVideoDriver.PROPERTY_GRAPHICS )).
-            drawImage(
-                m_imageResource.GetJ2SEImage(),
-                x, y, x + m_width, y + m_height,
-                m_x, m_y, m_x + m_width, m_y + m_height,
-                null );
+        
+        m_transform.translate( x, y );
+        g.drawImage( m_image, m_transform, null );
+        m_transform.translate( -x, -y );
     }
 
     public short GetWidth()
@@ -77,6 +123,7 @@ final class J2SESubImage extends ISubImage
         return images;
     }
 
-    private J2SEImageResource   m_imageResource;
-    private short               m_x, m_y, m_width, m_height;
+    private Image           m_image;
+    private AffineTransform m_transform;
+    private short           m_width, m_height;
 }

@@ -322,7 +322,9 @@ public final class CommonInfoPanel extends JPanel
         "Image scene node",
         "Sprite scene node",
         "String scene node",
-        "Tiled scene node"
+        "Tiled scene node",
+        "Clipping scene node",
+        "Viewport scene node"
     };
 
     private JFrame      m_masterFrame;

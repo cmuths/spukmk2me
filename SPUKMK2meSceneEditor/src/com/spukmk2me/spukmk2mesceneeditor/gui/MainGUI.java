@@ -65,6 +65,9 @@ public class MainGUI extends javax.swing.JFrame
         
         m_filename = null;
         this.setTitle( "SPUKMK2ME Scene Editor - %new%" );
+        
+        m_centralData.GetDevice().GetVideoDriver().SetClipping(
+            (short)0, (short)0, (short)640, (short)480 );
     }
 
     /** This method is called from within the constructor to

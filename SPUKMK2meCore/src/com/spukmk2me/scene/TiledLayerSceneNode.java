@@ -47,7 +47,30 @@ public class TiledLayerSceneNode extends ITopLeftOriginSceneNode
                     ++nY;
             }
             
-            driver.SetClipping( oldX, oldY, m_viewWidth, m_viewHeight );
+            short oldClipX, oldClipY, oldClipW, oldClipH, clipX, clipY, clipW, clipH;
+            
+            oldClipX = (short)(oldClip >>> 48);
+            oldClipY = (short)(oldClip >> 32 & 0x000000000000FFFFL);
+            oldClipW = (short)(oldClip >> 16 & 0x000000000000FFFFL);
+            oldClipH = (short)(oldClip & 0x000000000000FFFFL);
+            
+            if ( Util.RectIntersect(
+                oldClipX, oldClipY, oldClipW, oldClipH,
+                ri.c_rasterX, ri.c_rasterY, m_viewWidth, m_viewHeight ) )
+            {
+                clipX = (short)Math.max( ri.c_rasterX, oldClipX );
+                clipY = (short)Math.max( ri.c_rasterY, oldClipY );
+                clipW = (short)(Math.min(
+                    ri.c_rasterX + m_viewWidth,
+                    oldClipX + oldClipW ) - clipX);
+                clipH = (short)(Math.min(
+                    ri.c_rasterY + m_viewHeight,
+                    oldClipY + oldClipH ) - clipY);
+            }
+            else
+                clipX = clipY = clipW = clipH = 0;
+            
+            driver.SetClipping( clipX, clipY, clipW, clipH );
             
             short x, y = (short)(m_viewY + oldY);
             
@@ -64,9 +87,7 @@ public class TiledLayerSceneNode extends ITopLeftOriginSceneNode
                 y += displayH;
             }
             
-            driver.SetClipping(
-                (short)(oldClip >>> 48), (short)(oldClip >>> 32),
-                (short)(oldClip >>> 16), (short)oldClip );
+            driver.SetClipping( oldClipX, oldClipY, oldClipW, oldClipH );
         }
         else
             RenderOnce( driver, oldX, oldY );

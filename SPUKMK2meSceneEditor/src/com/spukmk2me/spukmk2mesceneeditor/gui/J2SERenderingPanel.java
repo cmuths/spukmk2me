@@ -139,6 +139,9 @@ public class J2SERenderingPanel extends JPanel
 
     protected final void RenderScene( long timePassed )
     {
+        m_currentDevice.GetVideoDriver().SetClipping(
+            (short)0, (short)0, (short)m_width, (short)m_height );
+        
         if ( m_currentNode != null )
         {
             m_currentDevice.GetVideoDriver().StartRendering(

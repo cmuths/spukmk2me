@@ -12,6 +12,7 @@ import com.spukmk2me.video.ICFont;
 import com.spukmk2me.scene.ImageSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
 import com.spukmk2me.scene.TiledLayerSceneNode;
+import com.spukmk2me.scene.complex.ClippingSceneNode;
 
 import com.spukmk2me.optional.font.BitmapFont;
 import com.spukmk2me.optional.scene.ResourceManager;
@@ -25,7 +26,7 @@ public class PrivateInfoPanel extends JPanel
     {
         m_owner = owner;
         initComponents();
-        m_panels = new JPanel[ 6 ];
+        m_panels = new JPanel[ 7 ];
 
         m_panels[ 0 ] = m_unknownPanel;
         m_panels[ 1 ] = m_nullPanel;
@@ -33,6 +34,7 @@ public class PrivateInfoPanel extends JPanel
         m_panels[ 3 ] = m_spritePanel;
         m_panels[ 4 ] = m_stringPanel;
         m_panels[ 5 ] = m_tiledPanel;
+        m_panels[ 6 ] = m_clippingPanel;
     }
 
     public void ImageResourceChanged(
@@ -86,6 +88,10 @@ public class PrivateInfoPanel extends JPanel
 
             case NodeTypeChecker.NT_TILED:
                 LoadDataForTiledSceneNode();
+                break;
+                
+            case NodeTypeChecker.NT_CLIPPING:
+                LoadDataForClippingSceneNode();
                 break;
 
             default:
@@ -279,6 +285,18 @@ public class PrivateInfoPanel extends JPanel
         m_tiledViewXTextField.setText( String.valueOf( info.c_viewX ) );
         m_tiledViewYTextField.setText( String.valueOf( info.c_viewY ) );
     }
+    
+    private void LoadDataForClippingSceneNode()
+    {
+        ClippingSceneNode.ClippingSceneNodeInfoData info =
+            (ClippingSceneNode.ClippingSceneNodeInfoData)m_data.
+                GetCurrentNode().c_infoData;
+        
+        m_clippingXTextField.setText( String.valueOf( info.c_x ) );
+        m_clippingYTextField.setText( String.valueOf( info.c_y ) );
+        m_clippingWidthTextField.setText( String.valueOf( info.c_width ) );
+        m_clippingHeightTextField.setText( String.valueOf( info.c_height ) );
+    }
 
     private void EnableTiledImagePanelContent( boolean enable )
     {
@@ -370,6 +388,16 @@ public class PrivateInfoPanel extends JPanel
         m_tiledViewYTextField = new javax.swing.JTextField();
         m_tiledApplyButton = new javax.swing.JButton();
         m_tiledEditButton = new javax.swing.JButton();
+        m_clippingPanel = new javax.swing.JPanel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        m_clippingXTextField = new javax.swing.JTextField();
+        m_clippingYTextField = new javax.swing.JTextField();
+        m_clippingWidthTextField = new javax.swing.JTextField();
+        m_clippingHeightTextField = new javax.swing.JTextField();
+        m_clippingApplyButton = new javax.swing.JButton();
 
         jLabel9.setText("Unknown type.");
 
@@ -882,6 +910,70 @@ public class PrivateInfoPanel extends JPanel
         m_tiledPanel.setBounds(0, 0, 270, 300);
         m_layeredPane.add(m_tiledPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jLabel19.setText("Clip X:");
+
+        jLabel20.setText("Clip Y:");
+
+        jLabel21.setText("Clip width:");
+
+        jLabel22.setText("Clip height:");
+
+        m_clippingApplyButton.setText("Apply");
+        m_clippingApplyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_clippingApplyButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout m_clippingPanelLayout = new javax.swing.GroupLayout(m_clippingPanel);
+        m_clippingPanel.setLayout(m_clippingPanelLayout);
+        m_clippingPanelLayout.setHorizontalGroup(
+            m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(m_clippingPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(m_clippingPanelLayout.createSequentialGroup()
+                        .addGroup(m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(m_clippingYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                            .addComponent(m_clippingXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                            .addComponent(m_clippingWidthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                            .addComponent(m_clippingHeightTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)))
+                    .addComponent(m_clippingApplyButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        m_clippingPanelLayout.setVerticalGroup(
+            m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(m_clippingPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(m_clippingXTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(m_clippingYTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21)
+                    .addComponent(m_clippingWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_clippingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(m_clippingHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 157, Short.MAX_VALUE)
+                .addComponent(m_clippingApplyButton)
+                .addContainerGap())
+        );
+
+        m_clippingPanel.setBounds(0, 0, 270, 300);
+        m_layeredPane.add(m_clippingPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -1201,6 +1293,28 @@ public class PrivateInfoPanel extends JPanel
         }
     }//GEN-LAST:event_m_strEditColorButtonActionPerformed
 
+    private void m_clippingApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_clippingApplyButtonActionPerformed
+        try
+        {
+            short x         = Short.parseShort( m_clippingXTextField.getText() );
+            short y         = Short.parseShort( m_clippingYTextField.getText() );
+            short width     = Short.parseShort( m_clippingWidthTextField.getText() );
+            short height    = Short.parseShort( m_clippingHeightTextField.getText() );
+            ClippingSceneNode node = (ClippingSceneNode)m_data.GetCurrentNode();
+            ClippingSceneNode.ClippingSceneNodeInfoData info =
+                (ClippingSceneNode.ClippingSceneNodeInfoData)node.c_infoData;
+            
+            node.SetClipping( x, y, width, height );
+            info.c_x        = x;
+            info.c_y        = y;
+            info.c_width    = width;
+            info.c_height   = height;
+        } catch ( NumberFormatException e ) {
+            JOptionPane.showMessageDialog( this, "Wrong number",
+                "Error", JOptionPane.ERROR_MESSAGE );
+        }
+    }//GEN-LAST:event_m_clippingApplyButtonActionPerformed
+
     private CentralData m_data;
     private JPanel[]    m_panels;
     private Frame       m_owner;
@@ -1216,7 +1330,11 @@ public class PrivateInfoPanel extends JPanel
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1230,6 +1348,12 @@ public class PrivateInfoPanel extends JPanel
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton m_changeButton;
+    private javax.swing.JButton m_clippingApplyButton;
+    private javax.swing.JTextField m_clippingHeightTextField;
+    private javax.swing.JPanel m_clippingPanel;
+    private javax.swing.JTextField m_clippingWidthTextField;
+    private javax.swing.JTextField m_clippingXTextField;
+    private javax.swing.JTextField m_clippingYTextField;
     private javax.swing.JList m_imageList;
     private javax.swing.JPanel m_imagePanel;
     private javax.swing.JLayeredPane m_layeredPane;
