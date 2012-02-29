@@ -262,7 +262,7 @@ public class ImageDialog_AddImage extends JDialog
             }
 
             nW = ( x0 + imgWidth <= res.GetWidth() )? 1 : 0;
-            nH = ( x0 + imgHeight <= res.GetHeight() )? 1 : 0;
+            nH = ( y0 + imgHeight <= res.GetHeight() )? 1 : 0;
         }
 
         nImg = nW * nH;
@@ -324,7 +324,7 @@ public class ImageDialog_AddImage extends JDialog
         byte    flippingFlags;
 
         rotationDegree =
-            (int)Float.parseFloat( m_rotTextField.getText() ) * (2 << 16);
+            (int)(Double.parseDouble( m_rotTextField.getText() ) * 65536.0f);
 
         flippingFlags = 0;
 

@@ -587,25 +587,29 @@ public final class SceneTreeLoader
     private ISceneNode ConstructClippingSceneNode( DataInputStream dis )
         throws IOException
     {
-    	short x	        = dis.readShort();
-    	short y         = dis.readShort();
-    	short width	    = dis.readShort();
-    	short height    = dis.readShort();
-    	byte  flags     = dis.readByte(); 
+    	short x     = dis.readShort();
+    	short y     = dis.readShort();
+    	short clipX = dis.readShort();
+    	short clipY = dis.readShort();
+    	short clipW = dis.readShort();
+    	short clipH = dis.readShort();
+    	byte  flags = dis.readByte(); 
     	ClippingSceneNode node = new ClippingSceneNode();
     	
+    	node.c_x        = x;
+    	node.c_y        = y;
     	node.c_visible  = (flags & 0x80) != 0;
         node.c_enable   = (flags & 0x40) != 0;
-    	node.SetClipping( x, y, width, height );
+    	node.SetClipping( clipX, clipY, clipW, clipH );
     	
     	/* $if SPUKMK2ME_SCENESAVER$ */
         ClippingSceneNode.ClippingSceneNodeInfoData infoData =
             node.new ClippingSceneNodeInfoData();
 
-        infoData.c_x        = x;
-        infoData.c_y        = y;
-        infoData.c_width    = width;
-        infoData.c_height   = height;
+        infoData.c_x        = clipX;
+        infoData.c_y        = clipY;
+        infoData.c_width    = clipW;
+        infoData.c_height   = clipH;
         
         node.c_infoData = infoData;
         /* $endif$ */
