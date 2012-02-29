@@ -440,6 +440,8 @@ public final class Saver
                 ClippingSceneNode.ClippingSceneNodeInfoData info =
                     (ClippingSceneNode.ClippingSceneNodeInfoData)clippingNode.c_infoData;
                 
+                dos.writeShort( clippingNode.c_x );
+                dos.writeShort( clippingNode.c_y );
                 dos.writeShort( info.c_x );
                 dos.writeShort( info.c_y );
                 dos.writeShort( info.c_width );

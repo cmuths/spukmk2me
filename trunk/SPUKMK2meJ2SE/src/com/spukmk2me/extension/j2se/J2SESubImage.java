@@ -53,8 +53,19 @@ final class J2SESubImage extends ISubImage
             rotationDegree += 0x01680000;
             
         double rotationRad = rotationDegree * Math.PI / 0x00B40000;
-            
+        double angle = Math.atan( (double)height/width ) + rotationRad;
+        double d = Math.pow( Math.pow( width, 2 ) + Math.pow( height, 2 ), 0.5 );
+        
+        m_width     = (short)Math.abs( Math.round( d * Math.cos( angle ) ) );
+        m_height    = (short)Math.abs( Math.round( d * Math.sin( angle ) ) );
+        
         m_transform = new AffineTransform();
+        
+        m_transform.translate(
+            Math.abs( Math.round( d * Math.cos( angle ) ) ) / 2,
+            Math.abs( Math.round( d * Math.sin( angle ) ) ) / 2 );
+        m_transform.rotate( rotationRad );
+        m_transform.translate( -(double)width / 2, -(double)height / 2 );
         
         if ( hasHorizontalFlipping )
         {
@@ -62,25 +73,18 @@ final class J2SESubImage extends ISubImage
             m_transform.scale( -1, 1 );
             m_transform.translate( -(double)width / 2, -(double)height / 2 );
         }
-            
-        m_transform.rotate( rotationRad, (double)width / 2, (double)height / 2 );
-        
-        double angle = Math.atan( (double)height/width ) - rotationRad;
-        double d = Math.pow( Math.pow( width, 2 ) + Math.pow( height, 2 ), 0.5 );
-        
-        m_width     = (short)Math.abs( Math.round( d * Math.cos( angle ) ) );
-        m_height    = (short)Math.abs( Math.round( d * Math.sin( angle ) ) );
     }
 
     public void Render( IVideoDriver driver )
     {
 		Graphics2D g = (Graphics2D)driver.GetProperty( J2SEVideoDriver.PROPERTY_GRAPHICS );
-        short x = driver.GetRenderInfo().c_rasterX;
+		short x = driver.GetRenderInfo().c_rasterX;
         short y = driver.GetRenderInfo().c_rasterY;
+        AffineTransform transform = new AffineTransform(
+            1.0f, 0.0f, 0.0f, 1.0f, x, y );
         
-        m_transform.translate( x, y );
-        g.drawImage( m_image, m_transform, null );
-        m_transform.translate( -x, -y );
+        transform.concatenate( m_transform );
+        g.drawImage( m_image, transform, null );
     }
 
     public short GetWidth()
