@@ -9,7 +9,7 @@ import com.spukmk2me.video.ISubImage;
 import com.spukmk2me.debug.Logger;
 /* $endif$ */
 
-public class TiledLayerSceneNode extends ITopLeftOriginSceneNode
+public class TiledLayerSceneNode extends ISceneNode
 {
     public TiledLayerSceneNode() {}
 
@@ -94,6 +94,16 @@ public class TiledLayerSceneNode extends ITopLeftOriginSceneNode
         
         ri.c_rasterX = oldX;
         ri.c_rasterY = oldY;
+    }
+    
+    public short GetAABBX()
+    {
+        return 0;
+    }
+    
+    public short GetAABBY()
+    {
+        return 0;
     }
 
     public short GetAABBWidth()

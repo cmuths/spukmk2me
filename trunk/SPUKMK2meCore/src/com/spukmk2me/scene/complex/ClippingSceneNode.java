@@ -22,7 +22,6 @@ import com.spukmk2me.Util;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.RenderInfo;
 import com.spukmk2me.scene.ISceneNode;
-import com.spukmk2me.scene.ITopLeftOriginSceneNode;
 import com.spukmk2me.scene.NullSceneNode;
 
 /**
@@ -30,13 +29,23 @@ import com.spukmk2me.scene.NullSceneNode;
  */
 public final class ClippingSceneNode extends ComplexSceneNode
 {
-    private final class SubClippingSceneNode extends ITopLeftOriginSceneNode
+    private final class SubClippingSceneNode extends ISceneNode
     {
         public SubClippingSceneNode() {}
 
         public void Render( IVideoDriver driver )
         {
             driver.SetClipping( m_x, m_y, m_width, m_height );
+        }
+        
+        public final short GetAABBX()
+        {
+            return 0;
+        }
+
+        public final short GetAABBY()
+        {
+            return 0;
         }
         
         public short GetAABBWidth()
@@ -168,5 +177,5 @@ public final class ClippingSceneNode extends ComplexSceneNode
 
     private SubClippingSceneNode    m_unclippingNode;
     private NullSceneNode           m_entryNode;
-    private short m_width, m_height;
+    private short                   m_width, m_height;
 }

@@ -62,16 +62,16 @@ final class J2SESubImage extends ISubImage
         m_transform = new AffineTransform();
         
         m_transform.translate(
-            Math.abs( Math.round( d * Math.cos( angle ) ) ) / 2,
-            Math.abs( Math.round( d * Math.sin( angle ) ) ) / 2 );
+            Math.abs( d * Math.cos( angle ) ) / 2.0d,
+            Math.abs( d * Math.sin( angle ) ) / 2.0d );
         m_transform.rotate( rotationRad );
-        m_transform.translate( -(double)width / 2, -(double)height / 2 );
+        m_transform.translate( -(double)width / 2.0d, -(double)height / 2.0d );
         
         if ( hasHorizontalFlipping )
         {
-            m_transform.translate( (double)width / 2, (double)height / 2 );
+            m_transform.translate( (double)width / 2.0d, (double)height / 2.0d );
             m_transform.scale( -1, 1 );
-            m_transform.translate( -(double)width / 2, -(double)height / 2 );
+            m_transform.translate( -(double)width / 2.0d, -(double)height / 2.0d );
         }
     }
 

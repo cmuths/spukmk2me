@@ -25,7 +25,7 @@ import com.spukmk2me.Util;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.ISubImage;
 
-public final class SpriteSceneNode extends ITopLeftOriginSceneNode
+public final class SpriteSceneNode extends ISceneNode
 {
     public SpriteSceneNode( ISubImage[] images )
     {
@@ -41,6 +41,16 @@ public final class SpriteSceneNode extends ITopLeftOriginSceneNode
             UpdateAnimation( driver.GetRenderInfo().c_passedTime );
 
         m_images[ Util.FPRound( m_currentFrame ) ].Render( driver );
+    }
+    
+    public short GetAABBX()
+    {
+        return 0;
+    }
+    
+    public short GetAABBY()
+    {
+        return 0;
     }
 
     public short GetAABBWidth()
