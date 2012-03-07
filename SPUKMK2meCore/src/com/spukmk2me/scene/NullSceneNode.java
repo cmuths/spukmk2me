@@ -23,7 +23,7 @@ import com.spukmk2me.video.IVideoDriver;
 /**
  *  Used as a dummy or a faked-first node in the list. It's multi-purpose node.
  */
-public final class NullSceneNode extends ITopLeftOriginSceneNode
+public final class NullSceneNode extends ISceneNode
 {
     /**
      *  Default constructor.
@@ -33,14 +33,24 @@ public final class NullSceneNode extends ITopLeftOriginSceneNode
         c_visible = false;
     }
 
-    public final void Render( IVideoDriver driver ) {}
+    public void Render( IVideoDriver driver ) {}
+    
+    public short GetAABBX()
+    {
+        return 0;
+    }
+    
+    public short GetAABBY()
+    {
+        return 0;
+    }
 
-    public final short GetAABBWidth()
+    public short GetAABBWidth()
     {
         return c_width;
     }
 
-    public final short GetAABBHeight()
+    public short GetAABBHeight()
     {
         return c_height;
     }

@@ -24,7 +24,7 @@ import com.spukmk2me.video.ISubImage;
 /**
  *  Scene node that display an image.
  */
-public final class ImageSceneNode extends ITopLeftOriginSceneNode
+public final class ImageSceneNode extends ISceneNode
 {
     /**
      *  A constructor
@@ -41,6 +41,16 @@ public final class ImageSceneNode extends ITopLeftOriginSceneNode
     {
         if ( m_image != null )
             m_image.Render( driver );
+    }
+    
+    public short GetAABBX()
+    {
+        return 0;
+    }
+    
+    public short GetAABBY()
+    {
+        return 0;
     }
 
     public short GetAABBWidth()
@@ -66,7 +76,7 @@ public final class ImageSceneNode extends ITopLeftOriginSceneNode
      *  Set new image to this node for displaying
      *  @param image New image.
      */
-    public final void SetImage( ISubImage image )
+    public void SetImage( ISubImage image )
     {
         m_image = image;
     }    
