@@ -46,4 +46,6 @@ public final class NodeTypeChecker
     public static final byte NT_TILED       = 4;
     public static final byte NT_CLIPPING    = 5;
     public static final byte NT_VIEWPORT    = 6;
+    
+    public static final int NUMBERS_OF_TYPES = 7;
 }
