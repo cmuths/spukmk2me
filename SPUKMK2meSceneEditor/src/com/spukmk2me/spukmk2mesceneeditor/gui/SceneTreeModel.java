@@ -6,8 +6,6 @@ import javax.swing.tree.TreePath;
 
 import com.spukmk2me.DoublyLinkedList;
 import com.spukmk2me.scene.ISceneNode;
-import java.awt.AWTEvent;
-import javax.swing.event.TreeModelEvent;
 
 public final class SceneTreeModel implements TreeModel
 {

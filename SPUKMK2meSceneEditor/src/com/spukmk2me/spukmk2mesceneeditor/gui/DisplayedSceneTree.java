@@ -24,11 +24,12 @@ public class DisplayedSceneTree extends JTree
     {
         m_treeModel = new SceneTreeModel();
         m_treeModel.SetRoot( null );
-
+        
         this.getSelectionModel().setSelectionMode( selectionMode );
         this.addTreeSelectionListener( this );
+        //this.setEditable( true );
     }
-
+    
     public void ImageResourceChanged( IImageResource imageResource,
         byte changingCode )
     {
@@ -61,6 +62,7 @@ public class DisplayedSceneTree extends JTree
         this.setModel( null );
         m_treeModel.SetRoot( m_data.GetRootNode() );
         this.setModel( m_treeModel );
+        this.setCellRenderer( new SceneTreeCellRenderer() );
     }
 
     public void valueChanged( TreeSelectionEvent e )
