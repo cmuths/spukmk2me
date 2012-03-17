@@ -29,6 +29,7 @@ public class MainGUI extends javax.swing.JFrame
 
         m_sceneTree         = new DisplayedSceneTree(
             TreeSelectionModel.SINGLE_TREE_SELECTION );
+        m_sceneTree.setExpandsSelectedPaths( true );
         m_commonInfoPanel   = new CommonInfoPanel( this );
         m_renderingPanel    = new MainRenderingPanel();
         m_privateInfoPanel  = new PrivateInfoPanel( this );
@@ -343,10 +344,9 @@ public class MainGUI extends javax.swing.JFrame
         if ( node != null )
         {
             AddSceneNodeDialog dialog = new AddSceneNodeDialog(
-                m_centralData, this, true );
+                m_sceneTree, node, this );
 
             dialog.setVisible( true );
-            m_centralData.DispatchReload();
         }
     }//GEN-LAST:event_m_addNodeButtonActionPerformed
 
@@ -480,13 +480,8 @@ public class MainGUI extends javax.swing.JFrame
     }//GEN-LAST:event_m_downButtonActionPerformed
 
     private void m_removeNodeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_removeNodeButtonActionPerformed
-        ISceneNode node = m_centralData.GetCurrentNode();
-        
-        if ( node != m_centralData.GetRootNode() )
-        {
-            node.Drop();
-            m_centralData.DispatchReload();
-        }
+        m_sceneTree.getSceneTreeModel().removeNode(
+            m_centralData.GetCurrentNode() );
     }//GEN-LAST:event_m_removeNodeButtonActionPerformed
 
     private void m_saveasSceneMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_saveasSceneMenuItemActionPerformed
@@ -541,24 +536,12 @@ public class MainGUI extends javax.swing.JFrame
 
     private void moveNode( ISceneNode node, boolean upDown )
     {
-        if ( node != null );
+        if ( (node != null) && (node != m_centralData.GetRootNode()) )
         {
-            if ( node != m_centralData.GetRootNode() )
-            {
-                ISceneNode before = (upDown)? node.c_prev.c_prev : node.c_next;
-                
-                if ( before != node )
-                {
-                    node.c_prev.c_next = node.c_next;
-                    node.c_next.c_prev = node.c_prev;
-                    node.c_next = before.c_next;
-                    node.c_prev = before;
-                    before.c_next.c_prev = node;
-                    before.c_next = node;
-                    
-                    m_centralData.DispatchReload();
-                }
-            }
+            TreePath[] path = m_sceneTree.getSelectionPaths();
+
+            m_sceneTree.getSceneTreeModel().moveNode( node, upDown );
+            m_sceneTree.setSelectionPath( path[ 0 ] );
         }
     }
     
