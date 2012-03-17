@@ -245,7 +245,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jSplitPane2" alignment="0" pref="640" max="32767" attributes="0"/>
+                  <Component id="jSplitPane2" alignment="0" pref="641" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -281,7 +281,7 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jSplitPane3" alignment="0" pref="609" max="32767" attributes="0"/>
+                          <Component id="jSplitPane3" alignment="0" pref="611" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">

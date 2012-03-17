@@ -74,7 +74,7 @@ public final class SoundMonitor_MIDP implements ISoundMonitor, PlayerListener
                     break;
 
                 case FORMAT_WAV:
-                    formatString = "audio/x-wav";
+                    formatString = "audio/X-wav";
                     break;
 
                 case FORMAT_MP3:

@@ -27,7 +27,6 @@ public class DisplayedSceneTree extends JTree
         
         this.getSelectionModel().setSelectionMode( selectionMode );
         this.addTreeSelectionListener( this );
-        //this.setEditable( true );
     }
     
     public void ImageResourceChanged( IImageResource imageResource,
@@ -80,6 +79,11 @@ public class DisplayedSceneTree extends JTree
             for ( i = list.first(); !i.equals( end ); i.fwrd() )
                 ((SceneManagerEventListener)i.data()).CurrentNodeChanged();
         }
+    }
+
+    public SceneTreeModel getSceneTreeModel()
+    {
+        return m_treeModel;
     }
 
     public CentralData      m_data;

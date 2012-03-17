@@ -98,5 +98,5 @@ public final class CentralData
     private Device              m_device;
     private DoublyLinkedList    m_listenerList;
     private ResourceManager     m_resourceManager;
-    private ISceneNode          m_rootNode, m_currentNode, m_topViewNode;
+    private ISceneNode          m_rootNode, m_currentNode;
 }

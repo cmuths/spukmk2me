@@ -12,15 +12,14 @@ import com.spukmk2me.scene.TiledLayerSceneNode;
 import com.spukmk2me.scene.complex.ClippingSceneNode;
 import com.spukmk2me.scene.complex.ViewportSceneNode;
 
-import com.spukmk2me.spukmk2mesceneeditor.data.CentralData;
-
 public final class AddSceneNodeDialog extends JDialog
 {
-    public AddSceneNodeDialog( CentralData data,
-        Frame parent, boolean modal )
+    public AddSceneNodeDialog( DisplayedSceneTree tree, ISceneNode parentNode,
+        Frame parent )
     {
-        super( parent, modal );
-        m_data = data;
+        super( parent, true );
+        m_tree          = tree;
+        m_parentNode    = parentNode;
         initComponents();
     }
 
@@ -166,15 +165,15 @@ public final class AddSceneNodeDialog extends JDialog
             {
                 newNode.c_visible   = false;
                 newNode.c_enable    = true;
-                m_data.GetCurrentNode().AddChild( newNode );
-                m_data.DispatchReload();
+                m_tree.getSceneTreeModel().addNode( newNode, m_parentNode );
             }
 
             this.dispose();
         }
     }//GEN-LAST:event_m_addButtonActionPerformed
 
-    private CentralData m_data;
+    private DisplayedSceneTree  m_tree;
+    private ISceneNode          m_parentNode;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
