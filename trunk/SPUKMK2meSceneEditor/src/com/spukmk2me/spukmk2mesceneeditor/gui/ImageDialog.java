@@ -6,6 +6,10 @@ import javax.swing.ListSelectionModel;
 
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.optional.scene.ResourceManager;
+import com.spukmk2me.video.IImageResource;
+import com.spukmk2me.video.ISubImage;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 public class ImageDialog extends javax.swing.JDialog
 {
@@ -16,31 +20,83 @@ public class ImageDialog extends javax.swing.JDialog
         initComponents();
         m_manager = manager;
         m_vdriver = vdriver;
-        Initialise();
+        initialise();
     }
 
-    private void Initialise()
+    private void initialise()
     {
-        Reload();
-    }
-
-    private void Reload()
-    {
-        DefaultListModel model = (DefaultListModel)m_imageList.getModel();
+        DefaultListModel listModel = (DefaultListModel)m_imageList.getModel();
         int n = m_manager.GetNumberOfResources( ResourceManager.RT_IMAGE );
 
-        model.clear();
+        listModel.clear();
 
         for ( int i = 0; i != n; ++i )
         {
-            model.addElement(
+            listModel.addElement(
                 m_manager.
                 GetResource( i, ResourceManager.RT_IMAGE ).
                 GetCreationData().c_proxyName );
         }
 
-        m_imageList.setModel( model );
+        m_imageList.setModel( listModel );
         m_imageList.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+
+        //
+        DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
+
+        n = m_manager.GetNumberOfResources( ResourceManager.RT_IMAGERESOURCE );
+
+        for ( int i = 0; i != n; ++i )
+        {
+            comboBoxModel.addElement(
+                m_manager.GetResource( i, ResourceManager.RT_IMAGERESOURCE ).
+                GetCreationData().c_proxyName );
+        }
+
+        m_imageResComboBox.setModel( comboBoxModel );
+
+        resetFields();
+    }
+
+    private void loadSubImageData( ISubImage image )
+    {
+        resetFields();
+
+        ISubImage.SubImageCreationData data =
+            (ISubImage.SubImageCreationData)image.GetCreationData();
+
+        m_imageResComboBox.setSelectedIndex(
+            m_manager.GetResourceIndex( data.c_resource,
+                ResourceManager.RT_IMAGERESOURCE) );
+        m_xTextField.setText( String.valueOf( data.c_x ) );
+        m_yTextField.setText( String.valueOf( data.c_y ) );
+        m_wTextField.setText( String.valueOf( data.c_width ) );
+        m_hTextField.setText( String.valueOf( data.c_height ) );
+        m_proxynameTextField.setText( data.c_proxyName );
+        m_rotTextField.setText( String.valueOf(
+            (double)data.c_rotationDegree / 0x00010000 ) );
+        m_verticalFlipCheckBox.setSelected(
+            (data.c_flippingFlags & IVideoDriver.FLIP_VERTICAL) != 0 );
+        m_horizontalFlipCheckBox.setSelected(
+            (data.c_flippingFlags & IVideoDriver.FLIP_HORIZONTAL) != 0 );
+    }
+
+    private void resetFields()
+    {
+        m_imageResComboBox.setSelectedIndex( 0 );
+        m_proxynameTextField.setText( null );
+        m_rotTextField.setText( "0.0" );
+        m_verticalFlipCheckBox.setSelected( false );
+        m_horizontalFlipCheckBox.setSelected( false );
+
+        //
+        m_batchCheckBox.setSelected( false );
+        m_batchXTextField.setText( "0" );
+        m_batchYTextField.setText( "0" );
+        m_batchWTextField.setText( "0" );
+        m_batchHTextField.setText( "0" );
+        m_batchNWTextField.setText( "0" );
+        m_batchNHTextField.setText( "0" );
     }
 
     /** This method is called from within the constructor to
@@ -52,27 +108,57 @@ public class ImageDialog extends javax.swing.JDialog
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         m_imageList = new javax.swing.JList();
-        m_addButton = new javax.swing.JButton();
         m_removeButton = new javax.swing.JButton();
-        m_closeButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        m_imageResComboBox = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        m_xTextField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        m_yTextField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        m_wTextField = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        m_hTextField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        m_proxynameTextField = new javax.swing.JTextField();
+        m_batchCheckBox = new javax.swing.JCheckBox();
+        jSeparator1 = new javax.swing.JSeparator();
+        m_batchPanel = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        m_batchXTextField = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        m_batchWTextField = new javax.swing.JTextField();
+        m_batchNWTextField = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        m_batchYTextField = new javax.swing.JTextField();
+        m_batchHTextField = new javax.swing.JTextField();
+        m_batchNHTextField = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel13 = new javax.swing.JLabel();
+        m_rotTextField = new javax.swing.JTextField();
+        m_verticalFlipCheckBox = new javax.swing.JCheckBox();
+        m_horizontalFlipCheckBox = new javax.swing.JCheckBox();
+        m_applyButton = new javax.swing.JButton();
+        m_clearButton = new javax.swing.JButton();
+        m_addButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setText("Images:");
-
         m_imageList.setModel( new DefaultListModel() );
-        jScrollPane1.setViewportView(m_imageList);
-
-        m_addButton.setText("Add");
-        m_addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                m_addButtonActionPerformed(evt);
+        m_imageList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                m_imageListValueChanged(evt);
             }
         });
+        jScrollPane1.setViewportView(m_imageList);
 
         m_removeButton.setText("Remove");
         m_removeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -81,50 +167,350 @@ public class ImageDialog extends javax.swing.JDialog
             }
         });
 
-        m_closeButton.setText("Close");
-        m_closeButton.addActionListener(new java.awt.event.ActionListener() {
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
+                    .addComponent(m_removeButton))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(m_removeButton)
+                .addContainerGap())
+        );
+
+        jLabel1.setText("Image resource:");
+
+        m_imageResComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                m_closeButtonActionPerformed(evt);
+                m_imageResComboBoxActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Edit");
+        jLabel2.setText("X:");
+
+        m_xTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_xTextFieldFocusGained(evt);
+            }
+        });
+
+        jLabel3.setText("Y:");
+
+        m_yTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_yTextFieldFocusGained(evt);
+            }
+        });
+
+        jLabel4.setText("W:");
+
+        m_wTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_wTextFieldFocusGained(evt);
+            }
+        });
+
+        jLabel5.setText("H:");
+
+        m_hTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_hTextFieldFocusGained(evt);
+            }
+        });
+
+        jLabel6.setText("Proxy name:");
+
+        m_proxynameTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_proxynameTextFieldFocusGained(evt);
+            }
+        });
+
+        m_batchCheckBox.setText("Create image batch (create image only)");
+        m_batchCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_batchCheckBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("X:");
+
+        jLabel8.setText("W:");
+
+        jLabel9.setText("NW:");
+
+        m_batchXTextField.setEnabled(false);
+        m_batchXTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_batchXTextFieldFocusGained(evt);
+            }
+        });
+
+        jLabel10.setText("Y:");
+
+        m_batchWTextField.setEnabled(false);
+        m_batchWTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_batchWTextFieldFocusGained(evt);
+            }
+        });
+
+        m_batchNWTextField.setEnabled(false);
+        m_batchNWTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_batchNWTextFieldFocusGained(evt);
+            }
+        });
+
+        jLabel11.setText("H:");
+
+        jLabel12.setText("NH:");
+
+        m_batchYTextField.setEnabled(false);
+        m_batchYTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_batchYTextFieldFocusGained(evt);
+            }
+        });
+
+        m_batchHTextField.setEnabled(false);
+        m_batchHTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_batchHTextFieldFocusGained(evt);
+            }
+        });
+
+        m_batchNHTextField.setEnabled(false);
+        m_batchNHTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_batchNHTextFieldFocusGained(evt);
+            }
+        });
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel14.setText("Input -1 for NW/NH to auto detect.");
+
+        javax.swing.GroupLayout m_batchPanelLayout = new javax.swing.GroupLayout(m_batchPanel);
+        m_batchPanel.setLayout(m_batchPanelLayout);
+        m_batchPanelLayout.setHorizontalGroup(
+            m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(m_batchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(m_batchPanelLayout.createSequentialGroup()
+                        .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(m_batchNWTextField)
+                            .addComponent(m_batchWTextField)
+                            .addComponent(m_batchXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(m_batchHTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                            .addComponent(m_batchYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                            .addComponent(m_batchNHTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)))
+                    .addComponent(jLabel14))
+                .addContainerGap())
+        );
+        m_batchPanelLayout.setVerticalGroup(
+            m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(m_batchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(m_batchXTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10)
+                    .addComponent(m_batchYTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(m_batchWTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(m_batchHTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_batchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(m_batchNWTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12)
+                    .addComponent(m_batchNHTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel14)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jLabel13.setText("Rotation degree:");
+
+        m_rotTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                m_rotTextFieldFocusGained(evt);
+            }
+        });
+
+        m_verticalFlipCheckBox.setText("Vertical flip");
+
+        m_horizontalFlipCheckBox.setText("Horizontal flip");
+
+        m_applyButton.setText("Apply");
+        m_applyButton.setEnabled(false);
+
+        m_clearButton.setText("Clear");
+        m_clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_clearButtonActionPerformed(evt);
+            }
+        });
+
+        m_addButton.setText("Add");
+        m_addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_addButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(m_imageResComboBox, 0, 177, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(m_wTextField)
+                                    .addComponent(m_xTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(m_hTextField)
+                                    .addComponent(m_yTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE))))
+                        .addContainerGap(10, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(m_proxynameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                        .addContainerGap())))
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(m_batchCheckBox)
+                .addContainerGap(59, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(m_batchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(m_rotTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(m_verticalFlipCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(m_horizontalFlipCheckBox)
+                .addContainerGap(106, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(91, Short.MAX_VALUE)
+                .addComponent(m_addButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(m_clearButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(m_applyButton)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(m_imageResComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(m_xTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(m_yTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(m_wTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(m_hTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(m_proxynameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(m_batchCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(m_batchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(m_rotTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(m_verticalFlipCheckBox)
+                    .addComponent(m_horizontalFlipCheckBox))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(m_applyButton)
+                    .addComponent(m_clearButton)
+                    .addComponent(m_addButton))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(m_removeButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                            .addComponent(m_closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
-                            .addComponent(m_addButton, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE))))
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(m_addButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(m_removeButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(m_closeButton)
-                .addContainerGap())
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -132,17 +518,188 @@ public class ImageDialog extends javax.swing.JDialog
 
     private void m_addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_addButtonActionPerformed
 
-        ImageDialog_AddImage dlg = new ImageDialog_AddImage( m_manager,
-           m_vdriver, this, true );
+        int imgResIndex = m_imageResComboBox.getSelectedIndex();
 
-        dlg.setVisible( true );
-        Reload();
+        if ( imgResIndex == -1 )
+            return;
+
+        IImageResource res = (IImageResource)m_manager.GetResource(
+            imgResIndex, ResourceManager.RT_IMAGERESOURCE );
+        int     nW, nH, nImg;
+        short   x0, y0, imgWidth, imgHeight;
+
+        if ( m_batchCheckBox.isSelected() )
+        {
+            try
+            {
+                x0          = Short.parseShort( m_batchXTextField.getText() );
+                y0          = Short.parseShort( m_batchYTextField.getText() );
+                imgWidth    = Short.parseShort( m_batchWTextField.getText() );
+                imgHeight   = Short.parseShort( m_batchHTextField.getText() );
+                nW          = Short.parseShort( m_batchNWTextField.getText() );
+                nH          = Short.parseShort( m_batchNHTextField.getText() );
+            } catch ( NumberFormatException e ) {
+                JOptionPane.showMessageDialog( this, "Numerical error in batch info" );
+                return;
+            }
+
+            if ( nW == -1 )
+                nW = (res.GetWidth() - x0) / imgWidth;
+            else if ( nW < 0 )
+            {
+                JOptionPane.showMessageDialog( this, "Number of image columns < 0." );
+                return;
+            }
+            else
+                nW = Math.min( nW, (res.GetWidth() - x0) / imgWidth );
+
+            if ( nH == -1 )
+                nH = (res.GetHeight() - y0) / imgHeight;
+            else if ( nH < 0 )
+            {
+                JOptionPane.showMessageDialog( this, "Number of image rows < 0." );
+                return;
+            }
+            else
+                nH = Math.min( nH, (res.GetHeight() - y0) / imgHeight );
+
+            m_batchNWTextField.setText( String.valueOf( nW ) );
+            m_batchNHTextField.setText( String.valueOf( nH ) );
+        }
+        else
+        {
+            try
+            {
+                x0 = Short.parseShort( m_xTextField.getText() );
+                y0 = Short.parseShort( m_yTextField.getText() );
+                imgWidth    = Short.parseShort( m_wTextField.getText() );
+                imgHeight   = Short.parseShort( m_hTextField.getText() );
+            } catch ( NumberFormatException e ) {
+                JOptionPane.showMessageDialog( this, "Numerical error" );
+                return;
+            }
+
+            nW = ( x0 + imgWidth <= res.GetWidth() )? 1 : 0;
+            nH = ( y0 + imgHeight <= res.GetHeight() )? 1 : 0;
+        }
+
+        nImg = nW * nH;
+
+        if ( nImg == 0 )
+        {
+            JOptionPane.showMessageDialog( this,
+                "Number of cropped image is zero." );
+            return;
+        }
+
+        String proxyName = m_proxynameTextField.getText();
+
+        if ( proxyName == null )
+        {
+            JOptionPane.showMessageDialog( this,
+                "Proxy name cannot be null." );
+            return;
+        }
+        else if ( proxyName.length() == 0 )
+        {
+            JOptionPane.showMessageDialog( this,
+                "Proxy name is empty." );
+            return;
+        }
+        else // Check proxy name(s) for duplication
+        {
+            boolean duplicatedProxy = false;
+
+            if ( (nW == 1) && (nH == 1) )
+            {
+                duplicatedProxy = m_manager.GetResource(
+                    proxyName, ResourceManager.RT_IMAGE ) != null;
+            }
+            else
+            {
+                for ( int i = 0; i != nImg; ++i )
+                {
+                    if ( m_manager.GetResource(
+                        proxyName + i, ResourceManager.RT_IMAGE ) != null )
+                    {
+                        duplicatedProxy = true;
+                        break;
+                    }
+                }
+            }
+
+            if ( duplicatedProxy )
+            {
+                JOptionPane.showMessageDialog( this,
+                    "Duplicated proxy name." );
+                return;
+            }
+        }
+
+        // Create sub images
+
+        int     rotationDegree;
+        short   x, y;
+        byte    flippingFlags;
+
+        rotationDegree =
+            (int)(Double.parseDouble( m_rotTextField.getText() ) * 65536.0f);
+
+        flippingFlags = 0;
+
+        if ( m_verticalFlipCheckBox.isSelected() )
+            flippingFlags |= IVideoDriver.FLIP_VERTICAL;
+
+        if ( m_horizontalFlipCheckBox.isSelected() )
+            flippingFlags |= IVideoDriver.FLIP_HORIZONTAL;
+
+        y = y0;
+
+        int counter = 0;
+        boolean singleName = (nW == 1) && (nH == 1);
+
+        for ( int i = 0; i != nH; ++i )
+        {
+            x = x0;
+
+            for ( int j = 0; j != nW; ++j )
+            {
+                ISubImage image = m_vdriver.CreateSubImage(
+                    (IImageResource)m_manager.GetResource(
+                        imgResIndex, ResourceManager.RT_IMAGERESOURCE ),
+                    x, y, imgWidth, imgHeight, rotationDegree, flippingFlags );
+                ISubImage.SubImageCreationData creationData =
+                    image.new SubImageCreationData();
+
+                creationData.c_x = x;
+                creationData.c_y = y;
+                creationData.c_width = imgWidth;
+                creationData.c_height = imgHeight;
+                creationData.c_rotationDegree = rotationDegree;
+                // creationData.c_imageResIndex = ///;
+                creationData.c_flippingFlags = flippingFlags;
+                creationData.c_resource = res;
+
+                if ( singleName )
+                    creationData.c_proxyName = proxyName;
+                else
+                    creationData.c_proxyName = proxyName + counter;
+
+                ++counter;
+
+                image.SetCreationData( creationData );
+                m_manager.AddResource( image, ResourceManager.RT_IMAGE );
+
+                x += imgWidth;
+            }
+
+            y += imgHeight;
+        }
+
+        DefaultListModel listModel = (DefaultListModel)m_imageList.getModel();
+
+        listModel.addElement( proxyName );
     }//GEN-LAST:event_m_addButtonActionPerformed
-
-    private void m_closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_closeButtonActionPerformed
-
-        this.dispose();
-    }//GEN-LAST:event_m_closeButtonActionPerformed
 
     private void m_removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_removeButtonActionPerformed
 
@@ -155,16 +712,138 @@ public class ImageDialog extends javax.swing.JDialog
         }
     }//GEN-LAST:event_m_removeButtonActionPerformed
 
+    private void m_imageListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_m_imageListValueChanged
+        int index = m_imageList.getSelectedIndex();
+        
+        if ( index != -1 )
+        {
+            loadSubImageData( (ISubImage)m_manager.GetResource(
+                index, ResourceManager.RT_IMAGE ) );
+        }
+    }//GEN-LAST:event_m_imageListValueChanged
+
+    private void m_batchCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_batchCheckBoxActionPerformed
+        boolean enabled = m_batchCheckBox.isSelected();
+
+        m_batchXTextField.setEnabled( enabled );
+        m_batchYTextField.setEnabled( enabled );
+        m_batchWTextField.setEnabled( enabled );
+        m_batchHTextField.setEnabled( enabled );
+        m_batchNWTextField.setEnabled( enabled );
+        m_batchNHTextField.setEnabled( enabled );
+    }//GEN-LAST:event_m_batchCheckBoxActionPerformed
+
+    private void m_xTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_xTextFieldFocusGained
+        m_xTextField.selectAll();
+    }//GEN-LAST:event_m_xTextFieldFocusGained
+
+    private void m_yTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_yTextFieldFocusGained
+        m_yTextField.selectAll();
+    }//GEN-LAST:event_m_yTextFieldFocusGained
+
+    private void m_wTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_wTextFieldFocusGained
+        m_wTextField.selectAll();
+    }//GEN-LAST:event_m_wTextFieldFocusGained
+
+    private void m_hTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_hTextFieldFocusGained
+        m_hTextField.selectAll();
+    }//GEN-LAST:event_m_hTextFieldFocusGained
+
+    private void m_proxynameTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_proxynameTextFieldFocusGained
+        m_proxynameTextField.selectAll();
+    }//GEN-LAST:event_m_proxynameTextFieldFocusGained
+
+    private void m_rotTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_rotTextFieldFocusGained
+        m_rotTextField.selectAll();
+    }//GEN-LAST:event_m_rotTextFieldFocusGained
+
+    private void m_batchXTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_batchXTextFieldFocusGained
+        m_batchXTextField.selectAll();
+    }//GEN-LAST:event_m_batchXTextFieldFocusGained
+
+    private void m_batchYTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_batchYTextFieldFocusGained
+        m_batchYTextField.selectAll();
+    }//GEN-LAST:event_m_batchYTextFieldFocusGained
+
+    private void m_batchWTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_batchWTextFieldFocusGained
+        m_batchWTextField.selectAll();
+    }//GEN-LAST:event_m_batchWTextFieldFocusGained
+
+    private void m_batchHTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_batchHTextFieldFocusGained
+        m_batchHTextField.selectAll();
+    }//GEN-LAST:event_m_batchHTextFieldFocusGained
+
+    private void m_batchNWTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_batchNWTextFieldFocusGained
+        m_batchNWTextField.selectAll();
+    }//GEN-LAST:event_m_batchNWTextFieldFocusGained
+
+    private void m_batchNHTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_batchNHTextFieldFocusGained
+        m_batchNHTextField.selectAll();
+    }//GEN-LAST:event_m_batchNHTextFieldFocusGained
+
+    private void m_imageResComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_imageResComboBoxActionPerformed
+        int index = m_imageResComboBox.getSelectedIndex();
+
+        if ( index != -1 )
+        {
+            IImageResource res = (IImageResource)m_manager.GetResource( index,
+                ResourceManager.RT_IMAGERESOURCE );
+
+            m_xTextField.setText( "0" );
+            m_yTextField.setText( "0" );
+            m_wTextField.setText( String.valueOf( res.GetWidth() ) );
+            m_hTextField.setText( String.valueOf( res.GetHeight() ) );
+        }
+    }//GEN-LAST:event_m_imageResComboBoxActionPerformed
+
+    private void m_clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_clearButtonActionPerformed
+        resetFields();
+    }//GEN-LAST:event_m_clearButtonActionPerformed
+
     private IVideoDriver    m_vdriver;
     private ResourceManager m_manager;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JButton m_addButton;
-    private javax.swing.JButton m_closeButton;
+    private javax.swing.JButton m_applyButton;
+    private javax.swing.JCheckBox m_batchCheckBox;
+    private javax.swing.JTextField m_batchHTextField;
+    private javax.swing.JTextField m_batchNHTextField;
+    private javax.swing.JTextField m_batchNWTextField;
+    private javax.swing.JPanel m_batchPanel;
+    private javax.swing.JTextField m_batchWTextField;
+    private javax.swing.JTextField m_batchXTextField;
+    private javax.swing.JTextField m_batchYTextField;
+    private javax.swing.JButton m_clearButton;
+    private javax.swing.JTextField m_hTextField;
+    private javax.swing.JCheckBox m_horizontalFlipCheckBox;
     private javax.swing.JList m_imageList;
+    private javax.swing.JComboBox m_imageResComboBox;
+    private javax.swing.JTextField m_proxynameTextField;
     private javax.swing.JButton m_removeButton;
+    private javax.swing.JTextField m_rotTextField;
+    private javax.swing.JCheckBox m_verticalFlipCheckBox;
+    private javax.swing.JTextField m_wTextField;
+    private javax.swing.JTextField m_xTextField;
+    private javax.swing.JTextField m_yTextField;
     // End of variables declaration//GEN-END:variables
 }

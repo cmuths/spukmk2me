@@ -145,6 +145,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="m_xTextbox">
+      <Events>
+        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="m_xTextboxFocusGained"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
@@ -152,6 +155,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="m_yTextbox">
+      <Events>
+        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="m_yTextboxFocusGained"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="m_visibleCheckbox">
       <Properties>
