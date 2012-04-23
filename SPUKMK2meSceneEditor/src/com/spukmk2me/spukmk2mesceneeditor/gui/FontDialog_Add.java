@@ -8,19 +8,20 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import com.spukmk2me.video.BitmapFont;
+import com.spukmk2me.video.BitmapFontConstructionData;
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.ResourceSet;
 import com.spukmk2me.spukmk2mesceneeditor.data.Misc;
-
-import com.spukmk2me.optional.font.BitmapFont;
-import com.spukmk2me.optional.scene.ResourceManager;
 
 public class FontDialog_Add extends JDialog
 {
-    public FontDialog_Add( ResourceManager manager,
+    public FontDialog_Add( ResourceSet manager,
         Frame parent, boolean modal )
     {
         super( parent, modal );
         initComponents();
-        m_manager = manager;
+        m_resourceSet = manager;
     }
 
     /** This method is called from within the constructor to
@@ -150,8 +151,8 @@ public class FontDialog_Add extends JDialog
             JOptionPane.showMessageDialog( this, "Empty proxy name." );
             return;
         }
-        else if ( m_manager.GetResource(
-            proxyName, ResourceManager.RT_FONT ) != null )
+        else if ( m_resourceSet.GetResource(
+            proxyName, IResource.RT_BITMAPFONT ) != null )
         {
             JOptionPane.showMessageDialog( this, "Duplicated proxy name." );
             return;
@@ -160,22 +161,23 @@ public class FontDialog_Add extends JDialog
         try
         {
             BitmapFont font = new BitmapFont(
-                new FileInputStream( m_filenameTextField.getText() ) );
-            BitmapFont.BitmapFontCreationData creationData =
-                font.new BitmapFontCreationData();
+                new FileInputStream( m_filenameTextField.getText() ),
+                proxyName );
+            BitmapFontConstructionData constructionData =
+                new BitmapFontConstructionData();
 
-            creationData.c_path = m_filenameTextField.getText();
-            creationData.c_proxyName = m_proxyTextField.getText();
-            font.SetCreationData( creationData );
+            constructionData.c_path = m_filenameTextField.getText();
+            constructionData.c_proxyname = proxyName;
+            font.SetConstructionData( constructionData );
 
-            m_manager.AddResource( font, ResourceManager.RT_FONT );
+            m_resourceSet.AddResource( font );
             this.dispose();
         } catch ( IOException e ) {
             JOptionPane.showMessageDialog( this, "IO Error" );
         }
     }//GEN-LAST:event_m_addButtonActionPerformed
 
-    private ResourceManager m_manager;
+    private ResourceSet m_resourceSet;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

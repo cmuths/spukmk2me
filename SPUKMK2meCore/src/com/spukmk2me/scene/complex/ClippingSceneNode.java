@@ -57,7 +57,7 @@ public final class ClippingSceneNode extends ComplexSceneNode
         {
             return 0;
         }
-
+        
         private void SetClipping( short x, short y, short width, short height )
         {
             m_x         = x;
@@ -130,6 +130,12 @@ public final class ClippingSceneNode extends ComplexSceneNode
     public short GetAABBHeight()
     {
         return m_height;
+    }
+    
+    public long GetHierarchicalBoundingRect()
+    {
+        return  ((long)(m_width & 0x0000FFFF) << 16) |
+                (long)(m_height & 0x0000FFFF);
     }
 
     /**

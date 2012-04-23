@@ -17,9 +17,10 @@ import com.spukmk2me.spukmk2mesceneeditor.data.NodeTypeChecker;
 public final class CommonInfoPanel extends JPanel
     implements SceneManagerEventListener
 {
-    public CommonInfoPanel( JFrame masterFrame )
+    public CommonInfoPanel( JFrame masterFrame, DisplayedSceneTree mainTree )
     {
         m_masterFrame = masterFrame;
+        m_mainTree = mainTree;
         initComponents();
     }
 
@@ -322,6 +323,8 @@ public final class CommonInfoPanel extends JPanel
             node.c_exportFlag   = false;
             node.c_proxyName    = null;
         }
+
+        m_mainTree.getSceneTreeModel().noticeNodePropertyChanged( node );
     }//GEN-LAST:event_m_applyButtonActionPerformed
 
     private void m_xTextboxFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_m_xTextboxFocusGained
@@ -334,7 +337,6 @@ public final class CommonInfoPanel extends JPanel
 
     private static final String UNKNOWN_TYPE    = "Unknown";
     private static final String ROOT_NODE       = "Root node";
-    private static final String EMPTY_STRING    = "";
     private static final String[] NODE_TYPES    = {
         "Null scene node",
         "Image scene node",
@@ -347,6 +349,7 @@ public final class CommonInfoPanel extends JPanel
 
     private JFrame      m_masterFrame;
     private CentralData m_centralData;
+    private DisplayedSceneTree m_mainTree;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

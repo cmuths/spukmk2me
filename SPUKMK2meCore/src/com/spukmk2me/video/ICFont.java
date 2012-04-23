@@ -18,6 +18,8 @@
 
 package com.spukmk2me.video;
 
+import com.spukmk2me.resource.IResource;
+
 /**
  *  Interface for fonts used in SPUKMK2me engine.
  *  \details This interface is suitable only for character-based fonts. Any
@@ -31,8 +33,13 @@ package com.spukmk2me.video;
  *  There is an exception about space (0x20). Space is considered as a no-glyph
  * character.
  */
-public abstract class ICFont implements IResource
+public abstract class ICFont extends IResource
 {
+    protected ICFont( String proxyname )
+    {
+        super( proxyname );
+    }
+    
     /**
      *  Get the render data type of this font.
      *  \details Currently, developments on J2ME platform heavily depends on

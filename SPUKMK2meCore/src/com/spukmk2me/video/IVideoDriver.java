@@ -162,21 +162,23 @@ public interface IVideoDriver
     /**
      *  Create an image resources from an input stream.
      *  @param inputStream Image file name.
+     *  @param proxyname Leave null if you don't plan on using ResourceSet.
      *  @return Image resource created from file.
      *  @throws IOException If loading sequence got error.
      */
-    public IImageResource CreateImageResource( InputStream inputStream )
+    public IImageResource CreateImageResource( InputStream inputStream, String proxyname )
         throws IOException;
     
     /**
      *  Create an image resources from file.
      *  @param filename Image file name.
+     *  @param proxyname Leave null if you don't plan on using ResourceSet.
      *  @return Image resource created from file.
      *  @throws IOException If loading sequence got error.
      *  @deprecated This function is deprecated due to the ambiguity of
      * "filename". 
      */
-    public IImageResource CreateImageResource( String filename )
+    public IImageResource CreateImageResource( String filename, String proxyname )
         throws IOException;
     
     /**
@@ -188,11 +190,12 @@ public interface IVideoDriver
      *  @param height Crop height
      *  @param rotationDegree Rotation degree (16-16 fixed point)
      *  @param flippingFlag Check the constants (flipping is applied before rotation).
+     *  @param proxyname Leave null if you don't plan on using ResourceSet.
      *  @return Created sub image.
      */
     public ISubImage CreateSubImage( IImageResource imgResource,
         short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag );
+        int rotationDegree, byte flippingFlag, String proxyname );
     
     /**
      *  Create a sub image from file name.
@@ -200,12 +203,14 @@ public interface IVideoDriver
      * explicitly and then create a sub image from it with full size and no
      * rotation/flipping.
      *  @param filename File name to load image.
+     *  @param proxyname Leave null if you don't plan on using ResourceSet.
      *  @return Created sub image.
      *  @throws IOException If loading sequence got error.
      *  @deprecated This function is deprecated due to the ambiguity of
      * "filename". 
      */
-    public ISubImage CreateSubImage( String filename ) throws IOException;
+    public ISubImage CreateSubImage( String filename, String proxyname )
+        throws IOException;
     
     /**
      *  Create batch of sub images from an image resources.
@@ -215,9 +220,10 @@ public interface IVideoDriver
      *  @param imgResource Resource to create batch if sub images.
      *  @param width Width of each sub image.
      *  @param height Height of each sub image.
+     *  @param proxynames Leave null if you don't plan on using ResourceSet.
      */
     public ISubImage[] CreateSubImages( IImageResource imgResource,
-        short width, short height );
+        short width, short height, String[] proxynames );
     
     public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
     public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.

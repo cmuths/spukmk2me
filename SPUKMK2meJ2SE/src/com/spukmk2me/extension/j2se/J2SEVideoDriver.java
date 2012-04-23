@@ -18,7 +18,7 @@ import com.spukmk2me.video.IVideoDriver;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-public class J2SEVideoDriver extends JPanel
+public final class J2SEVideoDriver extends JPanel
     implements IVideoDriver, Scrollable
 {
     public J2SEVideoDriver()
@@ -204,40 +204,41 @@ public class J2SEVideoDriver extends JPanel
             (long)(m_clipHeight & 0x0000FFFF);
     }
 
-    public IImageResource CreateImageResource( InputStream is )
+    public IImageResource CreateImageResource( InputStream is, String proxyname )
         throws IOException
     {
-        return new J2SEImageResource( is );
+        return new J2SEImageResource( is, proxyname );
     }
     
-    public IImageResource CreateImageResource( String filename )
+    public IImageResource CreateImageResource( String filename, String proxyname )
         throws IOException
     {
-        return new J2SEImageResource( new FileInputStream( filename ) );
+        return new J2SEImageResource( new FileInputStream( filename ), proxyname );
     }
 
     public ISubImage CreateSubImage( IImageResource imageResource,
         short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag )
+        int rotationDegree, byte flippingFlag, String proxyname )
     {
         return new J2SESubImage( (J2SEImageResource)imageResource,
-            x, y, width, height, rotationDegree, flippingFlag );
+            x, y, width, height, rotationDegree, flippingFlag, proxyname );
     }
 
     public ISubImage[] CreateSubImages( IImageResource imageResource,
-        short width, short height )
+        short width, short height, String[] proxynames )
     {
         return J2SESubImage.CreateSubImagesFromResource(
-            (J2SEImageResource)imageResource, width, height );
+            (J2SEImageResource)imageResource, width, height,
+            proxynames );
     }
 
-    public ISubImage CreateSubImage( String filename ) throws IOException
+    public ISubImage CreateSubImage( String filename, String proxyname ) throws IOException
     {
         J2SEImageResource res =
-            new J2SEImageResource( new FileInputStream( filename ) );
+            new J2SEImageResource( new FileInputStream( filename ), null );
         
         return new J2SESubImage( res, (short)0, (short)0,
-            res.GetWidth(), res.GetHeight(), 0, (byte)0 );
+            res.GetWidth(), res.GetHeight(), 0, (byte)0, proxyname );
     }
     
     private void InitialiseDriver()

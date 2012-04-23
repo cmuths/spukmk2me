@@ -15,9 +15,9 @@ public final class SceneTreeCellRenderer implements TreeCellRenderer
 {
     public SceneTreeCellRenderer()
     {
-        m_icons = new ImageIcon[ NodeTypeChecker.NUMBERS_OF_TYPES ];
+        m_icons = new ImageIcon[ ICON_FILES.length ];
         
-        for ( int i =0; i != NodeTypeChecker.NUMBERS_OF_TYPES; ++i )
+        for ( int i =0; i != ICON_FILES.length; ++i )
             m_icons[ i ] = new ImageIcon( this.getClass().getResource(ICON_FILES[ i ]) );
     }
     
@@ -36,7 +36,11 @@ public final class SceneTreeCellRenderer implements TreeCellRenderer
         
         JLabel component = new JLabel( label );
         
-        component.setIcon( m_icons[ nodeType ] );
+        if ( nodeType == -1 )
+            component.setIcon( m_icons[ ICON_FILES.length - 1 ] );
+        else
+            component.setIcon( m_icons[ nodeType ] );
+
         component.setForeground( ( selected )? Color.BLACK : Color.GRAY );
         return component;
     }
@@ -49,6 +53,7 @@ public final class SceneTreeCellRenderer implements TreeCellRenderer
         "/tilednodeicon.png",
         "/clipnodeicon.png",
         "/imgnodeicon.png",
+        "/unknownnodeicon.png"
     };
     
     private ImageIcon m_icons[];

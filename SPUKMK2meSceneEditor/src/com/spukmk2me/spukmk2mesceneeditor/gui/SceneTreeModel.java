@@ -152,6 +152,11 @@ public final class SceneTreeModel implements TreeModel
         }
     }
 
+    public void noticeNodePropertyChanged( ISceneNode node )
+    {
+        fireChangedEvent( generateEvent( node ) );
+    }
+
     private TreeModelEvent generateEvent( ISceneNode node )
     {
         ISceneNode iterator = node;

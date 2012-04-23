@@ -3,22 +3,24 @@ package com.spukmk2me.spukmk2mesceneeditor.gui;
 import java.awt.Frame;
 import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
-
-import com.spukmk2me.video.IVideoDriver;
-import com.spukmk2me.optional.scene.ResourceManager;
-import com.spukmk2me.video.IImageResource;
-import com.spukmk2me.video.ISubImage;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
+import com.spukmk2me.video.IVideoDriver;
+import com.spukmk2me.video.IImageResource;
+import com.spukmk2me.video.ISubImage;
+import com.spukmk2me.video.SubImageConstructionData;
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.ResourceSet;
+
 public class ImageDialog extends javax.swing.JDialog
 {
-    public ImageDialog( ResourceManager manager, IVideoDriver vdriver,
+    public ImageDialog( ResourceSet resourceSet, IVideoDriver vdriver,
         Frame parent, boolean modal )
     {
         super( parent, modal );
         initComponents();
-        m_manager = manager;
+        m_resourceSet = resourceSet;
         m_vdriver = vdriver;
         initialise();
     }
@@ -26,16 +28,14 @@ public class ImageDialog extends javax.swing.JDialog
     private void initialise()
     {
         DefaultListModel listModel = (DefaultListModel)m_imageList.getModel();
-        int n = m_manager.GetNumberOfResources( ResourceManager.RT_IMAGE );
+        int n = m_resourceSet.GetNumberOfResources( IResource.RT_IMAGE );
 
         listModel.clear();
 
         for ( int i = 0; i != n; ++i )
         {
-            listModel.addElement(
-                m_manager.
-                GetResource( i, ResourceManager.RT_IMAGE ).
-                GetCreationData().c_proxyName );
+            listModel.addElement( m_resourceSet.
+                GetResource( i, IResource.RT_IMAGE ).GetProxyName() );
         }
 
         m_imageList.setModel( listModel );
@@ -44,13 +44,13 @@ public class ImageDialog extends javax.swing.JDialog
         //
         DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
 
-        n = m_manager.GetNumberOfResources( ResourceManager.RT_IMAGERESOURCE );
+        n = m_resourceSet.GetNumberOfResources( IResource.RT_IMAGERESOURCE );
 
         for ( int i = 0; i != n; ++i )
         {
             comboBoxModel.addElement(
-                m_manager.GetResource( i, ResourceManager.RT_IMAGERESOURCE ).
-                GetCreationData().c_proxyName );
+                m_resourceSet.GetResource( i, IResource.RT_IMAGERESOURCE ).
+                GetProxyName() );
         }
 
         m_imageResComboBox.setModel( comboBoxModel );
@@ -62,17 +62,16 @@ public class ImageDialog extends javax.swing.JDialog
     {
         resetFields();
 
-        ISubImage.SubImageCreationData data =
-            (ISubImage.SubImageCreationData)image.GetCreationData();
+        SubImageConstructionData data =
+            (SubImageConstructionData)image.GetConstructionData();
 
         m_imageResComboBox.setSelectedIndex(
-            m_manager.GetResourceIndex( data.c_resource,
-                ResourceManager.RT_IMAGERESOURCE) );
+            m_resourceSet.GetResourceIndex( data.c_resource ) );
         m_xTextField.setText( String.valueOf( data.c_x ) );
         m_yTextField.setText( String.valueOf( data.c_y ) );
         m_wTextField.setText( String.valueOf( data.c_width ) );
         m_hTextField.setText( String.valueOf( data.c_height ) );
-        m_proxynameTextField.setText( data.c_proxyName );
+        m_proxynameTextField.setText( data.c_proxyname );
         m_rotTextField.setText( String.valueOf(
             (double)data.c_rotationDegree / 0x00010000 ) );
         m_verticalFlipCheckBox.setSelected(
@@ -523,8 +522,8 @@ public class ImageDialog extends javax.swing.JDialog
         if ( imgResIndex == -1 )
             return;
 
-        IImageResource res = (IImageResource)m_manager.GetResource(
-            imgResIndex, ResourceManager.RT_IMAGERESOURCE );
+        IImageResource res = (IImageResource)m_resourceSet.GetResource(
+            imgResIndex, IResource.RT_IMAGERESOURCE );
         int     nW, nH, nImg;
         short   x0, y0, imgWidth, imgHeight;
 
@@ -612,15 +611,15 @@ public class ImageDialog extends javax.swing.JDialog
 
             if ( (nW == 1) && (nH == 1) )
             {
-                duplicatedProxy = m_manager.GetResource(
-                    proxyName, ResourceManager.RT_IMAGE ) != null;
+                duplicatedProxy = m_resourceSet.GetResource(
+                    proxyName, IResource.RT_IMAGE ) != null;
             }
             else
             {
                 for ( int i = 0; i != nImg; ++i )
                 {
-                    if ( m_manager.GetResource(
-                        proxyName + i, ResourceManager.RT_IMAGE ) != null )
+                    if ( m_resourceSet.GetResource(
+                        proxyName + i, IResource.RT_IMAGE ) != null )
                     {
                         duplicatedProxy = true;
                         break;
@@ -665,11 +664,12 @@ public class ImageDialog extends javax.swing.JDialog
             for ( int j = 0; j != nW; ++j )
             {
                 ISubImage image = m_vdriver.CreateSubImage(
-                    (IImageResource)m_manager.GetResource(
-                        imgResIndex, ResourceManager.RT_IMAGERESOURCE ),
-                    x, y, imgWidth, imgHeight, rotationDegree, flippingFlags );
-                ISubImage.SubImageCreationData creationData =
-                    image.new SubImageCreationData();
+                    (IImageResource)m_resourceSet.GetResource(
+                        imgResIndex, IResource.RT_IMAGERESOURCE ),
+                    x, y, imgWidth, imgHeight, rotationDegree, flippingFlags,
+                    ( singleName )? proxyName : proxyName + counter );
+                SubImageConstructionData creationData =
+                    new SubImageConstructionData();
 
                 creationData.c_x = x;
                 creationData.c_y = y;
@@ -681,14 +681,14 @@ public class ImageDialog extends javax.swing.JDialog
                 creationData.c_resource = res;
 
                 if ( singleName )
-                    creationData.c_proxyName = proxyName;
+                    creationData.c_proxyname = proxyName;
                 else
-                    creationData.c_proxyName = proxyName + counter;
+                    creationData.c_proxyname = proxyName + counter;
 
                 ++counter;
 
-                image.SetCreationData( creationData );
-                m_manager.AddResource( image, ResourceManager.RT_IMAGE );
+                image.SetConstructionData( creationData );
+                m_resourceSet.AddResource( image );
 
                 x += imgWidth;
             }
@@ -707,7 +707,10 @@ public class ImageDialog extends javax.swing.JDialog
         
         if ( index != -1 )
         {
-            m_manager.RemoveResource( index, ResourceManager.RT_IMAGE );
+            m_resourceSet.RemoveResource(
+                m_resourceSet.GetResource( index, IResource.RT_IMAGE ).
+                    GetProxyName(),
+                IResource.RT_IMAGE );
             ((DefaultListModel)m_imageList.getModel()).remove( index );
         }
     }//GEN-LAST:event_m_removeButtonActionPerformed
@@ -717,8 +720,8 @@ public class ImageDialog extends javax.swing.JDialog
         
         if ( index != -1 )
         {
-            loadSubImageData( (ISubImage)m_manager.GetResource(
-                index, ResourceManager.RT_IMAGE ) );
+            loadSubImageData( (ISubImage)m_resourceSet.GetResource(
+                index, IResource.RT_IMAGE ) );
         }
     }//GEN-LAST:event_m_imageListValueChanged
 
@@ -786,13 +789,14 @@ public class ImageDialog extends javax.swing.JDialog
 
         if ( index != -1 )
         {
-            IImageResource res = (IImageResource)m_manager.GetResource( index,
-                ResourceManager.RT_IMAGERESOURCE );
+            IImageResource res = (IImageResource)m_resourceSet.GetResource( index,
+                IResource.RT_IMAGERESOURCE );
 
             m_xTextField.setText( "0" );
             m_yTextField.setText( "0" );
             m_wTextField.setText( String.valueOf( res.GetWidth() ) );
             m_hTextField.setText( String.valueOf( res.GetHeight() ) );
+            m_proxynameTextField.setText( res.GetProxyName() );
         }
     }//GEN-LAST:event_m_imageResComboBoxActionPerformed
 
@@ -801,7 +805,7 @@ public class ImageDialog extends javax.swing.JDialog
     }//GEN-LAST:event_m_clearButtonActionPerformed
 
     private IVideoDriver    m_vdriver;
-    private ResourceManager m_manager;
+    private ResourceSet     m_resourceSet;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

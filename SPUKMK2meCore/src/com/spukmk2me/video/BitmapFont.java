@@ -16,7 +16,7 @@
  *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.spukmk2me.optional.font;
+package com.spukmk2me.video;
 
 import com.spukmk2me.video.ICFont;
 
@@ -24,9 +24,8 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-/* $if SPUKMK2ME_SCENESAVER$ */
-import com.spukmk2me.video.IResourceCreationData;
-/* $endif$ */
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.IResourceConstructionData;
 
 /* $if SPUKMK2ME_DEBUG$ */
 import com.spukmk2me.debug.Logger;
@@ -46,8 +45,9 @@ import com.spukmk2me.debug.Logger;
  */
 public final class BitmapFont extends ICFont
 {
-    public BitmapFont( InputStream is ) throws IOException
+    public BitmapFont( InputStream is, String proxyname ) throws IOException
     {
+        super( proxyname );
         DataInputStream dis = new DataInputStream( is );
 
         // Header
@@ -93,6 +93,11 @@ public final class BitmapFont extends ICFont
         m_buffer            = new int[ m_bufferWidth * m_height ];
         m_preprocessedData  = new int[ m_bytesPerChar ];
         m_colors            = new int[ 1 << m_bitDepth ];
+    }
+    
+    public byte GetResourceType()
+    {
+        return IResource.RT_BITMAPFONT;
     }
 
     public byte GetRenderDataType()
@@ -425,18 +430,18 @@ public final class BitmapFont extends ICFont
     }
 
     /* $if SPUKMK2ME_SCENESAVER$ */
-    public void SetCreationData( IResourceCreationData creationData )
+    public void SetConstructionData( IResourceConstructionData data )
     {
     	/* $if SPUKMK2ME_DEBUG$ */
-        if ( !(creationData instanceof BitmapFontCreationData) )
+        if ( !(data instanceof BitmapFontConstructionData) )
         {
             Logger.Log( "This isn't creation data for ICFont" );
         }
     	/* $endif$ */
-    	m_creationData = creationData;
+    	m_creationData = data;
     }
 
-    public IResourceCreationData GetCreationData()
+    public IResourceConstructionData GetConstructionData()
     {
         return m_creationData;
     }
@@ -448,7 +453,7 @@ public final class BitmapFont extends ICFont
     public static final byte STYLE_UNDERLINE    = 0x04;
 
     /* $if SPUKMK2ME_SCENESAVER$ */
-    IResourceCreationData m_creationData;
+    IResourceConstructionData m_creationData;
     /* $endif$ */
     private int[]   m_extraCharMap, m_buffer, m_preprocessedData,
                     m_colors;
@@ -459,15 +464,4 @@ public final class BitmapFont extends ICFont
                 m_charDistance, m_bytesPerLine, m_bytesPerChar,
                 m_yUnderline, m_italicStride;
     private int m_style, m_additionalCharWidth, m_bufferWidth;
-
-
-    /* $if SPUKMK2ME_SCENESAVER$ */
-    public final class BitmapFontCreationData extends
-        IResourceCreationData
-    {
-        public BitmapFontCreationData() {}
-
-        public String c_path;
-    }
-    /* $endif$ */
 }

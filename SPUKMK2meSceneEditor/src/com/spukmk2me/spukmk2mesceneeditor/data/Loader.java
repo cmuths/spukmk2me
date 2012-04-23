@@ -1,14 +1,13 @@
 package com.spukmk2me.spukmk2mesceneeditor.data;
 
-import com.spukmk2me.optional.scene.ResourceProducer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.DataInputStream;
-import java.io.File;
 
 import com.spukmk2me.scene.ISceneNode;
-import com.spukmk2me.optional.scene.SceneTreeLoader;
-import com.spukmk2me.optional.scene.StandardResourceLoader;
+import com.spukmk2me.resource.ResourceSet;
+import com.spukmk2me.resource.DefaultResourceProducer;
+import com.spukmk2me.scene.SceneTreeLoader;
 
 public final class Loader
 {
@@ -24,18 +23,17 @@ public final class Loader
 
         DataInputStream dis = new DataInputStream( is );
 
-        SceneTreeLoader sceneLoader = new SceneTreeLoader(
-           m_data.GetResourceManager() );
-        StandardResourceLoader resourceLoader =
-            new StandardResourceLoader( m_data.GetDevice().GetVideoDriver(),
-                m_data.GetResourceManager(),
+        SceneTreeLoader sceneLoader = new SceneTreeLoader();
+        DefaultResourceProducer producer =
+            new DefaultResourceProducer( m_data.GetDevice().GetVideoDriver(),
+                m_data.GetDevice().GetSoundMonitor(),
                 m_data.GetDevice().GetFileSystem(),
                 savePath );
-        ResourceProducer producer = new ResourceProducer( resourceLoader );
         
         boolean result = sceneLoader.Load( dis, producer );
         ISceneNode rootNode = sceneLoader.Get( "root" );
         
+        m_data.SetResourceSet( sceneLoader.GetResourceSet() );
         m_data.ChangeRootNode( rootNode );
         m_data.DispatchReload();
 

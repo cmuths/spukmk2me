@@ -1,17 +1,17 @@
 package com.spukmk2me.extension.j2se;
 
 import java.io.IOException;
-import java.io.File;
+import java.io.InputStream;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
 import com.spukmk2me.video.IImageResource;
-import java.io.InputStream;
 
 final class J2SEImageResource extends IImageResource
 {
-    public J2SEImageResource( InputStream is ) throws IOException
+    public J2SEImageResource( InputStream is, String proxyname ) throws IOException
     {
+        super( proxyname );
         m_image = ImageIO.read( is );
     }
 

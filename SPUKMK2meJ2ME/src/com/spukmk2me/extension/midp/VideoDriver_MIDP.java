@@ -219,13 +219,14 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     
     public void CleanupRenderingContext() {}
     
-    public IImageResource CreateImageResource( InputStream inputStream )
+    public IImageResource CreateImageResource(
+        InputStream inputStream, String proxyname )
         throws IOException
     {
-        return new MIDPImageResource( inputStream );
+        return new MIDPImageResource( inputStream, proxyname );
     }
 
-    public IImageResource CreateImageResource( String filename )
+    public IImageResource CreateImageResource( String filename, String proxyname )
         throws IOException
     {
         /* $if SPUKMK2ME_DEBUG$ */
@@ -237,7 +238,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         
         InputStream is =
             m_fileSystem.OpenFile( filename, IFileSystem.LOCATION_AUTODETECT );
-        IImageResource res = new MIDPImageResource( is );
+        IImageResource res = new MIDPImageResource( is, proxyname );
         
         is.close();
         
@@ -250,7 +251,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 
     public ISubImage CreateSubImage( IImageResource imgResource,
         short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag )
+        int rotationDegree, byte flippingFlag, String proxyname )
     {
         /* $if SPUKMK2ME_DEBUG$ */
         if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
@@ -270,21 +271,22 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         /* $endif$ */
 
         return new MIDPSubImage( (MIDPImageResource)imgResource,
-            x, y, width, height, rotationDegree, flippingFlag );
+            x, y, width, height, rotationDegree, flippingFlag, proxyname );
     }
     
-    public ISubImage CreateSubImage( String filename ) throws IOException
+    public ISubImage CreateSubImage( String filename, String proxyname )
+        throws IOException
     {
         MIDPImageResource resource =
-            (MIDPImageResource)CreateImageResource( filename );
+            (MIDPImageResource)CreateImageResource( filename, null );
         
         return new MIDPSubImage( resource,
             (short)0, (short)0, resource.GetWidth(), resource.GetHeight(),
-            0, (byte)0 );
+            0, (byte)0, proxyname );
     }
 
     public ISubImage[] CreateSubImages( IImageResource imgResource,
-        short width, short height )
+        short width, short height, String[] proxynames )
     {
         /* $if SPUKMK2ME_DEBUG$ */
         try
@@ -295,7 +297,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         }
         /* $endif$ */
         return MIDPSubImage.CreateSubImagesFromResource(
-            (MIDPImageResource)imgResource, width, height );
+            (MIDPImageResource)imgResource, width, height, proxynames );
     }
     
     public static final String PROPERTY_MIDPGRAPHICS    = "midp_graphics";

@@ -22,20 +22,33 @@ package com.spukmk2me.video;
 import com.spukmk2me.debug.Logger;
 /* $endif$ */
 
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.IResourceConstructionData;
+
 /**
  *  Presents image resource. Simply put, an instance of this class presents
  * an image that is loaded from somewhere.
  *  \details This class is implemented in video driver side.
  */
-public abstract class IImageResource implements IResource
+public abstract class IImageResource extends IResource
 {
+    protected IImageResource( String proxyname )
+    {
+        super( proxyname );
+    }
+    
+    public final byte GetResourceType()
+    {
+        return IResource.RT_IMAGERESOURCE;
+    }
+    
     public abstract short GetWidth();
     public abstract short GetHeight();
 
     /* $if SPUKMK2ME_SCENESAVER$ */
-    public final void SetCreationData( IResourceCreationData creationData )
+    public final void SetConstructionData( IResourceConstructionData creationData )
     {
-        if ( !(creationData instanceof ImageResourceCreationData) )
+        if ( !(creationData instanceof ImageResourceConstructionData) )
         {
             Logger.Log(
                 "ERROR: This isn't creation data for IImageResource." );
@@ -44,19 +57,11 @@ public abstract class IImageResource implements IResource
         m_creationData = creationData;
     }
     
-    public final IResourceCreationData GetCreationData()
+    public final IResourceConstructionData GetConstructionData()
     {
         return m_creationData;
     }
     
-    private IResourceCreationData m_creationData;
-    
-    public final class ImageResourceCreationData
-        extends IResourceCreationData
-    {
-        public ImageResourceCreationData() {}
-
-        public String c_path;
-    }
-	/* $endif$ */
+    private IResourceConstructionData m_creationData;
+    /* $endif$ */
 }

@@ -8,18 +8,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import com.spukmk2me.video.IVideoDriver;
-import com.spukmk2me.optional.scene.ResourceManager;
-import com.spukmk2me.spukmk2mesceneeditor.data.Misc;
 import com.spukmk2me.video.IImageResource;
+import com.spukmk2me.video.ImageResourceConstructionData;
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.ResourceSet;
+import com.spukmk2me.spukmk2mesceneeditor.data.Misc;
 
 public class AddImageResourceDialog extends JDialog
 {
-    public AddImageResourceDialog( ResourceManager resourceManager,
+    public AddImageResourceDialog( ResourceSet resourceSet,
         IVideoDriver vdriver, Dialog parent, boolean modal )
     {
         super( parent, modal );
-        m_resourceManager   = resourceManager;
-        m_vdriver           = vdriver;
+        m_resourceSet   = resourceSet;
+        m_vdriver       = vdriver;
         initComponents();
     }
 
@@ -154,30 +156,29 @@ public class AddImageResourceDialog extends JDialog
                 "Proxy name is empty" );
             return;
         }
-        else if ( m_resourceManager.GetResource( proxyName,
-            ResourceManager.RT_IMAGERESOURCE ) != null )
+        else if ( m_resourceSet.GetResource( proxyName,
+            IResource.RT_IMAGERESOURCE ) != null )
         {
             JOptionPane.showMessageDialog( this,
                 "Duplicated proxy name" );
             return;
         }
 
-        if ( m_resourceManager.GetResource(
-            proxyName, ResourceManager.RT_IMAGERESOURCE ) == null )
+        if ( m_resourceSet.GetResource(
+            proxyName, IResource.RT_IMAGERESOURCE ) == null )
         {
             try
             {
                 IImageResource resource = m_vdriver.CreateImageResource(
-                    m_filenameTextField.getText() );
-                IImageResource.ImageResourceCreationData creationData =
-                    resource.new ImageResourceCreationData();
+                    m_filenameTextField.getText(), proxyName );
+                ImageResourceConstructionData constructionData =
+                    new ImageResourceConstructionData();
                 
-                creationData.c_path = m_filenameTextField.getText();
-                creationData.c_proxyName = m_proxyTextField.getText();
-                resource.SetCreationData( creationData );
+                constructionData.c_path = m_filenameTextField.getText();
+                constructionData.c_proxyname = proxyName;
+                resource.SetConstructionData( constructionData );
 
-                m_resourceManager.AddResource( resource,
-                    ResourceManager.RT_IMAGERESOURCE );
+                m_resourceSet.AddResource( resource );
                 this.setVisible( false );
                 this.dispose();
             } catch ( IOException e ) {
@@ -196,7 +197,7 @@ public class AddImageResourceDialog extends JDialog
         }
     }//GEN-LAST:event_m_addButtonActionPerformed
 
-    private ResourceManager m_resourceManager;
+    private ResourceSet     m_resourceSet;
     private IVideoDriver    m_vdriver;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

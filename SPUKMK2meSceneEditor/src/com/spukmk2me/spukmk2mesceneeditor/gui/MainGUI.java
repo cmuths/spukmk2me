@@ -30,7 +30,7 @@ public class MainGUI extends javax.swing.JFrame
         m_sceneTree         = new DisplayedSceneTree(
             TreeSelectionModel.SINGLE_TREE_SELECTION );
         m_sceneTree.setExpandsSelectedPaths( true );
-        m_commonInfoPanel   = new CommonInfoPanel( this );
+        m_commonInfoPanel   = new CommonInfoPanel( this, m_sceneTree );
         m_renderingPanel    = new MainRenderingPanel();
         m_privateInfoPanel  = new PrivateInfoPanel( this );
         
@@ -320,7 +320,7 @@ public class MainGUI extends javax.swing.JFrame
     private void m_imageResouceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_imageResouceMenuItemActionPerformed
         
         ImageResourceDialog dlg = new ImageResourceDialog(
-            m_centralData.GetResourceManager(),
+            m_centralData.GetResourceSet(),
             m_centralData.GetDevice().GetVideoDriver(),
             this, true );
 
@@ -352,7 +352,7 @@ public class MainGUI extends javax.swing.JFrame
 
     private void m_imageMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_imageMenuItemActionPerformed
 
-        ImageDialog dlg = new ImageDialog( m_centralData.GetResourceManager(),
+        ImageDialog dlg = new ImageDialog( m_centralData.GetResourceSet(),
             m_centralData.GetDevice().GetVideoDriver(), this, true );
 
         dlg.setVisible( true );
@@ -360,7 +360,7 @@ public class MainGUI extends javax.swing.JFrame
 
     private void m_fontMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_fontMenuItemActionPerformed
 
-        FontDialog dlg = new FontDialog( m_centralData.GetResourceManager(),
+        FontDialog dlg = new FontDialog( m_centralData.GetResourceSet(),
             this, true );
 
         dlg.setVisible( true );
@@ -389,9 +389,10 @@ public class MainGUI extends javax.swing.JFrame
             {
                 os = new FileOutputStream( m_directory + m_filename );
 
-                Saver.Save( m_centralData.GetResourceManager(),
+                Saver.Save( m_centralData.GetResourceSet(),
                     m_centralData.GetRootNode(), os,
-                    m_directory.substring( 0, m_directory.length() - 1 ) );
+                    m_directory.substring( 0, m_directory.length() - 1 ),
+                    m_centralData.GetDevice().GetFileSystem() );
             } catch ( IOException e ) {
                 JOptionPane.showMessageDialog( this,
                     "Error when saving file", "Error",
@@ -499,9 +500,10 @@ public class MainGUI extends javax.swing.JFrame
                 os = new FileOutputStream(
                     dlg.getDirectory() + dlg.getFile() );
 
-                Saver.Save( m_centralData.GetResourceManager(),
+                Saver.Save( m_centralData.GetResourceSet(),
                     m_centralData.GetRootNode(), os,
-                    dir.substring( 0, dir.length() - 1 ) );
+                    dir.substring( 0, dir.length() - 1 ),
+                    m_centralData.GetDevice().GetFileSystem() );
                 
                 m_filename  = dlg.getFile();
                 m_directory = dlg.getDirectory();

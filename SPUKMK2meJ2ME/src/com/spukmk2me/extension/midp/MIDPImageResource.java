@@ -8,8 +8,9 @@ import com.spukmk2me.video.IImageResource;
 
 final class MIDPImageResource extends IImageResource
 {
-    public MIDPImageResource( InputStream is ) throws IOException
+    public MIDPImageResource( InputStream is, String proxyname ) throws IOException
     {
+        super( proxyname );
         m_image = Image.createImage( is );
     }
 
