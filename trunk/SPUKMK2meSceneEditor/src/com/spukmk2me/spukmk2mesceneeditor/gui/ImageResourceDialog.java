@@ -6,18 +6,18 @@ import javax.swing.ListSelectionModel;
 import javax.swing.DefaultListModel;
 
 import com.spukmk2me.video.IVideoDriver;
-import com.spukmk2me.optional.scene.ResourceManager;
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.ResourceSet;
 
 public final class ImageResourceDialog extends JDialog
 {
-    public ImageResourceDialog( ResourceManager resourceManager,
-        IVideoDriver vdriver,
+    public ImageResourceDialog( ResourceSet resourceSet, IVideoDriver vdriver,
         Frame parent, boolean modal )
     {
         super( parent, modal );
         initComponents();
-        m_resourceManager   = resourceManager;
-        m_vdriver           = vdriver;
+        m_resourceSet   = resourceSet;
+        m_vdriver       = vdriver;
         ReloadData();
     }
 
@@ -25,15 +25,14 @@ public final class ImageResourceDialog extends JDialog
     {
         m_resourceList.getModel();
 
-        int nResource = m_resourceManager.GetNumberOfResources(
-            ResourceManager.RT_IMAGERESOURCE );
+        int nResource = m_resourceSet.GetNumberOfResources(
+            IResource.RT_IMAGERESOURCE );
         DefaultListModel model = new DefaultListModel();
 
         for ( int i = 0; i != nResource; ++i )
         {
-            model.addElement( m_resourceManager.GetResource(
-                i, ResourceManager.RT_IMAGERESOURCE ).GetCreationData().
-                c_proxyName );
+            model.addElement( m_resourceSet.GetResource(
+                i, IResource.RT_IMAGERESOURCE ).GetProxyName() );
         }
 
         m_resourceList.setModel( model );
@@ -98,12 +97,12 @@ public final class ImageResourceDialog extends JDialog
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(m_closeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(m_removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(m_addButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(m_addButton, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                            .addComponent(m_removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                            .addComponent(m_closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -116,10 +115,10 @@ public final class ImageResourceDialog extends JDialog
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(m_addButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(m_removeButton))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(m_closeButton)
+                        .addComponent(m_removeButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
+                        .addComponent(m_closeButton))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -133,7 +132,7 @@ public final class ImageResourceDialog extends JDialog
     private void m_addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_addButtonActionPerformed
 
         AddImageResourceDialog addDialog = new AddImageResourceDialog(
-            m_resourceManager, m_vdriver, this, true );
+            m_resourceSet, m_vdriver, this, true );
 
         int width   = addDialog.getWidth();
         int height  = addDialog.getHeight();
@@ -156,13 +155,15 @@ public final class ImageResourceDialog extends JDialog
             DefaultListModel model =
                 (DefaultListModel)m_resourceList.getModel();
 
-            m_resourceManager.RemoveResource( index,
-                ResourceManager.RT_IMAGERESOURCE );
+            m_resourceSet.RemoveResource(
+                m_resourceSet.GetResource( index, IResource.RT_IMAGERESOURCE ).
+                    GetProxyName(),
+                IResource.RT_IMAGERESOURCE );
             model.remove( index );
         }
     }//GEN-LAST:event_m_removeButtonActionPerformed
 
-    private ResourceManager m_resourceManager;
+    private ResourceSet m_resourceSet;
     private IVideoDriver    m_vdriver;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

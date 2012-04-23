@@ -22,49 +22,48 @@ package com.spukmk2me.video;
 import com.spukmk2me.debug.Logger;
 /* $endif$ */
 
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.IResourceConstructionData;
+
 /**
  *  Hold data for sub image, which will be visible to ImageSceneNode.
  *  \details This class is implemented in video driver side.
  */
-public abstract class ISubImage implements IResource
+public abstract class ISubImage extends IResource
 {
+    protected ISubImage( String proxyname )
+    {
+        super( proxyname );
+    }
+    
+    public final byte GetResourceType()
+    {
+        return IResource.RT_IMAGE;
+    }
+    
     public abstract void Render( IVideoDriver driver );
     public abstract short GetWidth();
     public abstract short GetHeight();
 
     /* $if SPUKMK2ME_SCENESAVER$ */
-    public final void SetCreationData(
-        IResourceCreationData creationData )
+    public final void SetConstructionData(
+        IResourceConstructionData data )
     {
     	/* $if SPUKMK2ME_DEBUG$ */
-        if ( !(creationData instanceof SubImageCreationData) )
+        if ( !(data instanceof SubImageConstructionData) )
         {
             Logger.Log( "This isn't creation data for ISubImage" );
         }
         /* $endif$ */
 
-        m_creationData = creationData;
+        m_constructionData = data;
     }
 
-    public IResourceCreationData GetCreationData()
+    public final IResourceConstructionData GetConstructionData()
     {
-        return m_creationData;
+        return m_constructionData;
     }
 
-    private IResourceCreationData m_creationData;
-
-    // There is something improper here.
-    // Because ISubImage is a resource which require IImageResource to be
-    // initialised, so IImageResource must be loaded before.
-    public final class SubImageCreationData
-        extends IResourceCreationData
-    {
-        public SubImageCreationData() {}
-
-        public IImageResource c_resource;
-        public int      c_rotationDegree;
-        public short    c_x, c_y, c_width, c_height;
-        public byte     c_flippingFlags;
-    }
-	/* $endif$ */
+    private IResourceConstructionData m_constructionData;
+    /* $endif$ */
 }

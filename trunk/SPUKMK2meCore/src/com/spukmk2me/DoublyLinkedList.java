@@ -1,3 +1,21 @@
+/*
+ *  SPUKMK2me - SPUKMK2 Engine for J2ME platform
+ *  Copyright 2010 - 2011  HNYD Team
+ *
+ *   SPUKMK2me is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *   SPUKMK2me is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License
+ *  along with SPUKMK2me.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.spukmk2me;
 
 /* $if SPUKMK2ME_DEBUG$ */
@@ -100,7 +118,20 @@ public final class DoublyLinkedList
         m_ffe.c_next        = newElement;
         ++m_nElement;
     }
+    
+    public void replace( int index, Object newData )
+    {
+        if ( (index < 0) || (index >= m_nElement) )
+            return;
 
+        Iterator i = first();
+
+        while ( index-- != 0 )
+            i.fwrd();
+        
+        i.m_element.c_data = newData;
+    }
+    
     public Object pop_back()
     {
         if ( m_nElement == 0 )
@@ -181,13 +212,30 @@ public final class DoublyLinkedList
 
         return i.data();
     }
+    
+    public int getIndex( Object data )
+    {
+        Iterator i = first();
+        int index = 0;
+        
+        while ( !i.equals( m_ffi ) )
+        {
+            if ( data == i.data() )
+                return index;
+            
+            ++index;
+            i.fwrd();
+        }
+        
+        return -1;
+    }
 
     public void erase( int index )
     {
-        /* $if SPUKMK2ME_DEBUG$
+        /* $if SPUKMK2ME_DEBUG$ */
         if ( (index < 0) || (index >= m_nElement) )
             Logger.Trace( "Index is out of bounds." );
-        $endif$ */
+        /* $endif$ */
 
         Iterator i = first();
 

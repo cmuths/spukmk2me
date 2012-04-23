@@ -9,14 +9,14 @@ import java.awt.geom.AffineTransform;
 
 import com.spukmk2me.video.ISubImage;
 import com.spukmk2me.video.IVideoDriver;
-import com.spukmk2me.video.IImageResource;
 
 final class J2SESubImage extends ISubImage
 {
     public J2SESubImage( J2SEImageResource imageResource,
         short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag )
+        int rotationDegree, byte flippingFlag, String proxyname )
     {
+        super( proxyname );
         CropImageFilter filter = new CropImageFilter( x, y, width, height );
         
         m_image = new Panel().createImage( new FilteredImageSource(
@@ -98,7 +98,8 @@ final class J2SESubImage extends ISubImage
     }
 
     public static J2SESubImage[] CreateSubImagesFromResource(
-        J2SEImageResource imageResource, short width, short height )
+        J2SEImageResource imageResource, short width, short height,
+        String[] proxynames )
     {
         int nWidth  = imageResource.GetWidth() / width;
         int nHeight = imageResource.GetHeight() / height;
@@ -107,6 +108,7 @@ final class J2SESubImage extends ISubImage
             return null;
 
         J2SESubImage[] images = new J2SESubImage[ nWidth * nHeight ];
+        String proxyname;
         short x, y = 0;
         int i, j, imgIterator = 0;
 
@@ -116,8 +118,13 @@ final class J2SESubImage extends ISubImage
 
             for ( j = width; j != 0; --j )
             {
+                if ( proxynames == null )
+                    proxyname = null;
+                else
+                    proxyname = proxynames[ imgIterator ];
+                
                 images[ imgIterator++ ] = new J2SESubImage( imageResource,
-                   x, y, width, height, 0, (byte)0 );
+                   x, y, width, height, 0, (byte)0, proxyname );
                 x += width;
             }
 

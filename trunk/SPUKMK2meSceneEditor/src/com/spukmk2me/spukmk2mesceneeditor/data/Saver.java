@@ -3,19 +3,21 @@ package com.spukmk2me.spukmk2mesceneeditor.data;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 
 import com.spukmk2me.DoublyLinkedList;
+import com.spukmk2me.io.IFileSystem;
 import com.spukmk2me.video.ISubImage;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.scene.NullSceneNode;
 import com.spukmk2me.scene.ImageSceneNode;
 import com.spukmk2me.scene.SpriteSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
-import com.spukmk2me.optional.scene.ResourceManager;
 import com.spukmk2me.scene.TiledLayerSceneNode;
 import com.spukmk2me.scene.complex.ClippingSceneNode;
 import com.spukmk2me.scene.complex.ComplexSceneNode;
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.ResourceSet;
+import com.spukmk2me.resource.DefaultResourceExporter;
 
 /**
  *  Place which holds save functions.
@@ -26,23 +28,26 @@ public final class Saver
     {
     }
 
-    public static void Save( ResourceManager resourceManager,
-        ISceneNode rootNode, OutputStream os, String savePath )
+    public static void Save( ResourceSet resourceSet,
+        ISceneNode rootNode, OutputStream os, String savePath,
+        IFileSystem fsystem )
         throws IOException
     {
         DataOutputStream dos = new DataOutputStream( os );
+        DefaultResourceExporter exporter = new DefaultResourceExporter(
+            savePath, fsystem, resourceSet );
 
         char[] header = HEADER_MARK.toCharArray();
 
         for ( int i = 0; i != header.length; ++i )
             dos.writeByte( header[ i ] );
 
-        resourceManager.Save( os, savePath, File.separatorChar );
-        SaveTreeStruct( rootNode, resourceManager, dos );
+        resourceSet.Save( os, exporter );
+        SaveTreeStruct( rootNode, resourceSet, dos );
     }
 
     private static void SaveTreeStruct( ISceneNode rootNode,
-        ResourceManager resourceManager, DataOutputStream dos )
+        ResourceSet resourceSet, DataOutputStream dos )
         throws IOException
     {
         int numberOfNodes   = 1;
@@ -236,7 +241,7 @@ public final class Saver
                 for ( ; !i.equals( border ); i.fwrd() )
                 {
                     WriteSceneNodeInfo( ((ISceneNode)i.data()),
-                        resourceManager, dos );
+                        resourceSet, dos );
                 }
 
                 /*TreeNode<SceneNodeWrapper>[] stack =
@@ -276,7 +281,7 @@ public final class Saver
     }
 
     private static void WriteSceneNodeInfo( ISceneNode node,
-        ResourceManager resourceManager, DataOutputStream dos )
+        ResourceSet resourceSet, DataOutputStream dos )
         throws IOException
     {
         byte nodeType = (byte)NodeTypeChecker.GetNodeType( node );
@@ -298,8 +303,8 @@ public final class Saver
 
                 dos.writeShort( imgNode.c_x );
                 dos.writeShort( imgNode.c_y );
-                dos.writeShort( resourceManager.GetResourceIndex(
-                    imgNode.GetImage(), ResourceManager.RT_IMAGE ) );
+                dos.writeShort( resourceSet.GetResourceIndex(
+                    imgNode.GetImage() ) );
                 dos.writeByte( Misc.GetVisibleFlag( imgNode ) );
                 break;
 
@@ -319,8 +324,8 @@ public final class Saver
 
                     for ( int i = 0; i != spriteInfo.c_nImages; ++i )
                     {
-                        dos.writeByte( resourceManager.GetResourceIndex(
-                            imageList[ i ], ResourceManager.RT_IMAGE ) );
+                        dos.writeShort( resourceSet.GetResourceIndex(
+                            imageList[ i ] ) );
                     }
                 }
 
@@ -342,8 +347,8 @@ public final class Saver
                     fontIndex = -1;
                 else
                 {
-                    fontIndex = resourceManager.GetResourceIndex(
-                        stringInfo.c_font, ResourceManager.RT_FONT );
+                    fontIndex = resourceSet.GetResourceIndex(
+                        stringInfo.c_font );
                 }
 
                 dos.writeInt( stringInfo.c_alignment );
@@ -402,9 +407,8 @@ public final class Saver
 
                     for ( int i = 0; i != infoData.c_images.length; ++i )
                     {
-                        dos.writeShort( resourceManager.GetResourceIndex(
-                            infoData.c_images[ i ],
-                            ResourceManager.RT_IMAGE ) );
+                        dos.writeShort( resourceSet.GetResourceIndex(
+                            infoData.c_images[ i ] ) );
                     }
                 }
 
@@ -423,9 +427,8 @@ public final class Saver
 
                         for ( int j = 0; j != sprite.length; ++j )
                         {
-                            dos.writeShort( resourceManager.GetResourceIndex(
-                                sprite[ j ],
-                                ResourceManager.RT_IMAGE) );
+                            dos.writeShort( resourceSet.GetResourceIndex(
+                                sprite[ j ] ) );
                         }
 
                         dos.writeInt( infoData.c_spriteSpeed[ i ] );

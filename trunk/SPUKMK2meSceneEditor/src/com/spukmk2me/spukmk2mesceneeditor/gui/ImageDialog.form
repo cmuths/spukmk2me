@@ -56,7 +56,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" pref="318" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="320" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="m_removeButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -107,7 +107,7 @@
                               <Group type="102" attributes="0">
                                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="m_imageResComboBox" pref="177" max="32767" attributes="0"/>
+                                  <Component id="m_imageResComboBox" pref="180" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -131,33 +131,33 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace pref="10" max="32767" attributes="0"/>
+                          <EmptySpace pref="13" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="m_proxynameTextField" pref="195" max="32767" attributes="0"/>
+                          <Component id="m_proxynameTextField" pref="201" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
-              <Component id="jSeparator1" alignment="0" pref="280" max="32767" attributes="0"/>
+              <Component id="jSeparator1" alignment="0" pref="286" max="32767" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="m_batchCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="59" max="32767" attributes="0"/>
+                  <EmptySpace pref="65" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="m_batchPanel" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
-              <Component id="jSeparator2" alignment="0" pref="280" max="32767" attributes="0"/>
+              <Component id="jSeparator2" alignment="0" pref="286" max="32767" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="m_rotTextField" pref="174" max="32767" attributes="0"/>
+                  <Component id="m_rotTextField" pref="180" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
               <Group type="102" alignment="0" attributes="0">
@@ -165,7 +165,7 @@
                   <Component id="m_verticalFlipCheckBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="m_horizontalFlipCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="106" max="32767" attributes="0"/>
+                  <EmptySpace pref="112" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace pref="91" max="32767" attributes="0"/>
@@ -333,9 +333,9 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="m_batchHTextField" pref="102" max="32767" attributes="0"/>
-                                  <Component id="m_batchYTextField" alignment="0" pref="102" max="32767" attributes="0"/>
-                                  <Component id="m_batchNHTextField" alignment="0" pref="102" max="32767" attributes="0"/>
+                                  <Component id="m_batchHTextField" pref="108" max="32767" attributes="0"/>
+                                  <Component id="m_batchYTextField" alignment="0" pref="108" max="32767" attributes="0"/>
+                                  <Component id="m_batchNHTextField" alignment="0" pref="108" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="jLabel14" alignment="0" min="-2" max="-2" attributes="0"/>

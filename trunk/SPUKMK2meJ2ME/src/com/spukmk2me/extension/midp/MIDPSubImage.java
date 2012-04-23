@@ -34,8 +34,10 @@ final class MIDPSubImage extends ISubImage
 {
     public MIDPSubImage( MIDPImageResource imageResource,
         short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag )
+        int rotationDegree, byte flippingFlag, String proxyname )
     {
+        super( proxyname );
+        
         int     midpTransformationFlag  = 0;
         boolean hasHorizontalFlipping     = false;
 
@@ -141,7 +143,8 @@ final class MIDPSubImage extends ISubImage
     }
 
     public static MIDPSubImage[] CreateSubImagesFromResource(
-        MIDPImageResource imageResource, short width, short height )
+        MIDPImageResource imageResource, short width, short height,
+        String[] proxynames )
     {
         /* $if SPUKMK2ME_DEBUG$ */
         Logger.Log(
@@ -162,14 +165,20 @@ final class MIDPSubImage extends ISubImage
             return null;
 
         MIDPSubImage[] images = new MIDPSubImage[ nImage ];
-
+        String proxyname;
+        
         for ( int i = nImageH; i != 0; --i )
         {
             for ( int j = nImageW; j != 0; --j )
             {
+                if ( proxynames == null )
+                    proxyname = null;
+                else
+                    proxyname = proxynames[ imgIterator ];
+                
                 images[ imgIterator ] =
                     new MIDPSubImage( imageResource, (short)_x, (short)_y,
-                        width, height, 0, (byte)0 );
+                        width, height, 0, (byte)0, proxyname );
                 ++imgIterator;
                 _x += width;
             }

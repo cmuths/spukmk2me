@@ -6,7 +6,7 @@ import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.scene.SceneManager;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.scene.NullSceneNode;
-import com.spukmk2me.optional.scene.ResourceManager;
+import com.spukmk2me.resource.ResourceSet;
 
 import com.spukmk2me.extension.j2se.J2SEVideoDriver;
 import com.spukmk2me.extension.j2se.J2SEFileSystem;
@@ -23,13 +23,13 @@ public final class CentralData
         scene.ChangeStackSize( 1000 );
         m_device = Device.CreateSPUKMK2meDevice(
             vdriver, null, null, new J2SEFileSystem(), scene );
-        m_resourceManager = new ResourceManager();
+        m_resourceSet = new ResourceSet();
         DispatchReset();
     }
 
-    public ResourceManager GetResourceManager()
+    public ResourceSet GetResourceSet()
     {
-        return m_resourceManager;
+        return m_resourceSet;
     }
 
     public void ChangeRootNode( ISceneNode node )
@@ -45,6 +45,11 @@ public final class CentralData
     public void SetCurrentNode( ISceneNode node )
     {
         m_currentNode = node;
+    }
+
+    public void SetResourceSet( ResourceSet resourceSet )
+    {
+        m_resourceSet = resourceSet;
     }
 
     public ISceneNode GetCurrentNode()
@@ -64,12 +69,12 @@ public final class CentralData
 
     public void DispatchReset()
     {
-        m_resourceManager.Clear();
+        m_resourceSet.Clear();
         m_device.GetSceneManager().Clear();
         m_rootNode = new NullSceneNode();
-        m_rootNode.c_exportFlag  = true;
-        m_rootNode.c_proxyName   = "root";
-        m_currentNode   = null;
+        m_rootNode.c_exportFlag = true;
+        m_rootNode.c_proxyName  = "root";
+        m_currentNode           = null;
 
         DoublyLinkedList.Iterator i, end;
 
@@ -97,6 +102,6 @@ public final class CentralData
 
     private Device              m_device;
     private DoublyLinkedList    m_listenerList;
-    private ResourceManager     m_resourceManager;
+    private ResourceSet         m_resourceSet;
     private ISceneNode          m_rootNode, m_currentNode;
 }

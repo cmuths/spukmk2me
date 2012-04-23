@@ -246,7 +246,7 @@ public abstract class ISceneNode
      *  - 0xcccc is the width of rectangle.
      *  - 0xdddd is the heights of rectangle.
      */
-    public final long GetHierarchicalBoundingRect()
+    public long GetHierarchicalBoundingRect()
     {
         DoublyLinkedList stack = new DoublyLinkedList();
         DoublyLinkedList finish = new DoublyLinkedList();

@@ -9,13 +9,13 @@ import javax.swing.JOptionPane;
 import com.spukmk2me.video.IImageResource;
 import com.spukmk2me.video.ISubImage;
 import com.spukmk2me.video.ICFont;
+import com.spukmk2me.video.BitmapFont;
 import com.spukmk2me.scene.ImageSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
 import com.spukmk2me.scene.TiledLayerSceneNode;
 import com.spukmk2me.scene.complex.ClippingSceneNode;
-
-import com.spukmk2me.optional.font.BitmapFont;
-import com.spukmk2me.optional.scene.ResourceManager;
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.ResourceSet;
 import com.spukmk2me.spukmk2mesceneeditor.data.CentralData;
 import com.spukmk2me.spukmk2mesceneeditor.data.NodeTypeChecker;
 
@@ -109,7 +109,7 @@ public class PrivateInfoPanel extends JPanel
 
     private void LoadDataForImageSceneNode()
     {
-        ResourceManager manager = m_data.GetResourceManager();
+        ResourceSet manager = m_data.GetResourceSet();
 
         DefaultListModel model =
             (DefaultListModel)m_imageList.getModel();
@@ -118,15 +118,15 @@ public class PrivateInfoPanel extends JPanel
         model.clear();
         model.addElement( "---Null---" );
 
-        int n = manager.GetNumberOfResources( ResourceManager.RT_IMAGE );
+        int n = manager.GetNumberOfResources( IResource.RT_IMAGE );
         int selectedIndex = 0;
 
         for ( int i = 0; i != n; ++i )
         {
             model.addElement( manager.GetResource( i,
-                ResourceManager.RT_IMAGE ).GetCreationData().c_proxyName );
+                IResource.RT_IMAGE ).GetProxyName() );
 
-            if ( manager.GetResource( i, ResourceManager.RT_IMAGE ) ==
+            if ( manager.GetResource( i, IResource.RT_IMAGE ) ==
                 node.GetImage() )
                 selectedIndex = i + 1;
         }
@@ -137,7 +137,7 @@ public class PrivateInfoPanel extends JPanel
 
     private void LoadDataForStringSceneNode()
     {
-        ResourceManager manager = m_data.GetResourceManager();
+        ResourceSet manager = m_data.GetResourceSet();
 
         DefaultComboBoxModel boxModel =
             (DefaultComboBoxModel)m_strFontCombobox.getModel();
@@ -148,15 +148,15 @@ public class PrivateInfoPanel extends JPanel
         boxModel.removeAllElements();
         boxModel.addElement( "---Null---" );
 
-        int n = manager.GetNumberOfResources( ResourceManager.RT_FONT );
+        int n = manager.GetNumberOfResources( IResource.RT_BITMAPFONT );
 
         for ( int i = 0; i != n; ++i )
         {
             boxModel.addElement( manager.GetResource(
-                i, ResourceManager.RT_FONT ).GetCreationData().c_proxyName );
+                i, IResource.RT_BITMAPFONT ).GetProxyName() );
 
             if ( info.c_font == manager.GetResource( i,
-                ResourceManager.RT_FONT ) )
+                IResource.RT_BITMAPFONT ) )
                 boxModel.setSelectedItem( boxModel.getElementAt( i + 1 ) );
         }
 
@@ -241,14 +241,13 @@ public class PrivateInfoPanel extends JPanel
 
             m_tiledCreatedImgList.setModel( model );
 
-            int n = m_data.GetResourceManager().GetNumberOfResources(
-                ResourceManager.RT_IMAGE );
+            int n = m_data.GetResourceSet().GetNumberOfResources(
+                IResource.RT_IMAGE );
 
             for ( int i = 0; i != n; ++i )
             {
-                model.addElement( m_data.GetResourceManager().GetResource(
-                    i, ResourceManager.RT_IMAGE ).GetCreationData().
-                    c_proxyName );
+                model.addElement( m_data.GetResourceSet().GetResource(
+                    i, IResource.RT_IMAGE ).GetProxyName() );
             }
             
             model = new DefaultListModel();
@@ -269,8 +268,7 @@ public class PrivateInfoPanel extends JPanel
 
             for ( int i = 0; i != n; ++i )
             {
-                model.addElement(
-                    info.c_images[ i ].GetCreationData().c_proxyName );
+                model.addElement( info.c_images[ i ].GetProxyName() );
             }
         }
 
@@ -998,15 +996,15 @@ public class PrivateInfoPanel extends JPanel
                 node.SetImage( null );
             else
             {
-                node.SetImage( (ISubImage)m_data.GetResourceManager().
-                    GetResource( index - 1, ResourceManager.RT_IMAGE ) );
+                node.SetImage( (ISubImage)m_data.GetResourceSet().
+                    GetResource( index - 1, IResource.RT_IMAGE ) );
             }
         }
     }//GEN-LAST:event_m_changeButtonActionPerformed
 
     private void m_strChangeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_strChangeButtonActionPerformed
 
-        ResourceManager manager = m_data.GetResourceManager();
+        ResourceSet manager = m_data.GetResourceSet();
         StringSceneNode node    = (StringSceneNode)m_data.GetCurrentNode();
 
         try
@@ -1069,7 +1067,7 @@ public class PrivateInfoPanel extends JPanel
             else
             {
                 font = (ICFont)manager.GetResource(
-                    fontIndex - 1, ResourceManager.RT_FONT );
+                    fontIndex - 1, IResource.RT_BITMAPFONT );
             }
             
             String content  = m_strContentTextField.getText();
@@ -1171,9 +1169,9 @@ public class PrivateInfoPanel extends JPanel
 
             for ( int i = 0; i != info.c_images.length; ++i )
             {
-                info.c_images[ i ] = (ISubImage)m_data.GetResourceManager().
+                info.c_images[ i ] = (ISubImage)m_data.GetResourceSet().
                     GetResource( (String)model.getElementAt( i ),
-                    ResourceManager.RT_IMAGE );
+                    IResource.RT_IMAGE );
             }
         }
 

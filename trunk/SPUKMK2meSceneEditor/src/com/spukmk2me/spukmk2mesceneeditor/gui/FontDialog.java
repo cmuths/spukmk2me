@@ -4,29 +4,30 @@ import java.awt.Frame;
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 
-import com.spukmk2me.optional.scene.ResourceManager;
+import com.spukmk2me.resource.IResource;
+import com.spukmk2me.resource.ResourceSet;
 
 public class FontDialog extends JDialog
 {
-    public FontDialog( ResourceManager manager, Frame parent, boolean modal )
+    public FontDialog( ResourceSet manager, Frame parent, boolean modal )
     {
         super( parent, modal );
         initComponents();
-        m_manager = manager;
+        m_resourceSet = manager;
         Reload();
     }
 
     private void Reload()
     {
         DefaultListModel model = (DefaultListModel)m_fontList.getModel();
-        int n = m_manager.GetNumberOfResources( ResourceManager.RT_FONT );
+        int n = m_resourceSet.GetNumberOfResources( IResource.RT_BITMAPFONT );
 
         model.clear();
 
         for ( int i = 0; i != n; ++i )
         {
-            model.addElement( m_manager.GetResource(
-                i, ResourceManager.RT_FONT ).GetCreationData().c_proxyName );
+            model.addElement( m_resourceSet.GetResource(
+                i, IResource.RT_BITMAPFONT ).GetProxyName() );
         }
     }
 
@@ -107,14 +108,14 @@ public class FontDialog extends JDialog
 
     private void m_addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_addButtonActionPerformed
 
-        FontDialog_Add dlg = new FontDialog_Add( m_manager,
+        FontDialog_Add dlg = new FontDialog_Add( m_resourceSet,
             (Frame)this.getOwner(), true );
 
         dlg.setVisible( true );
         Reload();
     }//GEN-LAST:event_m_addButtonActionPerformed
 
-    private ResourceManager m_manager;
+    private ResourceSet m_resourceSet;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
