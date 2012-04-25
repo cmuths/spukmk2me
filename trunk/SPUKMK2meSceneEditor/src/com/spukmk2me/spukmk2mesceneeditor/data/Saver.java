@@ -392,6 +392,8 @@ public final class Saver
                 dos.writeShort( infoData.c_viewHeight );
                 dos.writeShort( infoData.c_viewX );
                 dos.writeShort( infoData.c_viewY );
+                dos.writeInt( infoData.c_viewSpdX );
+                dos.writeInt( infoData.c_viewSpdY );
                 dos.writeByte( flags );
 
                 // Terrain data

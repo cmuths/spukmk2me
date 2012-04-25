@@ -23,17 +23,20 @@ public final class MainRenderingPanel extends J2SERenderingPanel
     public void ImageResourceChanged(
         IImageResource imageResource, byte changingCode )
     {
-        paint( this.getGraphics() );
+        if ( m_renderingMode == RENDERINGMODE_PASSIVE )
+            RenderScene( 0 );
     }
 
     public void ImageChanged( ISubImage image, byte changingCode )
     {
-        paint( this.getGraphics() );
+        if ( m_renderingMode == RENDERINGMODE_PASSIVE )
+            RenderScene( 0 );
     }
 
     public void FontChanged( ICFont font, byte changingCode )
     {
-        paint( this.getGraphics() );
+        if ( m_renderingMode == RENDERINGMODE_PASSIVE )
+            RenderScene( 0 );
     }
 
     public void CurrentNodeChanged()

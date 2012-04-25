@@ -64,7 +64,7 @@ final class J2SESubImage extends ISubImage
         m_transform.translate(
             Math.abs( d * Math.cos( angle ) ) / 2.0d,
             Math.abs( d * Math.sin( angle ) ) / 2.0d );
-        m_transform.rotate( rotationRad );
+        m_transform.rotate( -rotationRad ); // Y-axis in J2SE points toward the center of the Earth.
         m_transform.translate( -(double)width / 2.0d, -(double)height / 2.0d );
         
         if ( hasHorizontalFlipping )

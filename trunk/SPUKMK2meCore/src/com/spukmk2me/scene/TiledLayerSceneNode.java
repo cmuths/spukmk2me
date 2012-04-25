@@ -19,6 +19,8 @@ public class TiledLayerSceneNode extends ISceneNode
         short oldX = ri.c_rasterX;
         short oldY = ri.c_rasterY;
         
+        CalculateViewMovement( driver.GetRenderInfo().c_passedTime );
+        
         if ( m_sprites != null )
             CalculateSprites( driver.GetRenderInfo().c_passedTime );
         
@@ -30,7 +32,7 @@ public class TiledLayerSceneNode extends ISceneNode
             int displayH = m_stepY * m_tableHeight;
             
             {
-                int rangeX = m_viewWidth - m_viewX;
+                int rangeX = m_viewWidth - Util.FPRound( m_viewX );
 
                 nX = rangeX / displayW;
 
@@ -39,7 +41,7 @@ public class TiledLayerSceneNode extends ISceneNode
             }
             
             {
-                int rangeY = m_viewHeight - m_viewY;
+                int rangeY = m_viewHeight - Util.FPRound( m_viewY );
 
                 nY = rangeY / displayH;
 
@@ -72,11 +74,11 @@ public class TiledLayerSceneNode extends ISceneNode
             
             driver.SetClipping( clipX, clipY, clipW, clipH );
             
-            short x, y = (short)(m_viewY + oldY);
+            short x, y = (short)(Util.FPRound( m_viewY ) + oldY);
             
             for ( ; nY != 0; --nY )
             {
-                x = (short)(m_viewX + oldX);
+                x = (short)(Util.FPRound( m_viewX ) + oldX);
                 
                 for ( int i = nX; i != 0; --i )
                 {
@@ -168,13 +170,15 @@ public class TiledLayerSceneNode extends ISceneNode
     }
     
     public void SetupRepeatedView( short startX, short startY,
-        short width, short height, boolean repeatedView )
+        short width, short height, int spdX, int spdY, boolean repeatedView )
     {
         if ( m_repeatedView = repeatedView )
         {
             m_viewWidth     = width;
             m_viewHeight    = height;
-            // viewX, viewY are modified to become negative values
+            m_viewSpdX      = spdX;
+            m_viewSpdY      = spdY;
+            // viewX, viewY are modified to become 0 or negative values
             
             short w = (short)(m_stepX * m_tableWidth);
             short h = (short)(m_stepY * m_tableHeight);
@@ -193,6 +197,10 @@ public class TiledLayerSceneNode extends ISceneNode
             
             while ( m_viewY <= -h )
                 m_viewY += h;
+            
+            // Convert viewX and viewY to 16-16 fixed point
+            m_viewX <<= 16;
+            m_viewY <<= 16;
         }
     }
     
@@ -241,14 +249,39 @@ public class TiledLayerSceneNode extends ISceneNode
             m_spriteIndexes[ i ] %= m_sprites[ i ].length;
         }
     }
+    
+    private void CalculateViewMovement( int deltaTime )
+    {
+        if ( (m_viewSpdX == 0) && (m_viewSpdY == 0) )
+            return;
+        
+        m_viewX += Util.FPMul( m_viewSpdX, deltaTime );
+        m_viewY += Util.FPMul( m_viewSpdY, deltaTime );
+        
+        int w = (m_stepX * m_tableWidth) << 16;
+        int h = (m_stepY * m_tableHeight) << 16;
+        
+        while ( m_viewX > 0 )
+            m_viewX -= w;
+        
+        while ( m_viewX <= -w )
+            m_viewX += w;
+        
+        while ( m_viewY > 0 )
+            m_viewY -= h;
+        
+        while ( m_viewY <= -h )
+            m_viewY += h;
+    }
 
     private ISubImage[][]   m_sprites;
     private ISubImage[]     m_images;
     private int[]           m_spriteSpeed;
     private byte[]          m_terrainData;
     private short           m_tableWidth, m_tableHeight, m_stepX, m_stepY;
-    private short           m_viewX, m_viewY,
-                            m_viewWidth, m_viewHeight;
+    private int             m_viewX, m_viewY;
+    private short           m_viewWidth, m_viewHeight;
+    private int             m_viewSpdX, m_viewSpdY;
     private boolean         m_repeatedView;
 
     private int[]           m_spriteRealIndexes;
@@ -264,6 +297,7 @@ public class TiledLayerSceneNode extends ISceneNode
         public short            c_tableWidth, c_tableHeight,
                                 c_stepX, c_stepY,
                                 c_viewX, c_viewY, c_viewWidth, c_viewHeight;
+        public int              c_viewSpdX, c_viewSpdY;
         public boolean          c_repeatedView;
     }
     /* $endif$ */

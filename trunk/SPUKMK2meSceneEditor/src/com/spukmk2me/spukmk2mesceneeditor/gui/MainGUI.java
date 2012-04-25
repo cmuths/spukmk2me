@@ -1,5 +1,6 @@
 package com.spukmk2me.spukmk2mesceneeditor.gui;
 
+import com.spukmk2me.extension.j2se.J2SEVideoDriver;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -109,6 +110,7 @@ public class MainGUI extends javax.swing.JFrame
         m_fontMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         m_screenSizeMenuItem = new javax.swing.JMenuItem();
+        m_activeRenderingCheckBox = new javax.swing.JCheckBoxMenuItem();
         jMenu3 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -187,7 +189,7 @@ public class MainGUI extends javax.swing.JFrame
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
+            .addComponent(jSplitPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -200,7 +202,7 @@ public class MainGUI extends javax.swing.JFrame
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -289,6 +291,14 @@ public class MainGUI extends javax.swing.JFrame
             }
         });
         jMenu2.add(m_screenSizeMenuItem);
+
+        m_activeRenderingCheckBox.setText("Active rendering");
+        m_activeRenderingCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_activeRenderingCheckBoxActionPerformed(evt);
+            }
+        });
+        jMenu2.add(m_activeRenderingCheckBox);
 
         m_menuBar.add(jMenu2);
 
@@ -536,6 +546,16 @@ public class MainGUI extends javax.swing.JFrame
         }
     }//GEN-LAST:event_m_moveButtonActionPerformed
 
+    private void m_activeRenderingCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_activeRenderingCheckBoxActionPerformed
+        byte renderingMode = ( m_activeRenderingCheckBox.isSelected() )?
+            J2SERenderingPanel.RENDERINGMODE_ACTIVE : J2SERenderingPanel.RENDERINGMODE_PASSIVE;
+
+        m_renderingPanel.setRenderingMode( renderingMode, 16 );
+
+        if ( renderingMode == J2SERenderingPanel.RENDERINGMODE_PASSIVE )
+            m_renderingPanel.repaint();
+    }//GEN-LAST:event_m_activeRenderingCheckBoxActionPerformed
+
     private void moveNode( ISceneNode node, boolean upDown )
     {
         if ( (node != null) && (node != m_centralData.GetRootNode()) )
@@ -565,6 +585,7 @@ public class MainGUI extends javax.swing.JFrame
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JCheckBoxMenuItem m_activeRenderingCheckBox;
     private javax.swing.JButton m_addNodeButton;
     private javax.swing.JScrollPane m_commonInfoHolder;
     private javax.swing.JButton m_downButton;

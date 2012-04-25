@@ -28,7 +28,8 @@ public final class J2SEVideoDriver extends JPanel
 
     public void paint( Graphics g )
     {
-        g.drawImage( m_buffer, 0, 0, this );
+        if ( g != null )
+            g.drawImage( m_buffer, 0, 0, this );
     }
 
     public void update( Graphics g )
@@ -38,8 +39,7 @@ public final class J2SEVideoDriver extends JPanel
 
     public void repaint()
     {
-        if ( this.getGraphics() != null )
-            paint( this.getGraphics() );
+        paint( this.getGraphics() );
     }
 
     public Dimension getPreferredScrollableViewportSize()

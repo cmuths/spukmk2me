@@ -18,26 +18,30 @@ public class J2SERenderingPanel extends JPanel
         m_y0        = STANDARD_ROOT_Y;
         m_width     = STANDARD_WIDTH;
         m_height    = STANDARD_HEIGHT;
-        setDisplayedSize( STANDARD_WIDTH, STANDARD_HEIGHT );
+        this.setDisplayedSize( STANDARD_WIDTH, STANDARD_HEIGHT );
+        this.setBackground( new Color( 0xFF7F7F7F ) );
 
         m_renderingMode = RENDERINGMODE_PASSIVE;
     }
-
+    
+    @Override
+    public void repaint()
+    {
+        paint( this.getGraphics() );
+    }
+    
     @Override
     public void update( Graphics g )
     {
         paint( g );
     }
-
+    
     @Override
     public void paint( Graphics g )
     {
         if ( m_renderingMode == RENDERINGMODE_PASSIVE )
         {
             super.paint( g );
-            //g.setColor( Color.LIGHT_GRAY );
-            //g.fillRect( 0, 0, this.getWidth(), this.getHeight() );
-
             RenderScene( 0 );
         }
     }
@@ -75,20 +79,23 @@ public class J2SERenderingPanel extends JPanel
     public void setDevice( Device device )
     {
         m_currentDevice = device;
+        
         this.removeAll();
         this.add( (JPanel)device.GetVideoDriver() );
     }
-
+    
     public void setDisplayedNode( ISceneNode node )
     {
         m_currentNode = node;
+        
+        if ( m_renderingMode == RENDERINGMODE_PASSIVE )
+            this.repaint();
     }
 
     public void setDisplayedSize( int width, int height )
     {
         m_width     = width;
         m_height    = height;
-        this.setSize( width, height );
         //this.setPreferredSize( new Dimension( width, height ) );
     }
 
