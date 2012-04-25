@@ -128,7 +128,7 @@
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="91" max="32767" attributes="0"/>
+                      <EmptySpace pref="93" max="32767" attributes="0"/>
                       <Component id="m_changeButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -243,7 +243,7 @@
                                       <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="m_strColorTextField" alignment="0" pref="111" max="32767" attributes="0"/>
+                                          <Component id="m_strColorTextField" alignment="0" pref="113" max="32767" attributes="0"/>
                                           <Component id="jScrollPane4" alignment="0" min="0" pref="0" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -321,7 +321,7 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace pref="6" max="32767" attributes="0"/>
+                      <EmptySpace pref="8" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="m_strBoldCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -514,13 +514,13 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="130" max="32767" attributes="0"/>
+                      <EmptySpace pref="142" max="32767" attributes="0"/>
                       <Component id="m_tiledEditButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="m_tiledApplyButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="m_tiledTabbedPane" alignment="0" pref="270" max="32767" attributes="0"/>
+                  <Component id="m_tiledTabbedPane" alignment="0" pref="278" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -562,11 +562,11 @@
                                       <Component id="jScrollPane2" min="-2" pref="89" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="m_tiledDelImageButton" pref="73" max="32767" attributes="1"/>
-                                          <Component id="m_tiledAddImageButton" pref="73" max="32767" attributes="1"/>
+                                          <Component id="m_tiledDelImageButton" pref="77" max="32767" attributes="1"/>
+                                          <Component id="m_tiledAddImageButton" pref="77" max="32767" attributes="1"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane3" pref="71" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane3" pref="75" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -588,7 +588,7 @@
                                   <Component id="jScrollPane3" alignment="0" max="32767" attributes="1"/>
                                   <Component id="jScrollPane2" alignment="0" pref="165" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace pref="38" max="32767" attributes="0"/>
+                              <EmptySpace pref="35" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -654,7 +654,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="m_tiledNoSpriteCheckbox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="190" max="32767" attributes="0"/>
+                              <EmptySpace pref="198" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -663,7 +663,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="m_tiledNoSpriteCheckbox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="205" max="32767" attributes="0"/>
+                              <EmptySpace pref="202" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -706,42 +706,50 @@
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel15" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="m_tiledStepXTextField" pref="87" max="32767" attributes="1"/>
+                                      <Component id="m_tiledStepXTextField" pref="95" max="32767" attributes="1"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="m_tiledStepYTextField" pref="87" max="32767" attributes="0"/>
+                                      <Component id="m_tiledStepYTextField" pref="95" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jSeparator1" alignment="0" pref="265" max="32767" attributes="0"/>
+                          <Component id="jSeparator1" alignment="0" pref="273" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="m_tiledRepeatedViewCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="jLabel23" alignment="1" max="32767" attributes="1"/>
                                           <Component id="jLabel13" alignment="0" max="32767" attributes="0"/>
                                           <Component id="jLabel14" alignment="0" max="32767" attributes="1"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="m_tiledViewSpdXTextField" max="32767" attributes="1"/>
                                           <Component id="m_tiledViewHeightTextField" max="32767" attributes="1"/>
                                           <Component id="m_tiledViewWidthTextField" alignment="0" pref="54" max="32767" attributes="1"/>
                                       </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" attributes="0">
-                                              <Component id="jLabel18" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="m_tiledViewYTextField" pref="85" max="32767" attributes="0"/>
-                                          </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="m_tiledViewXTextField" pref="85" max="32767" attributes="0"/>
+                                              <Component id="m_tiledViewXTextField" pref="87" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                                  <Component id="jLabel24" alignment="0" max="32767" attributes="1"/>
+                                                  <Component id="jLabel18" alignment="0" max="32767" attributes="1"/>
+                                              </Group>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="m_tiledViewSpdYTextField" pref="87" max="32767" attributes="0"/>
+                                                  <Component id="m_tiledViewYTextField" alignment="0" pref="87" max="32767" attributes="0"/>
+                                              </Group>
                                           </Group>
                                       </Group>
                                   </Group>
@@ -785,7 +793,14 @@
                                   <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="m_tiledViewYTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="89" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel24" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="m_tiledViewSpdYTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="m_tiledViewSpdXTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="60" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -853,6 +868,20 @@
                     <Component class="javax.swing.JTextField" name="m_tiledViewXTextField">
                     </Component>
                     <Component class="javax.swing.JTextField" name="m_tiledViewYTextField">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel23">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Spd X:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="m_tiledViewSpdYTextField">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel24">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Spd Y:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="m_tiledViewSpdXTextField">
                     </Component>
                   </SubComponents>
                 </Container>

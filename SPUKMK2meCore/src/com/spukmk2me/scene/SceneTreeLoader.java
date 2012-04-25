@@ -491,6 +491,7 @@ public final class SceneTreeLoader
         short[][]   spriteIndexes;
         int[]       spriteSpeed;
         byte[]      terrainData;
+        int         viewSpdX, viewSpdY;
         short       x, y, width, height, stepX, stepY,
                     viewWidth, viewHeight, viewX, viewY;
         byte        flags;
@@ -506,6 +507,9 @@ public final class SceneTreeLoader
         viewHeight  = dis.readShort();
         viewX       = dis.readShort();
         viewY       = dis.readShort();
+        //viewSpdX = viewSpdY = 0;
+        viewSpdX    = dis.readInt();
+        viewSpdY    = dis.readInt();
         flags       = dis.readByte();
 
         // Terrain data
@@ -564,7 +568,7 @@ public final class SceneTreeLoader
 
         node.SetupTiledLayer( images, sprites, spriteSpeed, terrainData,
             width, height, stepX, stepY );
-        node.SetupRepeatedView( viewX, viewY, viewWidth, viewHeight,
+        node.SetupRepeatedView( viewX, viewY, viewWidth, viewHeight, viewSpdX, viewSpdY,
             (flags & 0x20) != 0 );
 
         node.c_x = x;
@@ -586,6 +590,8 @@ public final class SceneTreeLoader
         infoData.c_viewHeight   = viewHeight;
         infoData.c_viewX        = viewX;
         infoData.c_viewY        = viewY;
+        infoData.c_viewSpdX     = viewSpdX;
+        infoData.c_viewSpdY     = viewSpdY;
         infoData.c_repeatedView = (flags & 0x20) != 0;
         infoData.c_spriteSpeed  = spriteSpeed;
         infoData.c_terrainData  = terrainData;

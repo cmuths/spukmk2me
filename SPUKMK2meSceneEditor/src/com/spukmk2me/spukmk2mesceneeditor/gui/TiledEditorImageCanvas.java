@@ -27,10 +27,11 @@ public final class TiledEditorImageCanvas extends J2SERenderingPanel
         m_superNode.AddChild( m_viewLayer );
         m_cursorNode    = new NullSceneNode();
         m_superNode.AddChild( m_cursorNode );
-        this.setDisplayedNode( m_superNode );
         vdrv.PrepareRenderingContext();
+        
+        this.setRenderingMode( RENDERINGMODE_PASSIVE, 33 );
     }
-
+    
     public ISceneNode getCursorNode()
     {
         return m_cursorNode;
@@ -75,7 +76,9 @@ public final class TiledEditorImageCanvas extends J2SERenderingPanel
         lineNode.SetupLine( info.c_stepX, (short)1, 0x00000000 );
         lineNode.SetPosition( (short)0, info.c_stepY );
         m_cursorNode.AddChild( lineNode );
+        
+        this.setDisplayedNode( m_superNode );
     }
 
-    private ISceneNode m_cursorNode, m_superNode, m_viewLayer;
+    private ISceneNode  m_cursorNode, m_superNode, m_viewLayer;
 }

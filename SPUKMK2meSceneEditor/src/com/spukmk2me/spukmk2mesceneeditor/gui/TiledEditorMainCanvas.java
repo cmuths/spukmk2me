@@ -19,7 +19,6 @@ public final class TiledEditorMainCanvas extends J2SERenderingPanel
             new J2SEFileSystem(), smng );
 
         setDevice( device );
-        m_device = device;
 
         // setup cursor node
         m_superNode  = new NullSceneNode();
@@ -27,7 +26,6 @@ public final class TiledEditorMainCanvas extends J2SERenderingPanel
         m_superNode.AddChild( m_viewLayer );
         m_cursorNode = new NullSceneNode();
         m_superNode.AddChild( m_cursorNode );
-        this.setDisplayedNode( m_superNode );
 
         // setup grid layer
         m_gridLayer = new NullSceneNode();
@@ -35,8 +33,10 @@ public final class TiledEditorMainCanvas extends J2SERenderingPanel
         m_superNode.AddChild( m_gridLayer );
 
         vdrv.PrepareRenderingContext();
+        
+        this.setDisplayedNode( m_superNode );
     }
-
+    
     public void setNode( TiledLayerSceneNode node )
     {
         TiledLayerSceneNode.TiledLayerSceneNodeInfoData info =
@@ -51,9 +51,6 @@ public final class TiledEditorMainCanvas extends J2SERenderingPanel
             info.c_images, info.c_sprites, info.c_spriteSpeed,
             m_temporaryData, info.c_tableWidth, info.c_tableHeight,
             info.c_stepX, info.c_stepY );
-
-        this.setDisplayedSize( info.c_tableWidth * info.c_stepX,
-            info.c_tableHeight * info.c_stepY );
 
         // node setup
         m_viewLayer.AddChild( m_temporaryNode );
@@ -108,6 +105,18 @@ public final class TiledEditorMainCanvas extends J2SERenderingPanel
                 coord += info.c_stepY;
             }
         }
+        
+        byte renderingMode;
+        
+        if ( info.c_sprites == null )
+            renderingMode = RENDERINGMODE_PASSIVE;
+        else if ( info.c_sprites.length == 0 )
+            renderingMode = RENDERINGMODE_PASSIVE;
+        else
+            renderingMode = RENDERINGMODE_ACTIVE;
+        
+        this.setRenderingMode( renderingMode, 33 );
+        this.setDisplayedNode( m_superNode );
     }
 
     public byte[] getEditedData()
@@ -123,11 +132,10 @@ public final class TiledEditorMainCanvas extends J2SERenderingPanel
     public void setGridVisible( boolean visibility )
     {
         m_gridLayer.c_enable = visibility;
-        this.repaint();
+        //this.repaint();
     }
 
 
-    private Device              m_device;
     private TiledLayerSceneNode m_temporaryNode;
     private ISceneNode          m_cursorNode, m_viewLayer,
                                 m_superNode, m_gridLayer;

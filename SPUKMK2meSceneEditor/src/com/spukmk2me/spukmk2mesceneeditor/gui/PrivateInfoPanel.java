@@ -276,6 +276,8 @@ public class PrivateInfoPanel extends JPanel
         m_tiledStepYTextField.setText( String.valueOf( info.c_stepY ) );
         m_tiledWidthTextField.setText( String.valueOf( info.c_tableWidth ) );
         m_tiledHeightTextField.setText( String.valueOf( info.c_tableHeight ) );
+        m_tiledViewSpdXTextField.setText( String.valueOf( info.c_viewSpdX * 1.0f / 0x00010000 ) );
+        m_tiledViewSpdYTextField.setText( String.valueOf( info.c_viewSpdY * 1.0f / 0x00010000 ) );
         
         m_tiledRepeatedViewCheckBox.setSelected( info.c_repeatedView );
         m_tiledViewWidthTextField.setText( String.valueOf( info.c_viewWidth ) );
@@ -384,6 +386,10 @@ public class PrivateInfoPanel extends JPanel
         jLabel18 = new javax.swing.JLabel();
         m_tiledViewXTextField = new javax.swing.JTextField();
         m_tiledViewYTextField = new javax.swing.JTextField();
+        jLabel23 = new javax.swing.JLabel();
+        m_tiledViewSpdYTextField = new javax.swing.JTextField();
+        jLabel24 = new javax.swing.JLabel();
+        m_tiledViewSpdXTextField = new javax.swing.JTextField();
         m_tiledApplyButton = new javax.swing.JButton();
         m_tiledEditButton = new javax.swing.JButton();
         m_clippingPanel = new javax.swing.JPanel();
@@ -472,7 +478,7 @@ public class PrivateInfoPanel extends JPanel
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
                 .addComponent(m_changeButton)
                 .addContainerGap())
         );
@@ -603,7 +609,7 @@ public class PrivateInfoPanel extends JPanel
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(m_stringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(m_strColorTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                                    .addComponent(m_strColorTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                                     .addComponent(jScrollPane4, 0, 0, Short.MAX_VALUE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(m_stringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -662,7 +668,7 @@ public class PrivateInfoPanel extends JPanel
                         .addGroup(m_stringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(m_strEditColorButton)
                             .addComponent(m_strColorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(m_stringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(m_strBoldCheckbox)
@@ -718,10 +724,10 @@ public class PrivateInfoPanel extends JPanel
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(m_tiledImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(m_tiledDelImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
-                            .addComponent(m_tiledAddImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
+                            .addComponent(m_tiledDelImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+                            .addComponent(m_tiledAddImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         m_tiledImagePanelLayout.setVerticalGroup(
@@ -737,7 +743,7 @@ public class PrivateInfoPanel extends JPanel
                         .addComponent(m_tiledDelImageButton))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         m_tiledTabbedPane.addTab("Images", m_tiledImagePanel);
@@ -753,14 +759,14 @@ public class PrivateInfoPanel extends JPanel
             .addGroup(m_tiledSpritePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(m_tiledNoSpriteCheckbox)
-                .addContainerGap(190, Short.MAX_VALUE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
         m_tiledSpritePanelLayout.setVerticalGroup(
             m_tiledSpritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(m_tiledSpritePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(m_tiledNoSpriteCheckbox)
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addContainerGap(202, Short.MAX_VALUE))
         );
 
         m_tiledTabbedPane.addTab("Sprites", m_tiledSpritePanel);
@@ -783,6 +789,10 @@ public class PrivateInfoPanel extends JPanel
 
         jLabel18.setText("View Y:");
 
+        jLabel23.setText("Spd X:");
+
+        jLabel24.setText("Spd Y:");
+
         javax.swing.GroupLayout m_tiledInfoPanelLayout = new javax.swing.GroupLayout(m_tiledInfoPanel);
         m_tiledInfoPanel.setLayout(m_tiledInfoPanelLayout);
         m_tiledInfoPanelLayout.setHorizontalGroup(
@@ -801,35 +811,41 @@ public class PrivateInfoPanel extends JPanel
                     .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(m_tiledStepXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                        .addComponent(m_tiledStepXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
                     .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(m_tiledStepYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)))
+                        .addComponent(m_tiledStepYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
             .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(m_tiledRepeatedViewCheckBox)
                     .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
-                        .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(m_tiledViewSpdXTextField)
                             .addComponent(m_tiledViewHeightTextField)
                             .addComponent(m_tiledViewWidthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel18)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(m_tiledViewYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
                             .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel16)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(m_tiledViewXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)))))
+                                .addComponent(m_tiledViewXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                            .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
+                                .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel24, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(m_tiledViewSpdYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                                    .addComponent(m_tiledViewYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))))))
                 .addContainerGap())
         );
         m_tiledInfoPanelLayout.setVerticalGroup(
@@ -863,7 +879,13 @@ public class PrivateInfoPanel extends JPanel
                     .addComponent(m_tiledViewHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel18)
                     .addComponent(m_tiledViewYTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel24)
+                    .addComponent(m_tiledViewSpdYTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel23)
+                    .addComponent(m_tiledViewSpdXTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
 
         m_tiledTabbedPane.addTab("Info", m_tiledInfoPanel);
@@ -887,12 +909,12 @@ public class PrivateInfoPanel extends JPanel
         m_tiledPanelLayout.setHorizontalGroup(
             m_tiledPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, m_tiledPanelLayout.createSequentialGroup()
-                .addContainerGap(130, Short.MAX_VALUE)
+                .addContainerGap(142, Short.MAX_VALUE)
                 .addComponent(m_tiledEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(m_tiledApplyButton)
                 .addContainerGap())
-            .addComponent(m_tiledTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+            .addComponent(m_tiledTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
         );
         m_tiledPanelLayout.setVerticalGroup(
             m_tiledPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1135,6 +1157,7 @@ public class PrivateInfoPanel extends JPanel
 
         short   newWidth, newHeight, newStepX, newStepY,
                 newViewWidth, newViewHeight, newViewX, newViewY;
+        int     newSpdX, newSpdY;
 
         newWidth = newHeight = newStepX = newStepY =
             newViewWidth = newViewHeight = newViewX = newViewY = 0;
@@ -1150,6 +1173,8 @@ public class PrivateInfoPanel extends JPanel
             newViewHeight   = Short.parseShort( m_tiledViewHeightTextField.getText() );
             newViewX        = Short.parseShort( m_tiledViewXTextField.getText() );
             newViewY        = Short.parseShort( m_tiledViewYTextField.getText() );
+            newSpdX         = (int)(Double.parseDouble( m_tiledViewSpdXTextField.getText() ) * 0x00010000);
+            newSpdY         = (int)(Double.parseDouble( m_tiledViewSpdYTextField.getText() ) * 0x00010000);
         } catch ( NumberFormatException e ) {
             JOptionPane.showMessageDialog( this,
                 "Invalid input number", "ERROR", JOptionPane.ERROR_MESSAGE );
@@ -1223,6 +1248,8 @@ public class PrivateInfoPanel extends JPanel
         info.c_viewHeight   = newViewHeight;
         info.c_viewX        = newViewX;
         info.c_viewY        = newViewY;
+        info.c_viewSpdX     = newSpdX;
+        info.c_viewSpdY     = newSpdY;
         info.c_repeatedView = m_tiledRepeatedViewCheckBox.isSelected();
 
         TiledLayerSceneNode node =
@@ -1232,7 +1259,7 @@ public class PrivateInfoPanel extends JPanel
             info.c_spriteSpeed, newTerrain,
             newWidth, newHeight, newStepX, newStepY );
         node.SetupRepeatedView( newViewX, newViewY,
-            newViewWidth, newViewHeight, info.c_repeatedView );
+            newViewWidth, newViewHeight, newSpdX, newSpdY, info.c_repeatedView );
     }//GEN-LAST:event_m_tiledApplyButtonActionPerformed
 
     private void m_tiledEditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_tiledEditButtonActionPerformed
@@ -1333,6 +1360,8 @@ public class PrivateInfoPanel extends JPanel
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1396,6 +1425,8 @@ public class PrivateInfoPanel extends JPanel
     private javax.swing.JTextField m_tiledStepYTextField;
     private javax.swing.JTabbedPane m_tiledTabbedPane;
     private javax.swing.JTextField m_tiledViewHeightTextField;
+    private javax.swing.JTextField m_tiledViewSpdXTextField;
+    private javax.swing.JTextField m_tiledViewSpdYTextField;
     private javax.swing.JTextField m_tiledViewWidthTextField;
     private javax.swing.JTextField m_tiledViewXTextField;
     private javax.swing.JTextField m_tiledViewYTextField;
