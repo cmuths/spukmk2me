@@ -6,6 +6,7 @@ import javax.swing.JDialog;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.scene.NullSceneNode;
 import com.spukmk2me.scene.ImageSceneNode;
+import com.spukmk2me.scene.LineSceneNode;
 import com.spukmk2me.scene.SpriteSceneNode;
 import com.spukmk2me.scene.StringSceneNode;
 import com.spukmk2me.scene.TiledLayerSceneNode;
@@ -54,7 +55,8 @@ public final class AddSceneNodeDialog extends JDialog
                 "String scene node",
                 "Tiled scene node",
                 "Clipping scene node",
-                "Viewport scene node"
+                "Viewport scene node",
+                "Line scene node"
             };
 
             public int getSize() { return strings.length; }
@@ -87,7 +89,7 @@ public final class AddSceneNodeDialog extends JDialog
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(18, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(133, Short.MAX_VALUE)
+                .addContainerGap(137, Short.MAX_VALUE)
                 .addComponent(m_cancelButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(m_addButton)
@@ -158,6 +160,10 @@ public final class AddSceneNodeDialog extends JDialog
 
                 case 6:
                     newNode = new ViewportSceneNode();
+                    break;
+
+                case 7:
+                    newNode = new LineSceneNode();
                     break;
             }
 

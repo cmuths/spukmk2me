@@ -1,6 +1,5 @@
 package com.spukmk2me.spukmk2mesceneeditor.gui;
 
-import com.spukmk2me.extension.j2se.J2SEVideoDriver;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

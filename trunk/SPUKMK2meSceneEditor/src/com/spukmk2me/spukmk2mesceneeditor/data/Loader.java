@@ -7,6 +7,7 @@ import java.io.DataInputStream;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.resource.ResourceSet;
 import com.spukmk2me.resource.DefaultResourceProducer;
+import com.spukmk2me.scene.DefaultSceneNodeProducer;
 import com.spukmk2me.scene.SceneTreeLoader;
 
 public final class Loader
@@ -30,7 +31,8 @@ public final class Loader
                 m_data.GetDevice().GetFileSystem(),
                 savePath );
         
-        boolean result = sceneLoader.Load( dis, producer );
+        boolean result = sceneLoader.Load( dis, producer,
+            new DefaultSceneNodeProducer() );
         ISceneNode rootNode = sceneLoader.Get( "root" );
         
         m_data.SetResourceSet( sceneLoader.GetResourceSet() );

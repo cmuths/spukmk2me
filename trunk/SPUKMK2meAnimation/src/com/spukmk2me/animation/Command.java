@@ -1,20 +1,17 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-/* $if EXPORTABLE$ */
-import java.io.DataOutputStream;
-/* $endif$ */
 
 public interface Command
 {
     public int GetCommandCode();
     public Command CreateClone();
-    public void Read( DataInputStream dis ) throws IOException;
+    public void Read( StringMappedDataInputStream dis ) throws IOException;
     
     /* $if EXPORTABLE$ */
-    public void Write( DataOutputStream dos ) throws IOException;
+    public void Write( StringMappedDataOutputStream dos ) throws IOException;
     public String GetCommandLabel();
+    public String GetDataStrings();
     public String GetParamAsString();
     public void ReadParamFromString( String param );
     /* $endif$ */

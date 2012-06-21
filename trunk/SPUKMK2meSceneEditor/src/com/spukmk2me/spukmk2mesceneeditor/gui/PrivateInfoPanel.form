@@ -177,15 +177,214 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="270" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jCheckBox1" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="m_spriteAutodropCheckbox" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="m_spriteBackwardCheckbox" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="m_spriteAnimatingCheckbox" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="m_spriteFrameStopCheckbox" alignment="0" min="-2" max="-2" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jLabel32" max="32767" attributes="1"/>
+                                  <Component id="jLabel31" max="32767" attributes="1"/>
+                                  <Component id="jLabel30" max="32767" attributes="1"/>
+                                  <Component id="jLabel29" max="32767" attributes="1"/>
+                                  <Component id="jLabel28" alignment="0" min="-2" max="-2" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="m_spriteFirstIndexTextField" pref="89" max="32767" attributes="0"/>
+                                  <Component id="m_spriteMSPerFrameTextField" alignment="0" pref="89" max="32767" attributes="0"/>
+                                  <Component id="m_spriteLastIndexTextField" alignment="0" pref="89" max="32767" attributes="0"/>
+                                  <Component id="m_spriteNFrameToStopTextField" alignment="0" pref="89" max="32767" attributes="0"/>
+                                  <Component id="m_spriteStartIndexTextField" alignment="0" pref="89" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jScrollPane5" min="-2" pref="92" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="m_spriteImgRemoveButton" max="32767" attributes="1"/>
+                                  <Component id="m_spriteImgAddButton" alignment="0" pref="73" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jScrollPane6" pref="73" max="32767" attributes="0"/>
+                          </Group>
+                          <Component id="m_spriteApplyButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="300" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="m_spriteImgAddButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="m_spriteImgRemoveButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jScrollPane5" alignment="0" pref="109" max="32767" attributes="1"/>
+                          <Component id="jScrollPane6" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="m_spriteAnimatingCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel28" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_spriteMSPerFrameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="m_spriteFrameStopCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel29" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_spriteFirstIndexTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="m_spriteBackwardCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel30" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_spriteLastIndexTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="m_spriteAutodropCheckbox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel31" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_spriteNFrameToStopTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel32" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_spriteStartIndexTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="m_spriteApplyButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
           </Layout>
+          <SubComponents>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane5">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JList" name="m_spriteImgList">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList( new DefaultListModel() )"/>
+                  </AuxValues>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Component class="javax.swing.JButton" name="m_spriteImgAddButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&lt;--"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_spriteImgAddButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane6">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JList" name="m_spriteAllImgList">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JList( new DefaultListModel() )"/>
+                  </AuxValues>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Component class="javax.swing.JButton" name="m_spriteImgRemoveButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="--&gt;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_spriteImgRemoveButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="m_spriteAnimatingCheckbox">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Animating"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="m_spriteFrameStopCheckbox">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Frame stop"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="m_spriteBackwardCheckbox">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Backward"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="m_spriteAutodropCheckbox">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Auto drop"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel28">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ms per frame:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel29">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="First index:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel30">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Last index:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel31">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="NFrame to stop:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_spriteMSPerFrameTextField">
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_spriteFirstIndexTextField">
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_spriteLastIndexTextField">
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_spriteNFrameToStopTextField">
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="123"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel32">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Start index:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_spriteStartIndexTextField">
+            </Component>
+            <Component class="javax.swing.JButton" name="m_spriteApplyButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Apply"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_spriteApplyButtonActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="m_stringPanel">
           <Constraints>
@@ -514,13 +713,13 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace pref="142" max="32767" attributes="0"/>
+                      <EmptySpace pref="134" max="32767" attributes="0"/>
                       <Component id="m_tiledEditButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="m_tiledApplyButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="m_tiledTabbedPane" alignment="0" pref="278" max="32767" attributes="0"/>
+                  <Component id="m_tiledTabbedPane" alignment="0" pref="270" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -562,11 +761,11 @@
                                       <Component id="jScrollPane2" min="-2" pref="89" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="m_tiledDelImageButton" pref="77" max="32767" attributes="1"/>
-                                          <Component id="m_tiledAddImageButton" pref="77" max="32767" attributes="1"/>
+                                          <Component id="m_tiledDelImageButton" pref="73" max="32767" attributes="1"/>
+                                          <Component id="m_tiledAddImageButton" pref="73" max="32767" attributes="1"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane3" pref="75" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane3" pref="71" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -654,7 +853,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="m_tiledNoSpriteCheckbox" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="198" max="32767" attributes="0"/>
+                              <EmptySpace pref="190" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -706,17 +905,17 @@
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel15" min="-2" max="-2" attributes="1"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="m_tiledStepXTextField" pref="95" max="32767" attributes="1"/>
+                                      <Component id="m_tiledStepXTextField" pref="87" max="32767" attributes="1"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="m_tiledStepYTextField" pref="95" max="32767" attributes="0"/>
+                                      <Component id="m_tiledStepYTextField" pref="87" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jSeparator1" alignment="0" pref="273" max="32767" attributes="0"/>
+                          <Component id="jSeparator1" alignment="0" pref="265" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -738,7 +937,7 @@
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
-                                              <Component id="m_tiledViewXTextField" pref="87" max="32767" attributes="0"/>
+                                              <Component id="m_tiledViewXTextField" pref="79" max="32767" attributes="0"/>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -747,8 +946,8 @@
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="m_tiledViewSpdYTextField" pref="87" max="32767" attributes="0"/>
-                                                  <Component id="m_tiledViewYTextField" alignment="0" pref="87" max="32767" attributes="0"/>
+                                                  <Component id="m_tiledViewSpdYTextField" pref="79" max="32767" attributes="0"/>
+                                                  <Component id="m_tiledViewYTextField" alignment="0" pref="79" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
                                       </Group>
@@ -1004,6 +1203,95 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_clippingApplyButtonActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="m_linePanel">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
+              <JLayeredPaneConstraints x="0" y="0" width="270" height="300" layer="0" position="-1"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="jLabel27" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="jLabel25" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="jLabel26" alignment="0" max="32767" attributes="1"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="m_lineDeltaYTextField" pref="211" max="32767" attributes="0"/>
+                                  <Component id="m_lineDeltaXTextField" alignment="0" pref="211" max="32767" attributes="0"/>
+                                  <Component id="m_lineColorTextField" alignment="0" pref="211" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="m_lineApplyButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel25" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_lineDeltaXTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel26" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_lineDeltaYTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel27" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="m_lineColorTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="183" max="32767" attributes="0"/>
+                      <Component id="m_lineApplyButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="jLabel25">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="DeltaX:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel26">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="DeltaY:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel27">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Color:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_lineDeltaXTextField">
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_lineDeltaYTextField">
+            </Component>
+            <Component class="javax.swing.JTextField" name="m_lineColorTextField">
+            </Component>
+            <Component class="javax.swing.JButton" name="m_lineApplyButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Apply"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_lineApplyButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

@@ -9,12 +9,12 @@ public final class AnimationExecutor
         m_cmdProcessors = new DoublyLinkedList();
     }
     
-    public void Prepare( Animation animation )
+    public void Prepare( Animation animation, boolean loop )
     {
-        m_animation     = animation;
         m_cmdItr        = animation.GetCommands().first();
         m_cmdEndItr     = animation.GetCommands().end();
         m_timeLeft      = 0;
+        m_loop          = loop;
         Execute( 0 );
         
         DoublyLinkedList.Iterator prcItr = m_cmdProcessors.first();
@@ -44,8 +44,13 @@ public final class AnimationExecutor
         {
             if ( m_cmdItr.equals( m_cmdEndItr ) )
             {
-                done = true;
-                break;
+                if ( m_loop )
+                    m_cmdItr.fwrd();
+                else
+                {
+                    done = true;
+                    break;
+                }
             }
             
             cmd = (Command)m_cmdItr.data();
@@ -68,8 +73,8 @@ public final class AnimationExecutor
         return done;
     }
     
-    private Animation                   m_animation;
     private DoublyLinkedList            m_cmdProcessors;
     private DoublyLinkedList.Iterator   m_cmdItr, m_cmdEndItr;
     private int                         m_timeLeft;
+    private boolean                     m_loop;
 }

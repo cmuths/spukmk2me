@@ -112,11 +112,11 @@ final class J2SESubImage extends ISubImage
         short x, y = 0;
         int i, j, imgIterator = 0;
 
-        for ( i = height; i != 0; --i )
+        for ( i = nHeight; i != 0; --i )
         {
             x = 0;
 
-            for ( j = width; j != 0; --j )
+            for ( j = nWidth; j != 0; --j )
             {
                 if ( proxynames == null )
                     proxyname = null;

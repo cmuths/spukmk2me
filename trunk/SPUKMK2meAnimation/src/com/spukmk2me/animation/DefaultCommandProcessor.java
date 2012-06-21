@@ -38,11 +38,11 @@ public final class DefaultCommandProcessor implements ICommandProcessor
                 {
                     RepositionCommand reposCmd = (RepositionCommand)command;
                     ISceneNode node = m_animation.GetNode( reposCmd.c_name );
+                    NodePositionInfo info = (NodePositionInfo)m_animation.
+                        GetOriginalPositionList().get( reposCmd.c_name );
                     
-                    if ( m_animReversed )
+                    if ( info != null ) // Node was reversed
                     {
-                        NodePositionInfo info =
-                            (NodePositionInfo)m_animation.GetOriginalPositionList().get( reposCmd.c_name );
                         short newX  = (short)(node.c_x + info.c_x - reposCmd.c_x );
                         
                         node.SetPosition( newX, reposCmd.c_y );
@@ -102,9 +102,21 @@ public final class DefaultCommandProcessor implements ICommandProcessor
                     if ( assembleCmd.c_assembleType == 0 )
                     {
                         ObjectNodeInfo info = new ObjectNodeInfo();
+                        boolean materialReversed = m_animation.
+                            GetOriginalPositionList().exist(
+                                assembleCmd.c_nodeName ) != -1;
                         
                         info.c_node = m_animation.GetNode( assembleCmd.c_nodeName );
                         info.c_dependantFlags = assembleCmd.c_dependantFlags;
+                        
+                        if ( materialReversed )
+                        {
+                            long hbb = info.c_node.GetHierarchicalBoundingRect();
+                            short nx = (short)((hbb >> 48) & 0x0000FFFF);
+                            short nw = (short)((hbb >> 16) & 0x0000FFFF);
+                            
+                            info.c_shiftX = (short)(0 - nw - (nx << 1));
+                        }
                         
                         obj.AttachNode( info, assembleCmd.c_nodeName );
                     }
@@ -125,25 +137,31 @@ public final class DefaultCommandProcessor implements ICommandProcessor
                     boolean materialReversed =
                         m_animation.GetOriginalPositionList().exist( shiftCmd.c_nodeName ) != -1;
                     
+                    /* $if DEBUG$ */
+                    Logger.Log( "Shift: " + shiftCmd.c_objectName + ' ' + shiftCmd.c_nodeName + '\n' );
+                    Logger.Log( "Base: " + shiftCmd.c_shiftX + ' ' + shiftCmd.c_shiftY + ' ' + shiftCmd.c_shiftZ + '\n' );
+                    /* $endif$ */
+                    
                     if ( materialReversed )
                     {
-                        long hbb = nodeInfo.c_node.GetHierarchicalBoundingRect();
-                        int nx = (int)((hbb >> 48) & 0x0000FFFF);
-                        int nw = (int)((hbb >> 16) & 0x0000FFFF);
+                        /* $if DEBUG$ */
+                        Logger.Log( "Reversal detected. \n" );
+                        /* $endif$ */
                         
-                        System.out.println( "Shift: " + shiftCmd.c_objectName + ' ' + shiftCmd.c_nodeName );
-                        System.out.println( "Base: " + shiftCmd.c_shiftX + ' ' + shiftCmd.c_shiftY + ' ' + shiftCmd.c_shiftZ );
-                        System.out.println( "X: " + nx + " Width: " + nw );
-                        
-                        shiftCmd.c_shiftX = (short)(-shiftCmd.c_shiftX - nw - (nx << 1)); 
+                        nodeInfo.c_shiftX += nodeInfo.c_originalShiftX - shiftCmd.c_shiftX; 
+                        nodeInfo.c_originalShiftX = shiftCmd.c_shiftX;
                     }
-                    
-                    nodeInfo.c_shiftX = shiftCmd.c_shiftX;
+                    else
+                        nodeInfo.c_shiftX = shiftCmd.c_shiftX;
+
                     nodeInfo.c_shiftY = shiftCmd.c_shiftY;
                     nodeInfo.c_shiftZ = shiftCmd.c_shiftZ;
                     obj.RealignNodes();
                     
-                    System.out.println( "Shifted range: " + nodeInfo.c_shiftX + ' ' + nodeInfo.c_shiftY + ' ' + nodeInfo.c_shiftZ );
+                    /* $if DEBUG$ */
+                    Logger.Log( "Shifted range: " + nodeInfo.c_shiftX + ' ' +
+                        nodeInfo.c_shiftY + ' ' + nodeInfo.c_shiftZ +'\n' );
+                    /* $endif$ */
                 }
                 
                 break;

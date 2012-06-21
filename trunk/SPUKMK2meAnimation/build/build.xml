@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="SPUKMK2meAnimation" default="NoExportDebug" basedir=".">
+<project name="SPUKMK2meAnimation" default="NoExportableDebug" basedir=".">
     <!-- Sets variables which can later be used. -->
     <!-- The value of a property is accessed via ${} -->
     <property name="src" value="./../src" />
@@ -36,7 +36,7 @@
 		</path>
         <javac srcdir="${temp}/${JARNAME}/sources" destdir="${temp}/${JARNAME}/classes"
 			encoding="UTF-8" debug="${DEBUGOPTION}" source="1.3" target="1.3" verbose="no"
-			classpath="${src}" optimize="${OPTIMIZE}" >
+			classpath="${src}" excludesfile="${EXCLUDEFILES}" optimize="${OPTIMIZE}" >
 			<compilerarg value="-Xbootclasspath/p:${toString:lib.path.ref}"/>
 		</javac>
     </target>
@@ -47,11 +47,12 @@
 		compress="true" keepcompression="true" />
 	</target>
 	
-	<target name="NoExportDebug">
+	<target name="NoExportableDebug">
 		<property name="DEBUGOPTION" value="on" />
 		<property name="JARNAME" value="SPUKMK2meAnimationNoExportDebug" />
 		<property name="OPTIMIZE" value="off" />
 		<property name="LIBUSE" value="SPUKMK2meCoreDebug" />
+        <property name="EXCLUDEFILES" value="noexportabledebug_excludes.txt" />
 		<property name="debug" value="true" />
 		<property name="exportable" value="false" />
 		<antcall target="makedir"/>
@@ -65,8 +66,23 @@
 		<property name="JARNAME" value="SPUKMK2meAnimationExportableDebug" />
 		<property name="OPTIMIZE" value="off" />
 		<property name="LIBUSE" value="SPUKMK2meCoreDebug" />
+        <property name="EXCLUDEFILES" value="exportabledebug_excludes.txt" />
 		<property name="debug" value="true" />
 		<property name="exportable" value="true" />
+		<antcall target="makedir"/>
+		<antcall target="preprocess"/>
+		<antcall target="compile"/>
+		<antcall target="makejar"/>
+	</target>
+    
+    <target name="NoExportableRelease">
+		<property name="DEBUGOPTION" value="off" />
+		<property name="JARNAME" value="SPUKMK2meAnimationNoExportRelease" />
+		<property name="OPTIMIZE" value="on" />
+		<property name="LIBUSE" value="SPUKMK2meCoreRelease" />
+        <property name="EXCLUDEFILES" value="noexportablerelease_excludes.txt" />
+		<property name="debug" value="false" />
+		<property name="exportable" value="false" />
 		<antcall target="makedir"/>
 		<antcall target="preprocess"/>
 		<antcall target="compile"/>

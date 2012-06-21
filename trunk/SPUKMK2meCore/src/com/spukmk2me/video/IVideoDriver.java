@@ -158,6 +158,15 @@ public interface IVideoDriver
      * element: x, y, width, height, respectively.
      */
     public long GetClipping();
+    
+    /**
+     *  Draw a line.
+     *  @param x1
+     *  @param y1
+     *  @param x2
+     *  @param y2
+     */
+    public void DrawLine( int x1, int y1, int x2, int y2, int color );
 
     /**
      *  Create an image resources from an input stream.

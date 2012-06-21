@@ -48,11 +48,12 @@ public final class SceneTreeCellRenderer implements TreeCellRenderer
     private static String[] ICON_FILES = {
         "/nullnodeicon.png",
         "/imgnodeicon.png",
-        "/imgnodeicon.png",
+        "/spritenodeicon.png",
         "/stringnodeicon.png",
         "/tilednodeicon.png",
         "/clipnodeicon.png",
         "/imgnodeicon.png",
+        "/linenodeicon.png",
         "/unknownnodeicon.png"
     };
     

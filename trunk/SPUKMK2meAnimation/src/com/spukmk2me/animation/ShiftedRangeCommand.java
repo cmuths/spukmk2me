@@ -1,11 +1,6 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-
-/* $if EXPORTABLE$ */
-import java.io.DataOutputStream;
-/* $endif$ */
 
 public final class ShiftedRangeCommand implements Command
 {
@@ -19,20 +14,20 @@ public final class ShiftedRangeCommand implements Command
         return new ShiftedRangeCommand();
     }
     
-    public void Read( DataInputStream dis ) throws IOException
+    public void Read( StringMappedDataInputStream dis ) throws IOException
     {
-        c_nodeName      = dis.readUTF();
-        c_objectName    = dis.readUTF();
+        c_nodeName      = dis.readStringID();
+        c_objectName    = dis.readStringID();
         c_shiftX        = dis.readShort();
         c_shiftY        = dis.readShort();
         c_shiftZ        = dis.readShort();
     }
 
     /* $if EXPORTABLE$ */
-    public void Write( DataOutputStream dos ) throws IOException
+    public void Write( StringMappedDataOutputStream dos ) throws IOException
     {
-        dos.writeUTF( c_nodeName );
-        dos.writeUTF( c_objectName );
+        dos.writeStringID( c_nodeName );
+        dos.writeStringID( c_objectName );
         dos.writeShort( c_shiftX );
         dos.writeShort( c_shiftY );
         dos.writeShort( c_shiftZ );
@@ -64,6 +59,11 @@ public final class ShiftedRangeCommand implements Command
     public String GetCommandLabel()
     {
         return CMDLABEL;
+    }
+    
+    public String GetDataStrings()
+    {
+        return c_nodeName + ' ' + c_objectName;
     }
     
     private static final String CMDLABEL = "shift";

@@ -14,6 +14,7 @@ public final class ObjectNodeInfo
     public static final byte DEPEND_Z   = 0x04;
     
     public ISceneNode   c_node;
+    public short        c_originalShiftX;
     public short        c_shiftX, c_shiftY, c_shiftZ;
     public byte         c_dependantFlags;
 }

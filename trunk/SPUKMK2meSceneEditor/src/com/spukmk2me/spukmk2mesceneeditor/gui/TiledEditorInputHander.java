@@ -125,8 +125,19 @@ public class TiledEditorInputHander implements KeyListener, MouseListener
 
         if ( image )
         {
-            m_imageCursor.SetPosition(
-                (short)(m_imageX * m_imageW), (short)0 );
+            int x = m_imageX * m_imageW;
+            int y = 0;
+
+            if ( x >= 600 )
+            {
+                int nPerLine = 600 / m_imageW;
+                int nLine = m_info.c_images.length / nPerLine;
+
+                y = nLine * m_info.c_stepY;
+                x = m_imageW * (m_imageX % nPerLine);
+            }
+
+            m_imageCursor.SetPosition( (short)x, (short)y );
             m_imagePanel.update( m_imagePanel.getGraphics() );
         }
 

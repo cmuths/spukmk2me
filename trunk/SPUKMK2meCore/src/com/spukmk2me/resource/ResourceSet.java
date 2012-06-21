@@ -113,10 +113,8 @@ public final class ResourceSet
         if ( list == null )
             return null;
         
-        /* $if SPUKMK2ME_DEBUG$ */
         if ( (index < 0) || (index >= list.length()) )
-            Logger.Trace( "ERROR: Index out of bound" + index + '\n' );
-        /* $endif$ */
+            return null;
         
         DoublyLinkedList.Iterator itr = list.getObjectIterator();
         
@@ -128,6 +126,9 @@ public final class ResourceSet
     
     public int GetResourceIndex( IResource resource )
     {
+        if ( resource == null )
+            return -1;
+        
         NamedList list = GetResourceList( resource.GetResourceType() );
         
         if ( list != null )

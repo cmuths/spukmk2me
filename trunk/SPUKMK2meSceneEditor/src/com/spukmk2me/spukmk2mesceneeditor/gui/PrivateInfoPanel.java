@@ -16,6 +16,8 @@ import com.spukmk2me.scene.TiledLayerSceneNode;
 import com.spukmk2me.scene.complex.ClippingSceneNode;
 import com.spukmk2me.resource.IResource;
 import com.spukmk2me.resource.ResourceSet;
+import com.spukmk2me.scene.LineSceneNode;
+import com.spukmk2me.scene.SpriteSceneNode;
 import com.spukmk2me.spukmk2mesceneeditor.data.CentralData;
 import com.spukmk2me.spukmk2mesceneeditor.data.NodeTypeChecker;
 
@@ -26,7 +28,7 @@ public class PrivateInfoPanel extends JPanel
     {
         m_owner = owner;
         initComponents();
-        m_panels = new JPanel[ 7 ];
+        m_panels = new JPanel[ 9 ];
 
         m_panels[ 0 ] = m_unknownPanel;
         m_panels[ 1 ] = m_nullPanel;
@@ -35,6 +37,8 @@ public class PrivateInfoPanel extends JPanel
         m_panels[ 4 ] = m_stringPanel;
         m_panels[ 5 ] = m_tiledPanel;
         m_panels[ 6 ] = m_clippingPanel;
+        m_panels[ 7 ] = new JPanel();
+        m_panels[ 8 ] = m_linePanel;
     }
 
     public void ImageResourceChanged(
@@ -82,6 +86,10 @@ public class PrivateInfoPanel extends JPanel
                 LoadDataForImageSceneNode();
                 break;
 
+            case NodeTypeChecker.NT_SPRITE:
+                LoadDataForSpriteSceneNode();
+                break;
+
             case NodeTypeChecker.NT_STRING:
                 LoadDataForStringSceneNode();
                 break;
@@ -92,6 +100,10 @@ public class PrivateInfoPanel extends JPanel
                 
             case NodeTypeChecker.NT_CLIPPING:
                 LoadDataForClippingSceneNode();
+                break;
+
+            case NodeTypeChecker.NT_LINENODE:
+                LoadDataForLineNode();
                 break;
 
             default:
@@ -133,6 +145,53 @@ public class PrivateInfoPanel extends JPanel
 
         m_imageList.setModel( model );
         m_imageList.setSelectedIndex( selectedIndex );
+    }
+
+    private void LoadDataForSpriteSceneNode()
+    {
+        SpriteSceneNode.SpriteSceneNodeInfoData data =
+            (SpriteSceneNode.SpriteSceneNodeInfoData)m_data.GetCurrentNode().c_infoData;
+        ISubImage[] imgs = ( data.c_images == null )? new ISubImage[ 0 ] : data.c_images;
+
+        DefaultListModel allModel = (DefaultListModel)m_spriteAllImgList.getModel();
+        DefaultListModel imgModel = (DefaultListModel)m_spriteImgList.getModel();
+        ISubImage img;
+        //String[] nameList = m_data.GetResourceSet().
+        int n = m_data.GetResourceSet().GetNumberOfResources( IResource.RT_IMAGE );
+        boolean imgExists;
+
+        imgModel.clear();
+        allModel.clear();
+
+        for ( int i = 0; i != n; ++i )
+        {
+            img = (ISubImage)m_data.GetResourceSet().GetResource( i, IResource.RT_IMAGE );
+            imgExists = false;
+
+            for ( int j = 0; j != imgs.length; ++j )
+            {
+                if ( img == imgs[ j ] )
+                {
+                    imgExists = true;
+                    break;
+                }
+            }
+
+            if ( imgExists )
+                imgModel.addElement( img.GetProxyName() );
+            else
+                allModel.addElement( img.GetProxyName() );
+        }
+
+        m_spriteAnimatingCheckbox.setSelected( (data.c_mode & SpriteSceneNode.MODE_ANIMATING) != 0 );
+        m_spriteFrameStopCheckbox.setSelected( (data.c_mode & SpriteSceneNode.MODE_FRAMESTOP) != 0 );
+        m_spriteBackwardCheckbox.setSelected( (data.c_mode & SpriteSceneNode.MODE_BACKWARD) != 0 );
+        m_spriteAutodropCheckbox.setSelected( (data.c_mode & SpriteSceneNode.MODE_AUTODROP) != 0 );
+        m_spriteMSPerFrameTextField.setText( String.valueOf( data.c_msPerFrame ) );
+        m_spriteFirstIndexTextField.setText( String.valueOf( data.c_firstIndex ) );
+        m_spriteLastIndexTextField.setText( String.valueOf( data.c_lastIndex ) );
+        m_spriteNFrameToStopTextField.setText( String.valueOf( data.c_nFrameToStop ) );
+        m_spriteStartIndexTextField.setText( String.valueOf( data.c_startIndex ) );
     }
 
     private void LoadDataForStringSceneNode()
@@ -298,6 +357,19 @@ public class PrivateInfoPanel extends JPanel
         m_clippingHeightTextField.setText( String.valueOf( info.c_height ) );
     }
 
+    private void LoadDataForLineNode()
+    {
+        LineSceneNode lineNode = (LineSceneNode)m_data.GetCurrentNode();
+        long    data    = lineNode.GetData();
+        short   deltaX  = (short)(data >> 48);
+        short   deltaY  = (short)(data >> 32);
+        int     color   = (int)data;
+
+        m_lineDeltaXTextField.setText( String.valueOf( deltaX ) );
+        m_lineDeltaYTextField.setText( String.valueOf( deltaY ) );
+        m_lineColorTextField.setText( Integer.toHexString( color ) );
+    }
+
     private void EnableTiledImagePanelContent( boolean enable )
     {
         m_tiledImageList.setEnabled( enable );
@@ -326,6 +398,28 @@ public class PrivateInfoPanel extends JPanel
         m_imageList = new javax.swing.JList();
         m_changeButton = new javax.swing.JButton();
         m_spritePanel = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        m_spriteImgList = new javax.swing.JList( new DefaultListModel() );
+        m_spriteImgAddButton = new javax.swing.JButton();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        m_spriteAllImgList = new javax.swing.JList( new DefaultListModel() );
+        m_spriteImgRemoveButton = new javax.swing.JButton();
+        m_spriteAnimatingCheckbox = new javax.swing.JCheckBox();
+        m_spriteFrameStopCheckbox = new javax.swing.JCheckBox();
+        m_spriteBackwardCheckbox = new javax.swing.JCheckBox();
+        m_spriteAutodropCheckbox = new javax.swing.JCheckBox();
+        jLabel28 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        m_spriteMSPerFrameTextField = new javax.swing.JTextField();
+        m_spriteFirstIndexTextField = new javax.swing.JTextField();
+        m_spriteLastIndexTextField = new javax.swing.JTextField();
+        m_spriteNFrameToStopTextField = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jLabel32 = new javax.swing.JLabel();
+        m_spriteStartIndexTextField = new javax.swing.JTextField();
+        m_spriteApplyButton = new javax.swing.JButton();
         m_stringPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         m_strContentTextField = new javax.swing.JTextField();
@@ -402,6 +496,14 @@ public class PrivateInfoPanel extends JPanel
         m_clippingWidthTextField = new javax.swing.JTextField();
         m_clippingHeightTextField = new javax.swing.JTextField();
         m_clippingApplyButton = new javax.swing.JButton();
+        m_linePanel = new javax.swing.JPanel();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        m_lineDeltaXTextField = new javax.swing.JTextField();
+        m_lineDeltaYTextField = new javax.swing.JTextField();
+        m_lineColorTextField = new javax.swing.JTextField();
+        m_lineApplyButton = new javax.swing.JButton();
 
         jLabel9.setText("Unknown type.");
 
@@ -486,15 +588,129 @@ public class PrivateInfoPanel extends JPanel
         m_imagePanel.setBounds(0, 0, 270, 300);
         m_layeredPane.add(m_imagePanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jScrollPane5.setViewportView(m_spriteImgList);
+
+        m_spriteImgAddButton.setText("<--");
+        m_spriteImgAddButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_spriteImgAddButtonActionPerformed(evt);
+            }
+        });
+
+        jScrollPane6.setViewportView(m_spriteAllImgList);
+
+        m_spriteImgRemoveButton.setText("-->");
+        m_spriteImgRemoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_spriteImgRemoveButtonActionPerformed(evt);
+            }
+        });
+
+        m_spriteAnimatingCheckbox.setText("Animating");
+
+        m_spriteFrameStopCheckbox.setText("Frame stop");
+
+        m_spriteBackwardCheckbox.setText("Backward");
+
+        m_spriteAutodropCheckbox.setText("Auto drop");
+
+        jLabel28.setText("Ms per frame:");
+
+        jLabel29.setText("First index:");
+
+        jLabel30.setText("Last index:");
+
+        jLabel31.setText("NFrame to stop:");
+
+        jCheckBox1.setText("123");
+
+        jLabel32.setText("Start index:");
+
+        m_spriteApplyButton.setText("Apply");
+        m_spriteApplyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_spriteApplyButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout m_spritePanelLayout = new javax.swing.GroupLayout(m_spritePanel);
         m_spritePanel.setLayout(m_spritePanelLayout);
         m_spritePanelLayout.setHorizontalGroup(
             m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 270, Short.MAX_VALUE)
+            .addGroup(m_spritePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(m_spritePanelLayout.createSequentialGroup()
+                        .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jCheckBox1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(m_spriteAutodropCheckbox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(m_spriteBackwardCheckbox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(m_spriteAnimatingCheckbox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(m_spriteFrameStopCheckbox, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel31, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel30, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel29, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel28))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(m_spriteFirstIndexTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                            .addComponent(m_spriteMSPerFrameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                            .addComponent(m_spriteLastIndexTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                            .addComponent(m_spriteNFrameToStopTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                            .addComponent(m_spriteStartIndexTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)))
+                    .addGroup(m_spritePanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(m_spriteImgRemoveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(m_spriteImgAddButton, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
+                    .addComponent(m_spriteApplyButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
         );
         m_spritePanelLayout.setVerticalGroup(
             m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(m_spritePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(m_spritePanelLayout.createSequentialGroup()
+                        .addComponent(m_spriteImgAddButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(m_spriteImgRemoveButton))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, 0, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(m_spriteAnimatingCheckbox)
+                    .addComponent(jLabel28)
+                    .addComponent(m_spriteMSPerFrameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(m_spriteFrameStopCheckbox)
+                    .addComponent(jLabel29)
+                    .addComponent(m_spriteFirstIndexTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(m_spriteBackwardCheckbox)
+                    .addComponent(jLabel30)
+                    .addComponent(m_spriteLastIndexTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(m_spriteAutodropCheckbox)
+                    .addComponent(jLabel31)
+                    .addComponent(m_spriteNFrameToStopTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_spritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCheckBox1)
+                    .addComponent(jLabel32)
+                    .addComponent(m_spriteStartIndexTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(m_spriteApplyButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         m_spritePanel.setBounds(0, 0, 270, 300);
@@ -724,10 +940,10 @@ public class PrivateInfoPanel extends JPanel
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(m_tiledImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(m_tiledDelImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
-                            .addComponent(m_tiledAddImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
+                            .addComponent(m_tiledDelImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                            .addComponent(m_tiledAddImageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         m_tiledImagePanelLayout.setVerticalGroup(
@@ -759,7 +975,7 @@ public class PrivateInfoPanel extends JPanel
             .addGroup(m_tiledSpritePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(m_tiledNoSpriteCheckbox)
-                .addContainerGap(198, Short.MAX_VALUE))
+                .addContainerGap(190, Short.MAX_VALUE))
         );
         m_tiledSpritePanelLayout.setVerticalGroup(
             m_tiledSpritePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -811,13 +1027,13 @@ public class PrivateInfoPanel extends JPanel
                     .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                         .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(m_tiledStepXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE))
+                        .addComponent(m_tiledStepXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
                     .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                         .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(m_tiledStepYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)))
+                        .addComponent(m_tiledStepYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
             .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -837,15 +1053,15 @@ public class PrivateInfoPanel extends JPanel
                             .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel16)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(m_tiledViewXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                                .addComponent(m_tiledViewXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE))
                             .addGroup(m_tiledInfoPanelLayout.createSequentialGroup()
                                 .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(jLabel24, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(m_tiledInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(m_tiledViewSpdYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                                    .addComponent(m_tiledViewYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))))))
+                                    .addComponent(m_tiledViewSpdYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                                    .addComponent(m_tiledViewYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE))))))
                 .addContainerGap())
         );
         m_tiledInfoPanelLayout.setVerticalGroup(
@@ -909,12 +1125,12 @@ public class PrivateInfoPanel extends JPanel
         m_tiledPanelLayout.setHorizontalGroup(
             m_tiledPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, m_tiledPanelLayout.createSequentialGroup()
-                .addContainerGap(142, Short.MAX_VALUE)
+                .addContainerGap(134, Short.MAX_VALUE)
                 .addComponent(m_tiledEditButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(m_tiledApplyButton)
                 .addContainerGap())
-            .addComponent(m_tiledTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+            .addComponent(m_tiledTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
         );
         m_tiledPanelLayout.setVerticalGroup(
             m_tiledPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -993,6 +1209,62 @@ public class PrivateInfoPanel extends JPanel
 
         m_clippingPanel.setBounds(0, 0, 270, 300);
         m_layeredPane.add(m_clippingPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabel25.setText("DeltaX:");
+
+        jLabel26.setText("DeltaY:");
+
+        jLabel27.setText("Color:");
+
+        m_lineApplyButton.setText("Apply");
+        m_lineApplyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_lineApplyButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout m_linePanelLayout = new javax.swing.GroupLayout(m_linePanel);
+        m_linePanel.setLayout(m_linePanelLayout);
+        m_linePanelLayout.setHorizontalGroup(
+            m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(m_linePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(m_linePanelLayout.createSequentialGroup()
+                        .addGroup(m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel27, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel25, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel26, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(m_lineDeltaYTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                            .addComponent(m_lineDeltaXTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                            .addComponent(m_lineColorTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)))
+                    .addComponent(m_lineApplyButton, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        m_linePanelLayout.setVerticalGroup(
+            m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(m_linePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel25)
+                    .addComponent(m_lineDeltaXTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel26)
+                    .addComponent(m_lineDeltaYTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(m_linePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(m_lineColorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
+                .addComponent(m_lineApplyButton)
+                .addContainerGap())
+        );
+
+        m_linePanel.setBounds(0, 0, 270, 300);
+        m_layeredPane.add(m_linePanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -1340,11 +1612,114 @@ public class PrivateInfoPanel extends JPanel
         }
     }//GEN-LAST:event_m_clippingApplyButtonActionPerformed
 
+    private void m_lineApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_lineApplyButtonActionPerformed
+        try
+        {
+            short   deltaX  = Short.parseShort( m_lineDeltaXTextField.getText() );
+            short   deltaY  = Short.parseShort( m_lineDeltaYTextField.getText() );
+            int     color   = (int)Long.parseLong( m_lineColorTextField.getText(), 16 );
+
+            LineSceneNode lineNode = (LineSceneNode)m_data.GetCurrentNode();
+
+            lineNode.SetData( deltaX, deltaY, color );
+        } catch ( NumberFormatException e ) {
+            JOptionPane.showMessageDialog( this, "Wrong number",
+                "Error", JOptionPane.ERROR_MESSAGE );
+        }
+    }//GEN-LAST:event_m_lineApplyButtonActionPerformed
+
+    private void m_spriteImgAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_spriteImgAddButtonActionPerformed
+        DefaultListModel allModel = (DefaultListModel)m_spriteAllImgList.getModel();
+        DefaultListModel imgModel = (DefaultListModel)m_spriteImgList.getModel();
+        Object[] names = m_spriteAllImgList.getSelectedValues();
+
+        if ( names.length != 0 )
+        {
+            for ( int i = 0; i != names.length; ++i )
+            {
+                imgModel.addElement( names[ i ] );
+                allModel.removeElement( names[ i ] );
+            }
+        }
+    }//GEN-LAST:event_m_spriteImgAddButtonActionPerformed
+
+    private void m_spriteImgRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_spriteImgRemoveButtonActionPerformed
+        DefaultListModel allModel = (DefaultListModel)m_spriteAllImgList.getModel();
+        DefaultListModel imgModel = (DefaultListModel)m_spriteImgList.getModel();
+        Object[] names = m_spriteImgList.getSelectedValues();
+
+        if ( names.length != 0 )
+        {
+            for ( int i = 0; i != names.length; ++i )
+            {
+                allModel.addElement( names[ i ] );
+                imgModel.removeElement( names[ i ] );
+            }
+        }
+    }//GEN-LAST:event_m_spriteImgRemoveButtonActionPerformed
+
+    private void m_spriteApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_spriteApplyButtonActionPerformed
+        int msPerFrame, firstIndex, lastIndex, startIndex, nFrameToStop;
+
+        msPerFrame = firstIndex = lastIndex = startIndex = nFrameToStop = 0;
+
+        try
+        {
+            msPerFrame = Integer.parseInt( m_spriteMSPerFrameTextField.getText() );
+            firstIndex = Integer.parseInt( m_spriteFirstIndexTextField.getText() );
+            lastIndex = Integer.parseInt( m_spriteLastIndexTextField.getText() );
+            startIndex = Integer.parseInt( m_spriteStartIndexTextField.getText() );
+            nFrameToStop = Integer.parseInt( m_spriteNFrameToStopTextField.getText() );
+        } catch ( NumberFormatException e ) {
+            JOptionPane.showMessageDialog( this, "Number error", "Error", JOptionPane.ERROR_MESSAGE );
+            return;
+        }
+
+        SpriteSceneNode node = (SpriteSceneNode)m_data.GetCurrentNode();
+        SpriteSceneNode.SpriteSceneNodeInfoData data =
+            (SpriteSceneNode.SpriteSceneNodeInfoData)node.c_infoData;
+
+        data.c_mode = 0;
+
+        if ( m_spriteAnimatingCheckbox.isSelected() )
+            data.c_mode |= SpriteSceneNode.MODE_ANIMATING;
+
+        if ( m_spriteFrameStopCheckbox.isSelected() )
+            data.c_mode |= SpriteSceneNode.MODE_FRAMESTOP;
+
+        if ( m_spriteBackwardCheckbox.isSelected() )
+            data.c_mode |= SpriteSceneNode.MODE_BACKWARD;
+
+        if ( m_spriteAutodropCheckbox.isSelected() )
+            data.c_mode |= SpriteSceneNode.MODE_AUTODROP;
+
+        data.c_msPerFrame = msPerFrame;
+        data.c_startIndex = startIndex;
+        data.c_firstIndex = firstIndex;
+        data.c_lastIndex = lastIndex;
+
+        DefaultListModel model = (DefaultListModel)m_spriteImgList.getModel();
+        
+        data.c_nImages = model.size();
+        data.c_images = new ISubImage[ model.size() ];
+
+        for ( int i = 0; i != data.c_nImages; ++i )
+        {
+            data.c_images[ i ] = (ISubImage)m_data.GetResourceSet().GetResource(
+                (String)model.getElementAt( i ), IResource.RT_IMAGE );
+        }
+
+        node.SetImages( data.c_images );
+        node.SetAnimating( data.c_mode, data.c_firstIndex, data.c_lastIndex, data.c_msPerFrame, data.c_nFrameToStop );
+        node.SetFrameIndex( data.c_startIndex );
+    }//GEN-LAST:event_m_spriteApplyButtonActionPerformed
+
     private CentralData m_data;
     private JPanel[]    m_panels;
     private Frame       m_owner;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1362,7 +1737,15 @@ public class PrivateInfoPanel extends JPanel
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1373,6 +1756,8 @@ public class PrivateInfoPanel extends JPanel
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton m_changeButton;
     private javax.swing.JButton m_clippingApplyButton;
@@ -1384,8 +1769,27 @@ public class PrivateInfoPanel extends JPanel
     private javax.swing.JList m_imageList;
     private javax.swing.JPanel m_imagePanel;
     private javax.swing.JLayeredPane m_layeredPane;
+    private javax.swing.JButton m_lineApplyButton;
+    private javax.swing.JTextField m_lineColorTextField;
+    private javax.swing.JTextField m_lineDeltaXTextField;
+    private javax.swing.JTextField m_lineDeltaYTextField;
+    private javax.swing.JPanel m_linePanel;
     private javax.swing.JPanel m_nullPanel;
+    private javax.swing.JList m_spriteAllImgList;
+    private javax.swing.JCheckBox m_spriteAnimatingCheckbox;
+    private javax.swing.JButton m_spriteApplyButton;
+    private javax.swing.JCheckBox m_spriteAutodropCheckbox;
+    private javax.swing.JCheckBox m_spriteBackwardCheckbox;
+    private javax.swing.JTextField m_spriteFirstIndexTextField;
+    private javax.swing.JCheckBox m_spriteFrameStopCheckbox;
+    private javax.swing.JButton m_spriteImgAddButton;
+    private javax.swing.JList m_spriteImgList;
+    private javax.swing.JButton m_spriteImgRemoveButton;
+    private javax.swing.JTextField m_spriteLastIndexTextField;
+    private javax.swing.JTextField m_spriteMSPerFrameTextField;
+    private javax.swing.JTextField m_spriteNFrameToStopTextField;
     private javax.swing.JPanel m_spritePanel;
+    private javax.swing.JTextField m_spriteStartIndexTextField;
     private javax.swing.JButton m_strAddColorButton;
     private javax.swing.JCheckBox m_strBoldCheckbox;
     private javax.swing.JCheckBox m_strBottomCheckbox;

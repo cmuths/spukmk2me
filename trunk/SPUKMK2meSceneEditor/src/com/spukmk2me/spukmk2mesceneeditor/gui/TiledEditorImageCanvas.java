@@ -29,6 +29,7 @@ public final class TiledEditorImageCanvas extends J2SERenderingPanel
         m_superNode.AddChild( m_cursorNode );
         vdrv.PrepareRenderingContext();
         
+        //this.setDisplayedSize( 2048, 600 );
         this.setRenderingMode( RENDERINGMODE_PASSIVE, 33 );
     }
     
@@ -42,16 +43,22 @@ public final class TiledEditorImageCanvas extends J2SERenderingPanel
         TiledLayerSceneNode.TiledLayerSceneNodeInfoData info =
             (TiledLayerSceneNode.TiledLayerSceneNodeInfoData)node.c_infoData;
         ImageSceneNode imageNode;
-        short x = 0;
+        short x = 0, y = 0;
 
         if ( info.c_images != null )
         {
             for ( int i = 0; i != info.c_images.length; ++i )
             {
                 imageNode = new ImageSceneNode( info.c_images[ i ] );
-                imageNode.SetPosition( x, (short)0 );
+                imageNode.SetPosition( x, y );
                 m_viewLayer.AddChild( imageNode );
                 x += info.c_stepX;
+
+                if ( x >= 600 )
+                {
+                    x = 0;
+                    y += info.c_stepY;
+                }
             }
         }
 
