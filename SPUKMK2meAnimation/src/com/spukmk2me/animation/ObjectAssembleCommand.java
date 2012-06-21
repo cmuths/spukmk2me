@@ -1,11 +1,6 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-
-/* $if EXPORTABLE$ */
-import java.io.DataOutputStream;
-/* $endif$ */
 
 public final class ObjectAssembleCommand implements Command
 {
@@ -26,19 +21,19 @@ public final class ObjectAssembleCommand implements Command
         return new ObjectAssembleCommand();
     }
     
-    public void Read( DataInputStream dis ) throws IOException
+    public void Read( StringMappedDataInputStream dis ) throws IOException
     {
-        c_nodeName          = dis.readUTF();
-        c_objectName        = dis.readUTF();
+        c_nodeName          = dis.readStringID();
+        c_objectName        = dis.readStringID();
         c_assembleType      = dis.readByte();
         c_dependantFlags    = dis.readByte();
     }
 
     /* $if EXPORTABLE$ */
-    public void Write( DataOutputStream dos ) throws IOException
+    public void Write( StringMappedDataOutputStream dos ) throws IOException
     {
-        dos.writeUTF( c_nodeName );
-        dos.writeUTF( c_objectName );
+        dos.writeStringID( c_nodeName );
+        dos.writeStringID( c_objectName );
         dos.writeByte( c_assembleType );
         dos.writeByte( c_dependantFlags );
     }
@@ -99,6 +94,11 @@ public final class ObjectAssembleCommand implements Command
     public String GetCommandLabel()
     {
         return CMDLABEL;
+    }
+    
+    public String GetDataStrings()
+    {
+        return c_nodeName + ' ' + c_objectName;
     }
     
     private static final String CMDLABEL = "assemble";

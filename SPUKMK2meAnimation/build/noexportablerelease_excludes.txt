@@ -1,0 +1,2 @@
+com/spukmk2me/animation/String8bitMappedDataOutputStream.java
+com/spukmk2me/animation/String8bitMappedDataOutputStream.class

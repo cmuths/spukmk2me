@@ -3,10 +3,6 @@ package com.spukmk2me.animation;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-/* $if EXPORTABLE$ */
-import java.io.DataOutputStream;
-/* $endif$ */
-
 public final class AssignCommand implements Command
 {
     public int GetCommandCode()
@@ -19,17 +15,17 @@ public final class AssignCommand implements Command
         return new AssignCommand();
     }
     
-    public void Read( DataInputStream dis ) throws IOException
+    public void Read( StringMappedDataInputStream dis ) throws IOException
     {
-        c_name      = dis.readUTF();
-        c_address   = dis.readUTF();
+        c_name      = dis.readStringID();
+        c_address   = dis.readStringID();
     }
 
     /* $if EXPORTABLE$ */
-    public void Write( DataOutputStream dos ) throws IOException
+    public void Write( StringMappedDataOutputStream dos ) throws IOException
     {
-        dos.writeUTF( c_name );
-        dos.writeUTF( c_address );
+        dos.writeStringID( c_name );
+        dos.writeStringID( c_address );
     }
     
     public String GetParamAsString()
@@ -48,6 +44,11 @@ public final class AssignCommand implements Command
     public String GetCommandLabel()
     {
         return CMDLABEL;
+    }
+    
+    public String GetDataStrings()
+    {
+        return c_name + ' ' + c_address;
     }
     
     private static final String CMDLABEL = "assign";

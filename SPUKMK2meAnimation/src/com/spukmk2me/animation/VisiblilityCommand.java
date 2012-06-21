@@ -1,11 +1,6 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-
-/* $if EXPORTABLE$ */
-import java.io.DataOutputStream;
-/* $endif$ */
 
 public final class VisiblilityCommand implements Command
 {
@@ -19,16 +14,16 @@ public final class VisiblilityCommand implements Command
         return new VisiblilityCommand();
     }
     
-    public void Read( DataInputStream dis ) throws IOException
+    public void Read( StringMappedDataInputStream dis ) throws IOException
     {
-        c_name = dis.readUTF();
+        c_name = dis.readStringID();
         c_flags = dis.readByte();
     }
 
     /* $if EXPORTABLE$ */
-    public void Write( DataOutputStream dos ) throws IOException
+    public void Write( StringMappedDataOutputStream dos ) throws IOException
     {
-        dos.writeUTF( c_name );
+        dos.writeStringID( c_name );
         dos.writeByte( c_flags );
     }
     
@@ -68,6 +63,11 @@ public final class VisiblilityCommand implements Command
     public String GetCommandLabel()
     {
         return CMDLABEL;
+    }
+    
+    public String GetDataStrings()
+    {
+        return c_name;
     }
     
     private static final String CMDLABEL = "vis";

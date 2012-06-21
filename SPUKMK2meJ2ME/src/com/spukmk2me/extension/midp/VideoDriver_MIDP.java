@@ -82,6 +82,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             ((long)(m_clipWidth & 0x0000FFFF) << 16) |
             (long)(m_clipHeight & 0x0000FFFF);
     }
+    
+    public void DrawLine( int x1, int y1, int x2, int y2, int color )
+    {
+        m_g.setColor( color );
+        m_g.drawLine( x1, y1, x2, y2 );
+    }
 
     public void StartInternalClock()
     {
@@ -296,8 +302,61 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             Logger.Trace( "This isn't image resource created by MIDP driver" );
         }
         /* $endif$ */
-        return MIDPSubImage.CreateSubImagesFromResource(
+
+        return CreateSubImagesFromResource(
             (MIDPImageResource)imgResource, width, height, proxynames );
+    }
+    
+    private MIDPSubImage[] CreateSubImagesFromResource(
+        MIDPImageResource imageResource, short width, short height,
+        String[] proxynames )
+    {
+        /* $if SPUKMK2ME_DEBUG$ */
+        Logger.Log(
+            "Creating image batch from " + imageResource.toString() +
+            ", w = " + width + ", h = " + height + "..." );
+        /* $endif$ */
+
+        int imgWidth    = imageResource.GetWidth();
+        int imgHeight   = imageResource.GetHeight();
+        int nImageW     = imgWidth / width;
+        int nImageH     = imgHeight / height;
+        int nImage      = nImageW * nImageH;
+        int _x, _y, imgIterator;
+
+        _x = _y = imgIterator = 0;
+
+        if ( nImage == 0 )
+            return null;
+
+        MIDPSubImage[] images = new MIDPSubImage[ nImage ];
+        String proxyname;
+        
+        for ( int i = nImageH; i != 0; --i )
+        {
+            for ( int j = nImageW; j != 0; --j )
+            {
+                if ( proxynames == null )
+                    proxyname = null;
+                else
+                    proxyname = proxynames[ imgIterator ];
+                
+                images[ imgIterator ] =
+                    new MIDPSubImage( imageResource, (short)_x, (short)_y,
+                        width, height, 0, (byte)0, proxyname );
+                ++imgIterator;
+                _x += width;
+            }
+
+            _y += height;
+            _x = 0;
+        }
+
+        /* $if SPUKMK2ME_DEBUG$ */
+        Logger.Log( "Created.\n" );
+        /* $endif$ */
+
+        return images;
     }
     
     public static final String PROPERTY_MIDPGRAPHICS    = "midp_graphics";
@@ -317,4 +376,126 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     private char[]      m_fpsString;
     private long        m_fpsLastTime;
     /* $endif$ */
+    
+    /**
+     *  An implement of ISubImage for MIDP video driver.
+     */
+    final class MIDPSubImage extends ISubImage
+    {
+        public MIDPSubImage( MIDPImageResource imageResource,
+            short x, short y, short width, short height,
+            int rotationDegree, byte flippingFlag, String proxyname )
+        {
+            super( proxyname );
+            
+            int     midpTransformationFlag  = 0;
+            boolean hasHorizontalFlipping     = false;
+
+            if ( flippingFlag != 0 )
+            {
+                // Vertical & horizontal flipping
+                if ( (flippingFlag & (IVideoDriver.FLIP_HORIZONTAL |
+                    IVideoDriver.FLIP_VERTICAL)) ==
+                    (IVideoDriver.FLIP_HORIZONTAL | IVideoDriver.FLIP_VERTICAL) )
+                {
+                    flippingFlag = 0;
+                    rotationDegree += 0x00B40000;
+                }
+                
+                else
+                {
+                    // Vertical flipping only
+                    // Vertical flipping = Horizontal flipping + Rotate 180 degree
+                    if ( (flippingFlag & IVideoDriver.FLIP_VERTICAL) != 0 )
+                        rotationDegree += 0x00B40000;
+
+                    hasHorizontalFlipping = true;
+                }
+            }
+
+            while ( rotationDegree >= 0x01680000 ) // larger or equal 360
+                rotationDegree -= 0x01680000;
+
+            while ( rotationDegree < 0 )
+                rotationDegree += 0x01680000;
+
+            // I don't know why they come up with those Sprite constants.
+            if ( hasHorizontalFlipping )
+            {
+                switch ( rotationDegree )
+                {
+                    case 0:
+                        midpTransformationFlag = 2; // Sprite.TRANS_MIRROR
+                        break;
+
+                    case 0x005A0000:
+                        midpTransformationFlag = 4; // Sprite.TRANS_MIRROR_ROT270
+                        break;
+
+                    case 0x00B40000:
+                        midpTransformationFlag = 1; // Sprite.TRANS_MIRROR_ROT180
+                        break;
+
+                    case 0x010E0000:
+                        midpTransformationFlag = 7; // Sprite.TRANS_MIRROR_ROT90
+                        break;
+                }
+            }
+            else
+            {
+                switch ( rotationDegree )
+                {
+                    case 0:
+                        midpTransformationFlag = 0; // Sprite.TRANS_NONE
+                        break;
+
+                    case 0x005A0000:
+                        midpTransformationFlag = 6; // Sprite.TRANS_ROT270
+                        break;
+
+                    case 0x00B40000:
+                        midpTransformationFlag = 3; // Sprite.TRANS_ROT180
+                        break;
+
+                    case 0x010E0000:
+                        midpTransformationFlag = 5; // Sprite.TRANS_ROT90
+                        break;
+                }
+            }
+
+            // Assign to final values
+            m_imageResource             = imageResource;
+            m_x                         = x;
+            m_y                         = y;
+            m_width                     = width;
+            m_height                    = height;
+            m_midpTransformationFlag    = midpTransformationFlag;
+        }
+
+        public void Render( IVideoDriver driver )
+        {
+            m_g.drawRegion(
+                m_imageResource.GetMIDPImage(),
+                m_x, m_y, m_width, m_height,
+                m_midpTransformationFlag,
+                m_renderInfo.c_rasterX, m_renderInfo.c_rasterY,
+                MIDP_ANCHOR );
+        }
+
+        public short GetWidth()
+        {
+            return m_width;
+        }
+
+        public short GetHeight()
+        {
+            return m_height;
+        }
+
+        private static final int MIDP_ANCHOR = Graphics.TOP | Graphics.LEFT;
+
+        private final MIDPImageResource m_imageResource;
+        private final int               m_midpTransformationFlag;
+        private final short             m_x, m_y, m_width, m_height;
+    }
 }

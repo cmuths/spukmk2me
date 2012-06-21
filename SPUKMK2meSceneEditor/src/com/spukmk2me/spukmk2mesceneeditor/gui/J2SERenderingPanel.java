@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import com.spukmk2me.Device;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.extension.j2se.J2SEVideoDriver;
+import java.awt.Dimension;
 
 public class J2SERenderingPanel extends JPanel
     implements SceneDisplaySurface, Runnable

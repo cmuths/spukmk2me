@@ -39,8 +39,11 @@ public final class SpriteSceneNode extends ISceneNode
 
         if ( m_animating )
             UpdateAnimation( driver.GetRenderInfo().c_passedTime );
+        
+        ISubImage img = m_images[ Util.FPRound( m_currentFrame ) ]; 
 
-        m_images[ Util.FPRound( m_currentFrame ) ].Render( driver );
+        if ( img != null )
+            img.Render( driver );
     }
     
     public short GetAABBX()
@@ -219,7 +222,7 @@ public final class SpriteSceneNode extends ISceneNode
     public final class SpriteSceneNodeInfoData
     {
         public ISubImage[]   c_images;
-        public int           c_mode, c_msPerFrame, c_nImages,
+        public int           c_mode, c_msPerFrame, c_nImages, c_startIndex,
                              c_firstIndex, c_lastIndex, c_nFrameToStop;
     }
     /* $endif$ */

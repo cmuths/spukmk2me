@@ -28,8 +28,8 @@ public class TiledLayerSceneNode extends ISceneNode
         {
             long oldClip = driver.GetClipping();
             int nX, nY;
-            int displayW = m_stepX * m_tableWidth;
-            int displayH = m_stepY * m_tableHeight;
+            int displayW = c_stepX * c_tableWidth;
+            int displayH = c_stepY * c_tableHeight;
             
             {
                 int rangeX = m_viewWidth - Util.FPRound( m_viewX );
@@ -111,13 +111,13 @@ public class TiledLayerSceneNode extends ISceneNode
     public short GetAABBWidth()
     {
         return ( m_repeatedView )?
-            m_viewWidth : (short)(m_stepX * m_tableWidth);
+            m_viewWidth : (short)(c_stepX * c_tableWidth);
     }
 
     public short GetAABBHeight()
     {
         return ( m_repeatedView )?
-            m_viewHeight : (short)(m_stepY * m_tableHeight);
+            m_viewHeight : (short)(c_stepY * c_tableHeight);
     }
 
     public void SetupTiledLayer( ISubImage[] images, ISubImage[][] sprites,
@@ -156,11 +156,11 @@ public class TiledLayerSceneNode extends ISceneNode
         m_images        = images;
         m_sprites       = sprites;
         m_spriteSpeed   = spriteSpeed;
-        m_terrainData   = terrainData;
-        m_tableWidth    = tableWidth;
-        m_tableHeight   = tableHeight;
-        m_stepX         = stepX;
-        m_stepY         = stepY;
+        c_terrainData   = terrainData;
+        c_tableWidth    = tableWidth;
+        c_tableHeight   = tableHeight;
+        c_stepX         = stepX;
+        c_stepY         = stepY;
 
         if ( m_sprites != null )
         {
@@ -180,8 +180,8 @@ public class TiledLayerSceneNode extends ISceneNode
             m_viewSpdY      = spdY;
             // viewX, viewY are modified to become 0 or negative values
             
-            short w = (short)(m_stepX * m_tableWidth);
-            short h = (short)(m_stepY * m_tableHeight);
+            short w = (short)(c_stepX * c_tableWidth);
+            short h = (short)(c_stepY * c_tableHeight);
             
             m_viewX = startX;
             m_viewY = startY;
@@ -204,6 +204,12 @@ public class TiledLayerSceneNode extends ISceneNode
         }
     }
     
+    public void changeSpeed( int spdX, int spdY )
+    {
+        m_viewSpdX = spdX;
+        m_viewSpdY = spdY;
+    }
+    
     private void RenderOnce( IVideoDriver driver, short x, short y )
     {
         RenderInfo ri = driver.GetRenderInfo();
@@ -211,14 +217,14 @@ public class TiledLayerSceneNode extends ISceneNode
 
         index = 0;
 
-        for ( i = 0; i != m_tableHeight; ++i )
+        for ( i = 0; i != c_tableHeight; ++i )
         {
             ri.c_rasterX = x;
             ri.c_rasterY = y;
             
-            for ( j = 0; j != m_tableWidth; ++j )
+            for ( j = 0; j != c_tableWidth; ++j )
             {
-                data = m_terrainData[ index++ ];
+                data = c_terrainData[ index++ ];
 
                 if ( data >= 0 )
                     m_images[ data ].Render( driver );
@@ -229,10 +235,10 @@ public class TiledLayerSceneNode extends ISceneNode
                         Render( driver );
                 }
 
-                ri.c_rasterX += m_stepX;
+                ri.c_rasterX += c_stepX;
             }
 
-            y += m_stepY;
+            y += c_stepY;
         }
     }
     
@@ -258,8 +264,8 @@ public class TiledLayerSceneNode extends ISceneNode
         m_viewX += Util.FPMul( m_viewSpdX, deltaTime );
         m_viewY += Util.FPMul( m_viewSpdY, deltaTime );
         
-        int w = (m_stepX * m_tableWidth) << 16;
-        int h = (m_stepY * m_tableHeight) << 16;
+        int w = (c_stepX * c_tableWidth) << 16;
+        int h = (c_stepY * c_tableHeight) << 16;
         
         while ( m_viewX > 0 )
             m_viewX -= w;
@@ -274,11 +280,12 @@ public class TiledLayerSceneNode extends ISceneNode
             m_viewY += h;
     }
 
+    public byte[]   c_terrainData;
+    public short    c_tableWidth, c_tableHeight, c_stepX, c_stepY;
+    
     private ISubImage[][]   m_sprites;
     private ISubImage[]     m_images;
     private int[]           m_spriteSpeed;
-    private byte[]          m_terrainData;
-    private short           m_tableWidth, m_tableHeight, m_stepX, m_stepY;
     private int             m_viewX, m_viewY;
     private short           m_viewWidth, m_viewHeight;
     private int             m_viewSpdX, m_viewSpdY;

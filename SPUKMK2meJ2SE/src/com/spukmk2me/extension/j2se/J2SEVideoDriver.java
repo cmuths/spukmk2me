@@ -203,6 +203,12 @@ public final class J2SEVideoDriver extends JPanel
             ((long)(m_clipWidth & 0x0000FFFF) << 16) |
             (long)(m_clipHeight & 0x0000FFFF);
     }
+    
+    public void DrawLine( int x1, int y1, int x2, int y2, int color )
+    {
+        m_g.setColor( new Color( color ) );
+        m_g.drawLine( x1, y1, x2, y2 );
+    }
 
     public IImageResource CreateImageResource( InputStream is, String proxyname )
         throws IOException

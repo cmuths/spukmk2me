@@ -1,14 +1,9 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 
-/* $if EXPORTABLE$ */
-import java.io.DataOutputStream;
-/* $endif$ */
-
-public final class ObjectDeclarationCommand implements Command {
-
+public final class ObjectDeclarationCommand implements Command
+{
     public int GetCommandCode()
     {
         return Command.CMDCODE_DECLARE;
@@ -19,15 +14,15 @@ public final class ObjectDeclarationCommand implements Command {
         return new ObjectDeclarationCommand();
     }
 
-    public void Read( DataInputStream dis ) throws IOException
+    public void Read( StringMappedDataInputStream dis ) throws IOException
     {
-        c_name = dis.readUTF();
+        c_name = dis.readStringID();
     }
     
     /* $if EXPORTABLE$ */
-    public void Write( DataOutputStream dos ) throws IOException
+    public void Write( StringMappedDataOutputStream dos ) throws IOException
     {
-        dos.writeUTF( c_name );
+        dos.writeStringID( c_name );
     }
     
     public String GetParamAsString()
@@ -43,6 +38,11 @@ public final class ObjectDeclarationCommand implements Command {
     public String GetCommandLabel()
     {
         return CMDLABEL;
+    }
+    
+    public String GetDataStrings()
+    {
+        return c_name;
     }
     
     private static final String CMDLABEL = "declare";

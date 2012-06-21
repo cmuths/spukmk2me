@@ -22,6 +22,9 @@ import com.spukmk2me.video.ICFontRenderer;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.video.RenderInfo;
 import com.spukmk2me.video.ICFont;
+/* $if SPUKMK2ME_DEBUG$ */
+import com.spukmk2me.debug.Logger;
+/* $endif$ */
 
 /**
  *  A scene node that display string.
@@ -92,7 +95,12 @@ public final class StringSceneNode extends ISceneNode
     public void Replace( byte[] properties )
     {
         SetupString( m_font, m_str, properties, m_alignment,
-            m_width, m_height, m_truncate);
+            m_width, m_height, m_truncate );
+    }
+    
+    public void SetShownRange( int length )
+    {
+        m_shownLength = length;
     }
     
     /**
@@ -108,7 +116,7 @@ public final class StringSceneNode extends ISceneNode
         else
             m_renderedString = null;
     }
-
+    
     /**
      *  Alternative version of SetString() which takes String as input.
      *  @param s The new string to display.
@@ -135,16 +143,31 @@ public final class StringSceneNode extends ISceneNode
         }
         else
         {
+            int counter = Math.min( m_renderedString.length, m_shownLength );
+            int shownLengthInLine;
+            int line = 0;
             short y = (short)(ri.c_rasterY + m_startY);
+            
+            while ( counter > 0 )
+            {
+                shownLengthInLine = Math.min( counter,
+                    m_lineStartIndexes[ line + 1 ] - m_lineStartIndexes[ line ] );
+                fr.RenderString( m_renderedString, m_font,
+                    m_lineStartIndexes[ line ], shownLengthInLine,
+                    (short)(ri.c_rasterX + m_lineStartX[ line ]), y );
+                y += m_font.GetLineHeight();
+                ++line;
+                counter -= shownLengthInLine;
+            }
 
-            for ( int i = 0; i != m_nLine; ++i )
+            /*for ( int i = 0; i != m_nLine; ++i )
             {
                 fr.RenderString( m_renderedString, m_font,
                     m_lineStartIndexes[ i ],
                     m_lineStartIndexes[ i + 1 ] - m_lineStartIndexes[ i ],
                     (short)(ri.c_rasterX + m_lineStartX[ i ]), y );
                 y += m_font.GetLineHeight();
-            }
+            }*/
         }
     }
 
@@ -366,6 +389,28 @@ public final class StringSceneNode extends ISceneNode
 
             m_height = (short)(nLine * m_font.GetLineHeight());
         }
+        
+        m_shownLength = 0x7FFFFFFF;
+        
+        /* $if SPUKMK2ME_DEBUG$ */
+        // Scan for unsupported characters
+        boolean unsupportedFound = false;
+        
+        for ( int i = 0; i != m_str.length; ++i )
+        {   
+            if ( !m_font.IsSupported( m_str[ i ] ) )
+            {
+                unsupportedFound = true;
+                break;
+            }
+        }
+        
+        if ( unsupportedFound )
+        {
+            Logger.Trace( "Unsupported charater found in string: |" +
+                String.valueOf( m_str ) + "|\n" );
+        }
+        /* $endif$ */
     }
 
     public static final byte ALIGN_NONE     = 0x00;
@@ -384,7 +429,7 @@ public final class StringSceneNode extends ISceneNode
     private char[]  m_str, m_renderedString;
     private int[]   m_lineStartIndexes, m_lineStartX;
     private byte[]  m_properties;
-    private int     m_renderedLength, m_nLine, m_startY;
+    private int     m_renderedLength, m_nLine, m_startY, m_shownLength;
     private short   m_width, m_height;
     private boolean m_truncate;
     private byte    m_alignment;

@@ -1,11 +1,6 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-
-/* $if EXPORTABLE$ */
-import java.io.DataOutputStream;
-/* $endif$ */
 
 public final class DelayCommand implements Command
 {
@@ -19,13 +14,13 @@ public final class DelayCommand implements Command
         return new DelayCommand();
     }
     
-    public void Read( DataInputStream dis ) throws IOException
+    public void Read( StringMappedDataInputStream dis ) throws IOException
     {
         c_time = dis.readInt();
     }
 
     /* $if EXPORTABLE$ */
-    public void Write( DataOutputStream dos ) throws IOException
+    public void Write( StringMappedDataOutputStream dos ) throws IOException
     {
         dos.writeInt( c_time );
     }
@@ -43,6 +38,11 @@ public final class DelayCommand implements Command
     public String GetCommandLabel()
     {
         return CMDLABEL;
+    }
+    
+    public String GetDataStrings()
+    {
+        return null;
     }
     
     private static final String CMDLABEL = "delay";

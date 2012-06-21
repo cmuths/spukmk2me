@@ -5,11 +5,14 @@ import java.io.InputStream;
 
 import com.spukmk2me.DoublyLinkedList;
 import com.spukmk2me.NamedList;
+import com.spukmk2me.debug.Logger;
 import com.spukmk2me.io.IFileSystem;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.sound.ISoundMonitor;
 import com.spukmk2me.scene.ISceneNode;
 import com.spukmk2me.scene.SceneTreeLoader;
+import com.spukmk2me.scene.ISceneNodeProducer;
+import com.spukmk2me.scene.DefaultSceneNodeProducer;
 import com.spukmk2me.resource.IResourceProducer;
 import com.spukmk2me.resource.DefaultResourceProducer;
 
@@ -28,49 +31,93 @@ public final class Animation
     }
     
     /**
-     *  Load a material files.
+     *  Load a material file and add it's node to this animation.
      *  \details Material files won't be added if there's name collision.
      * Name collision occurs if there's at least 2 nodes in all material files
      * that have the same name (except "root").
      *  @param materialFile Material filename (absolute path).
-     *  @return True if there's no name collision.
+     *  @param originalNames Original names for changing node names.
+     * Pass null if don't want to change.
+     *  @param newNames New names for changing node names.
+     * Pass null if don't want to change.
      *  @throws IOException If IO error occurs.
      */
-    public boolean AddMaterialFile( String materialFile, boolean revert )
+    public void AddMaterialFile( String materialFile,
+        String[] originalNames, String[] newNames, boolean applyRevert )
         throws IOException
     {
         SceneTreeLoader     loader = new SceneTreeLoader();
         IResourceProducer   producer;
+        ISceneNodeProducer  nProducer;
         String              path = materialFile.substring(
             0, materialFile.lastIndexOf( m_fsystem.GetPathSeparator() ) );
         
-        if ( revert )
+        if ( applyRevert )
+        {
             producer = new ReversedResourceProducer( m_vdriver, m_smonitor, m_fsystem, path );
+            nProducer = new ReversedSceneNodeProducer();
+        }
         else
+        {
             producer = new DefaultResourceProducer( m_vdriver, m_smonitor, m_fsystem, path );
+            nProducer = new DefaultSceneNodeProducer();
+        }
         
         InputStream is = m_fsystem.OpenFile(
             materialFile, IFileSystem.LOCATION_AUTODETECT );
         
-        loader.Load( is, producer );
-        
-        if ( revert )
-            PrepareReversedTree( loader );
-
+        loader.Load( is, producer, nProducer );
         is.close();
+        
+        if ( originalNames != null )
+            loader.changeNodeNames( originalNames, newNames );
+        
+        if ( applyRevert )
+            PrepareReversedTree( loader );        
         
         String[] nameList = loader.GetExportedNames();
         
         for ( int i = 0; i != nameList.length; ++i )
         {
             if ( m_nodes.exist( nameList[ i ] ) != -1 )
-                return false;
+                return;
         }
         
         for ( int i = 0; i != nameList.length; ++i )
             m_nodes.add( loader.Get( nameList[ i ] ), nameList[ i ] );
-
-        return true;
+    }
+    
+    public void AddMaterialFromAnimation( Animation anim )
+    {
+        String[] names = anim.GetNodeNameList();
+        
+        for ( int i = 0; i != names.length; ++i )
+            this.AddNode( anim.GetNode( names[ i ] ), names[ i ] );
+        
+        DoublyLinkedList.Iterator iname = anim.GetOriginalPositionList().getNameIterator();
+        DoublyLinkedList.Iterator idata = anim.GetOriginalPositionList().getObjectIterator();
+        int length = anim.GetOriginalPositionList().length();
+        
+        for ( ; length != 0; --length )
+        {
+            m_revertedNodeOriginalInfos.add( idata.data(), (String)iname.data() );
+            iname.fwrd();
+            idata.fwrd();
+        }
+    }
+    
+    public void AddObjectFromAnimation( Animation anim )
+    {
+        DoublyLinkedList.Iterator iname = anim.m_objects.getNameIterator();
+        DoublyLinkedList.Iterator idata = anim.m_objects.getObjectIterator();
+        int length = anim.m_objects.length();
+        
+        for ( ; length != 0; --length )
+        {
+            m_objects.add( idata.data(), (String)iname.data() );
+            iname.fwrd();
+            idata.fwrd();
+        }
     }
     
     /**
@@ -82,6 +129,37 @@ public final class Animation
     public boolean AddAnimationObject( String name )
     {
         return m_objects.add( new AnimationObject(), name );
+    }
+    
+    /**
+     *  Rename an animation object.
+     *  @param oldName Old name.
+     *  @param newName New name.
+     *  @return Object can be renamed or not.
+     */
+    public boolean RenameAnimationObject( String oldName, String newName )
+    {
+        Object obj = m_objects.get( oldName ); 
+        
+        if ( obj == null )
+        {
+            /* $if DEBUG$ */
+            Logger.Trace( "Object doesn't exist: " + oldName + '\n' );
+            /* $endif$ */
+            return false;
+        }
+        
+        if ( m_objects.get( newName ) != null )
+        {
+            /* $if DEBUG$ */
+            Logger.Trace( "New name was used in the list: " + newName + '\n' );
+            /* $endif$ */
+            return false;
+        }
+        
+        m_objects.remove( oldName );
+        m_objects.add( obj, newName );
+        return true;
     }
     
     public AnimationObject GetAnimationObject( String name )

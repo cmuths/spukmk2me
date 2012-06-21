@@ -1,13 +1,11 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /* $if EXPORTABLE$ */
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.OutputStream;
 /* $endif$ */
 
@@ -41,12 +39,15 @@ public final class CommandIO
         throws IOException
     {
         DoublyLinkedList cmds = new DoublyLinkedList();
-        DataInputStream dis = new DataInputStream( is );
+        StringMappedDataInputStream dis =
+            new StringMappedDataInputStream( is );
         Command cmd;
         int nCmd, cmdCode;
 
         is.skip( MARKER.length() );
         nCmd = dis.readInt();
+        
+        dis.readStringMappingTable();
 
         for ( int i = 0; i != nCmd; ++i )
         {
@@ -65,11 +66,23 @@ public final class CommandIO
     {
         DoublyLinkedList.Iterator i = commands.first();
         DoublyLinkedList.Iterator end = commands.end();
-        DataOutputStream dos = new DataOutputStream( os );
+        StringMappedDataOutputStream dos =
+            new StringMappedDataOutputStream( os );  
         Command cmd;
 
         dos.write( MARKER.getBytes() );
         dos.writeInt( commands.length() );
+        
+        for ( ; !i.equals( end ); i.fwrd() )
+        {
+            dos.addStringsToMappingTable(
+                ((Command)i.data()).GetDataStrings() );
+        }
+        
+        dos.writeStringMappingTable();
+        
+        i = commands.first();
+        end = commands.end();
 
         for ( ; !i.equals( end ); i.fwrd() )
         {

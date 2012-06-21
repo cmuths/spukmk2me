@@ -15,9 +15,9 @@ import com.spukmk2me.scene.StringSceneNode;
 import com.spukmk2me.scene.TiledLayerSceneNode;
 import com.spukmk2me.scene.complex.ClippingSceneNode;
 import com.spukmk2me.scene.complex.ComplexSceneNode;
-import com.spukmk2me.resource.IResource;
 import com.spukmk2me.resource.ResourceSet;
 import com.spukmk2me.resource.DefaultResourceExporter;
+import com.spukmk2me.scene.LineSceneNode;
 
 /**
  *  Place which holds save functions.
@@ -324,11 +324,12 @@ public final class Saver
 
                     for ( int i = 0; i != spriteInfo.c_nImages; ++i )
                     {
-                        dos.writeShort( resourceSet.GetResourceIndex(
+                        dos.writeByte( resourceSet.GetResourceIndex(
                             imageList[ i ] ) );
                     }
                 }
 
+                dos.writeByte( spriteInfo.c_startIndex );
                 dos.writeByte( spriteInfo.c_firstIndex );
                 dos.writeByte( spriteInfo.c_lastIndex );
                 dos.writeByte( spriteInfo.c_nFrameToStop );
@@ -452,6 +453,17 @@ public final class Saver
                 dos.writeShort( info.c_width );
                 dos.writeShort( info.c_height );
                 dos.writeByte( Misc.GetVisibleFlag( clippingNode ) );
+                break;
+            }
+
+            case NodeTypeChecker.NT_LINENODE:
+            {
+                LineSceneNode lineNode = (LineSceneNode)node;
+
+                dos.writeShort( lineNode.c_x );
+                dos.writeShort( lineNode.c_y );
+                dos.writeByte( Misc.GetVisibleFlag( lineNode ) );
+                dos.writeLong( lineNode.GetData() );
                 break;
             }
         }

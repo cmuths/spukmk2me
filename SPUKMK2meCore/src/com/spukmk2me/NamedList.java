@@ -72,7 +72,19 @@ public final class NamedList
      */
     public int exist( String name )
     {
-        return m_proxyNames.getIndex( name );
+        DoublyLinkedList.Iterator i = m_proxyNames.first();
+        DoublyLinkedList.Iterator e = m_proxyNames.end();
+        int index = 0;
+        
+        for ( ; !i.equals( e ); i.fwrd() )
+        {
+            if ( name.equals( i.data() ) )
+                return index;
+            
+            ++index;
+        }
+        
+        return -1;
     }
     
     /**
