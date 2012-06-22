@@ -162,6 +162,7 @@ public class PrivateInfoPanel extends JPanel
 
         imgModel.clear();
         allModel.clear();
+        allModel.addElement( "---Null---" );
 
         for ( int i = 0; i != n; ++i )
         {
@@ -177,10 +178,16 @@ public class PrivateInfoPanel extends JPanel
                 }
             }
 
-            if ( imgExists )
-                imgModel.addElement( img.GetProxyName() );
-            else
+            if ( !imgExists )
                 allModel.addElement( img.GetProxyName() );
+        }
+
+        for ( int i = 0; i != imgs.length; ++i )
+        {
+            if ( imgs[ i ] == null )
+                imgModel.addElement( "---Null---" );
+            else
+                imgModel.addElement( imgs[ i ].GetProxyName() );
         }
 
         m_spriteAnimatingCheckbox.setSelected( (data.c_mode & SpriteSceneNode.MODE_ANIMATING) != 0 );
@@ -1629,32 +1636,24 @@ public class PrivateInfoPanel extends JPanel
     }//GEN-LAST:event_m_lineApplyButtonActionPerformed
 
     private void m_spriteImgAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_spriteImgAddButtonActionPerformed
-        DefaultListModel allModel = (DefaultListModel)m_spriteAllImgList.getModel();
         DefaultListModel imgModel = (DefaultListModel)m_spriteImgList.getModel();
         Object[] names = m_spriteAllImgList.getSelectedValues();
 
         if ( names.length != 0 )
         {
             for ( int i = 0; i != names.length; ++i )
-            {
                 imgModel.addElement( names[ i ] );
-                allModel.removeElement( names[ i ] );
-            }
         }
     }//GEN-LAST:event_m_spriteImgAddButtonActionPerformed
 
     private void m_spriteImgRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_spriteImgRemoveButtonActionPerformed
-        DefaultListModel allModel = (DefaultListModel)m_spriteAllImgList.getModel();
         DefaultListModel imgModel = (DefaultListModel)m_spriteImgList.getModel();
         Object[] names = m_spriteImgList.getSelectedValues();
 
         if ( names.length != 0 )
         {
             for ( int i = 0; i != names.length; ++i )
-            {
-                allModel.addElement( names[ i ] );
                 imgModel.removeElement( names[ i ] );
-            }
         }
     }//GEN-LAST:event_m_spriteImgRemoveButtonActionPerformed
 
@@ -1705,8 +1704,13 @@ public class PrivateInfoPanel extends JPanel
 
         for ( int i = 0; i != data.c_nImages; ++i )
         {
-            data.c_images[ i ] = (ISubImage)m_data.GetResourceSet().GetResource(
-                (String)model.getElementAt( i ), IResource.RT_IMAGE );
+            if ( model.getElementAt( i ).equals( "---Null---" ) )
+                data.c_images[ i ] = null;
+            else
+            {
+                data.c_images[ i ] = (ISubImage)m_data.GetResourceSet().GetResource(
+                    (String)model.getElementAt( i ), IResource.RT_IMAGE );
+            }
         }
 
         node.SetImages( data.c_images );
