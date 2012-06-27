@@ -15,8 +15,36 @@ import com.spukmk2me.io.IFileSystem;
  */
 public final class FileSystem_MIDP implements IFileSystem
 {
-    public FileSystem_MIDP() {}
-
+    public boolean Exists( String filename, byte location )
+    {
+        try
+        {
+            switch ( location )
+            {
+                case IFileSystem.LOCATION_INTERNAL:
+                case IFileSystem.LOCATION_AUTODETECT:
+                    {
+                        InputStream is = this.getClass().getResourceAsStream( filename );
+                        
+                        if ( is != null )
+                        {
+                            is.close();
+                            return true;
+                        }
+                    }
+                    
+                default:
+                    /* $if SPUKMK2ME_DEBUG$ */
+                    Logger.Trace( "Unsupported file type." );
+                    /* $endif$ */
+            }
+        } catch ( IOException e ) {
+            return false;
+        }
+        
+        return false;
+    }
+    
     public InputStream OpenFile( String filename, byte location )
         throws IOException
     {

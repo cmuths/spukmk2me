@@ -55,7 +55,8 @@ public final class SceneTreeLoader
                 }
             }
             
-            newNodeList.add( nodei.data(), name );
+            if ( name != null )
+                newNodeList.add( nodei.data(), name );
             
             namei.fwrd();
             nodei.fwrd();

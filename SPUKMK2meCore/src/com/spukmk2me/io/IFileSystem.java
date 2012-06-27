@@ -25,6 +25,14 @@ import java.io.IOException;
 public interface IFileSystem
 {
     /**
+     *  Check if a file exists or not.
+     *  @param filename Filename.
+     *  @param location Location.
+     *  @return True if the file exists.
+     */
+    public boolean Exists( String filename, byte location );
+    
+    /**
      *  Open a stream to read file.
      *  @param filename Filename of file to be read.
      *  @param location Location to read file.
