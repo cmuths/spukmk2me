@@ -6,12 +6,13 @@
     <property name="bin" value="./../bin" />
 	<property name="temp" value="./temp" />
 	<property name="commoncploption" value="-source 1.3 -encoding UTF-8 -target 1.3 -verbose" />
+    <taskdef name="preprocess" classname="com.objfac.prebop.ant.PreprocessorTask"/>
 
     <!-- Clean -->
 	<target name="clean">
 		<delete verbose="true" includeemptydirs="true">
 			<fileset dir="${bin}" includes="**/*" />
-			<fileset dir="${temp}" includes="**/*" />
+			<fileset dir="${temp}" includes="**/*" />            
 		</delete>
 	</target>
 	
