@@ -33,6 +33,8 @@ public final class FileSystem_MIDP implements IFileSystem
                         }
                     }
                     
+                    break;
+                    
                 default:
                     /* $if SPUKMK2ME_DEBUG$ */
                     Logger.Trace( "Unsupported file type." );

@@ -145,12 +145,12 @@ public final class ClippingSceneNode extends ComplexSceneNode
      *  @param width Width of clipping rectangle.
      *  @param height Height of clipping rectangle.
      */
-    public void SetClipping( short x, short y, short width, short height )
+    public void SetClipping( int x, int y, int width, int height )
     {
         m_entryNode.c_x = (short)-x;
         m_entryNode.c_y = (short)-y;
-        m_width         = width;
-        m_height        = height;
+        m_width         = (short)width;
+        m_height        = (short)height;
     }
 
     public short GetOriginX()
