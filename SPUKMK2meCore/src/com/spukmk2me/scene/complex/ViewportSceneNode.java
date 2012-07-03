@@ -217,19 +217,15 @@ public final class ViewportSceneNode extends ComplexSceneNode
 
         m_originX += movingX;
         m_originY += movingY;
-
+        
         if ( m_originX > m_viewableX + m_viewableWidth - m_width << 16 )
-        {
             m_originX = m_viewableX + m_viewableWidth - m_width << 16;
-        }
 
         if ( m_originX < m_viewableX << 16 )
             m_originX = m_viewableX << 16;
 
         if ( m_originY > m_viewableY + m_viewableHeight - m_height << 16 )
-        {
             m_originY = m_viewableY + m_viewableHeight - m_height << 16;
-        }
 
         if ( m_originY < m_viewableY << 16 )
             m_originY = m_viewableY << 16;
@@ -243,8 +239,20 @@ public final class ViewportSceneNode extends ComplexSceneNode
      *  @param x X coordinate of top-left point.
      *  @param y Y coordinate of top-left point.
      */
-    public void SetOrigin( short x, short y )
+    public void SetOrigin( int x, int y )
     {
+        if ( x > m_viewableX + m_viewableWidth - m_width )
+            x = m_viewableX + m_viewableWidth - m_width;
+        
+        if ( x < m_viewableX )
+            x= m_viewableX;
+        
+        if ( y > m_viewableY + m_viewableHeight - m_height )
+            y = m_viewableY + m_viewableHeight - m_height;
+
+        if ( y < m_viewableY )
+            y = m_viewableY;
+        
         m_originX = x << 16;
         m_originY = y << 16;
         m_clippingNode.SetClipping( x, y, m_width, m_height );
