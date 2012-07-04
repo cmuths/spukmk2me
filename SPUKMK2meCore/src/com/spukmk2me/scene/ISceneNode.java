@@ -203,10 +203,10 @@ public abstract class ISceneNode
      *  Set the position of this node.
      *  \details But c_x and c_y are public, so you can change them manually.
      */
-    public final void SetPosition( short x, short y )
+    public final void SetPosition( int x, int y )
     {
-        c_x = x;
-        c_y = y;
+        c_x = (short)x;
+        c_y = (short)y;
     }
 
     /**
