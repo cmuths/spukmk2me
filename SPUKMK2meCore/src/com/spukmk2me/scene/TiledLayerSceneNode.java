@@ -16,8 +16,8 @@ public class TiledLayerSceneNode extends ISceneNode
     public void Render( IVideoDriver driver )
     {
         RenderInfo ri = driver.GetRenderInfo();
-        short oldX = ri.c_rasterX;
-        short oldY = ri.c_rasterY;
+        int oldX = ri.c_rasterX;
+        int oldY = ri.c_rasterY;
         
         CalculateViewMovement( driver.GetRenderInfo().c_passedTime );
         
@@ -49,7 +49,7 @@ public class TiledLayerSceneNode extends ISceneNode
                     ++nY;
             }
             
-            short oldClipX, oldClipY, oldClipW, oldClipH, clipX, clipY, clipW, clipH;
+            int oldClipX, oldClipY, oldClipW, oldClipH, clipX, clipY, clipW, clipH;
             
             oldClipX = (short)(oldClip >>> 48);
             oldClipY = (short)(oldClip >> 32 & 0x000000000000FFFFL);
@@ -60,25 +60,21 @@ public class TiledLayerSceneNode extends ISceneNode
                 oldClipX, oldClipY, oldClipW, oldClipH,
                 ri.c_rasterX, ri.c_rasterY, m_viewWidth, m_viewHeight ) )
             {
-                clipX = (short)Math.max( ri.c_rasterX, oldClipX );
-                clipY = (short)Math.max( ri.c_rasterY, oldClipY );
-                clipW = (short)(Math.min(
-                    ri.c_rasterX + m_viewWidth,
-                    oldClipX + oldClipW ) - clipX);
-                clipH = (short)(Math.min(
-                    ri.c_rasterY + m_viewHeight,
-                    oldClipY + oldClipH ) - clipY);
+                clipX = Math.max( ri.c_rasterX, oldClipX );
+                clipY = Math.max( ri.c_rasterY, oldClipY );
+                clipW = Math.min( ri.c_rasterX + m_viewWidth, oldClipX + oldClipW ) - clipX;
+                clipH = Math.min( ri.c_rasterY + m_viewHeight, oldClipY + oldClipH ) - clipY;
             }
             else
                 clipX = clipY = clipW = clipH = 0;
             
             driver.SetClipping( clipX, clipY, clipW, clipH );
             
-            short x, y = (short)(Util.FPRound( m_viewY ) + oldY);
+            int x, y = Util.FPRound( m_viewY ) + oldY;
             
             for ( ; nY != 0; --nY )
             {
-                x = (short)(Util.FPRound( m_viewX ) + oldX);
+                x = Util.FPRound( m_viewX ) + oldX;
                 
                 for ( int i = nX; i != 0; --i )
                 {
@@ -122,7 +118,7 @@ public class TiledLayerSceneNode extends ISceneNode
 
     public void SetupTiledLayer( ISubImage[] images, ISubImage[][] sprites,
         int[] spriteSpeed, byte[] terrainData,
-        short tableWidth, short tableHeight, short stepX, short stepY )
+        int tableWidth, int tableHeight, int stepX, int stepY )
     {
         /* $if SPUKMK2ME_DEBUG$ */
         if ( (tableWidth == 0) || (tableHeight == 0)  )
@@ -157,10 +153,10 @@ public class TiledLayerSceneNode extends ISceneNode
         m_sprites       = sprites;
         m_spriteSpeed   = spriteSpeed;
         c_terrainData   = terrainData;
-        c_tableWidth    = tableWidth;
-        c_tableHeight   = tableHeight;
-        c_stepX         = stepX;
-        c_stepY         = stepY;
+        c_tableWidth    = (short)tableWidth;
+        c_tableHeight   = (short)tableHeight;
+        c_stepX         = (short)stepX;
+        c_stepY         = (short)stepY;
 
         if ( m_sprites != null )
         {
@@ -169,19 +165,19 @@ public class TiledLayerSceneNode extends ISceneNode
         }
     }
     
-    public void SetupRepeatedView( short startX, short startY,
-        short width, short height, int spdX, int spdY, boolean repeatedView )
+    public void SetupRepeatedView( int startX, int startY,
+            int width, int height, int spdX, int spdY, boolean repeatedView )
     {
         if ( m_repeatedView = repeatedView )
         {
-            m_viewWidth     = width;
-            m_viewHeight    = height;
+            m_viewWidth     = (short)width;
+            m_viewHeight    = (short)height;
             m_viewSpdX      = spdX;
             m_viewSpdY      = spdY;
             // viewX, viewY are modified to become 0 or negative values
             
-            short w = (short)(c_stepX * c_tableWidth);
-            short h = (short)(c_stepY * c_tableHeight);
+            int w = c_stepX * c_tableWidth;
+            int h = c_stepY * c_tableHeight;
             
             m_viewX = startX;
             m_viewY = startY;
@@ -210,7 +206,7 @@ public class TiledLayerSceneNode extends ISceneNode
         m_viewSpdY = spdY;
     }
     
-    private void RenderOnce( IVideoDriver driver, short x, short y )
+    private void RenderOnce( IVideoDriver driver, int x, int y )
     {
         RenderInfo ri = driver.GetRenderInfo();
         int i, j, index, data;

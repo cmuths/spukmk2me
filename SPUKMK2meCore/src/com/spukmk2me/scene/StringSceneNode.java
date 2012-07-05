@@ -50,7 +50,7 @@ public final class StringSceneNode extends ISceneNode
      *  @param truncate Use truncating feature or not.
      */
     public void SetupString( ICFont font, char[] s, byte[] properties,
-        int alignment, short width, short height, boolean truncate )
+        int alignment, int width, int height, boolean truncate )
     {
         boolean duplicate =
             truncate || ((alignment & ADVANCED_ALIGNMENT) != 0);
@@ -360,14 +360,14 @@ public final class StringSceneNode extends ISceneNode
     }
 
     private void Initialise( ICFont font, byte[] properties,
-        int alignment, short width, short height, boolean truncate,
+        int alignment, int width, int height, boolean truncate,
         boolean duplicate )
     {
         m_font          = font;
         m_properties    = properties;
         m_alignment     = (byte)alignment;
-        m_width         = width;
-        m_height        = height;
+        m_width         = (short)width;
+        m_height        = (short)height;
         m_truncate      = truncate;
         
         if ( m_font == null )

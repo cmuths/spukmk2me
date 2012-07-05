@@ -55,7 +55,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         return true;
     }
 
-    public void SetOrigin( short x0, short y0 )
+    public void SetOrigin( int x0, int y0 )
     {
         m_x0 = x0;
         m_y0 = y0;
@@ -66,7 +66,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
         return ( m_x0 << 16 ) | m_y0;
     }
 
-    public void SetClipping( short x, short y, short width, short height )
+    public void SetClipping( int x, int y, int width, int height )
     {
         m_clipX         = x;
         m_clipY         = y;
@@ -219,8 +219,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             'F', 'P', 'S', ':', ' ', '-', '-', '.', '-', '-' };
         /* $endif$ */
 
-        SetClipping( (short)0, (short)0,
-            (short)this.getWidth(), (short)this.getHeight() );
+        SetClipping( 0, 0, this.getWidth(), this.getHeight() );
     }
     
     public void CleanupRenderingContext() {}
@@ -256,8 +255,8 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     }
 
     public ISubImage CreateSubImage( IImageResource imgResource,
-        short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag, String proxyname )
+        int x, int y, int width, int height,
+        int rotationDegree, int flippingFlag, String proxyname )
     {
         /* $if SPUKMK2ME_DEBUG$ */
         if ( rotationDegree % 0x0005A0000 != 0 ) // Not divisible by 90
@@ -287,12 +286,12 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
             (MIDPImageResource)CreateImageResource( filename, null );
         
         return new MIDPSubImage( resource,
-            (short)0, (short)0, resource.GetWidth(), resource.GetHeight(),
-            0, (byte)0, proxyname );
+            0, 0, resource.GetWidth(), resource.GetHeight(),
+            0, 0, proxyname );
     }
 
     public ISubImage[] CreateSubImages( IImageResource imgResource,
-        short width, short height, String[] proxynames )
+        int width, int height, String[] proxynames )
     {
         /* $if SPUKMK2ME_DEBUG$ */
         try
@@ -308,7 +307,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     }
     
     private MIDPSubImage[] CreateSubImagesFromResource(
-        MIDPImageResource imageResource, short width, short height,
+        MIDPImageResource imageResource, int width, int height,
         String[] proxynames )
     {
         /* $if SPUKMK2ME_DEBUG$ */
@@ -369,7 +368,7 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     private ICFontRenderer  m_fontRenderer;
     private RenderInfo      m_renderInfo;
     private long            m_lastTime;
-    private short           m_x0, m_y0, m_clipX, m_clipY,
+    private int             m_x0, m_y0, m_clipX, m_clipY,
                             m_clipWidth, m_clipHeight;
 
     /* $if SPUKMK2ME_DEBUG$ */
@@ -383,8 +382,8 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
     final class MIDPSubImage extends ISubImage
     {
         public MIDPSubImage( MIDPImageResource imageResource,
-            short x, short y, short width, short height,
-            int rotationDegree, byte flippingFlag, String proxyname )
+            int x, int y, int width, int height,
+            int rotationDegree, int flippingFlag, String proxyname )
         {
             super( proxyname );
             
@@ -465,10 +464,10 @@ public final class VideoDriver_MIDP extends InputMonitor_MIDP
 
             // Assign to final values
             m_imageResource             = imageResource;
-            m_x                         = x;
-            m_y                         = y;
-            m_width                     = width;
-            m_height                    = height;
+            m_x                         = (short)x;
+            m_y                         = (short)y;
+            m_width                     = (short)width;
+            m_height                    = (short)height;
             m_midpTransformationFlag    = midpTransformationFlag;
         }
 

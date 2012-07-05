@@ -174,7 +174,7 @@ public final class J2SEVideoDriver extends JPanel
         return (short)this.getHeight();
     }
 
-    public void SetOrigin( short x0, short y0 )
+    public void SetOrigin( int x0, int y0 )
     {
         m_x0 = x0;
         m_y0 = y0;
@@ -185,7 +185,7 @@ public final class J2SEVideoDriver extends JPanel
         return (m_x0 << 16) | (m_y0 & 0x0000FFFF);
     }
 
-    public void SetClipping( short x, short y, short width, short height )
+    public void SetClipping( int x, int y, int width, int height )
     {
         m_clipX         = x;
         m_clipY         = y;
@@ -223,15 +223,15 @@ public final class J2SEVideoDriver extends JPanel
     }
 
     public ISubImage CreateSubImage( IImageResource imageResource,
-        short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag, String proxyname )
+        int x, int y, int width, int height,
+        int rotationDegree, int flippingFlag, String proxyname )
     {
         return new J2SESubImage( (J2SEImageResource)imageResource,
             x, y, width, height, rotationDegree, flippingFlag, proxyname );
     }
 
     public ISubImage[] CreateSubImages( IImageResource imageResource,
-        short width, short height, String[] proxynames )
+        int width, int height, String[] proxynames )
     {
         return J2SESubImage.CreateSubImagesFromResource(
             (J2SEImageResource)imageResource, width, height,
@@ -263,7 +263,6 @@ public final class J2SEVideoDriver extends JPanel
     private BufferedImage       m_buffer;
     private J2SEFontRenderer    m_fontRenderer;
 
-    private long            m_lastTime;
-    private short           m_clipX, m_clipY, m_clipWidth, m_clipHeight,
-                            m_x0, m_y0;
+    private long    m_lastTime;
+    private int     m_clipX, m_clipY, m_clipWidth, m_clipHeight, m_x0, m_y0;
 }

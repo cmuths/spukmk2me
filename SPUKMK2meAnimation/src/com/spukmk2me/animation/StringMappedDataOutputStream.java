@@ -8,9 +8,9 @@ import com.spukmk2me.DoublyLinkedList;
 
 /**
  *  Map strings into 8/16/32 bit numbers, based on the number of strings.
- *  If the number of strings is 256 or lower, strings will be mapped into 8-
+ *  If the number of strings is 255 or lower, strings will be mapped into 8-
  * bit numbers.
- *  If the number of strings is 2^16 or lower, strings will be mapped into 16-
+ *  If the number of strings is 65535 or lower, strings will be mapped into 16-
  * bit numbers.
  *  Otherwise, strings will be mapped into 32-bit numbers.
  */
@@ -107,15 +107,18 @@ public final class StringMappedDataOutputStream extends DataOutputStream
         
         m_stringList.push_back( str );
         
-        if ( m_stringList.length() == 257 )
+        if ( m_stringList.length() == 256 )
             m_nBytePerString = 2;
         
-        if ( m_stringList.length() == 65537 )
+        if ( m_stringList.length() == 65536 )
             m_nBytePerString = 4;
     }
     
     private int getIndex( String str )
     {
+        if ( str == null )
+            return -1;
+
         DoublyLinkedList.Iterator i = m_stringList.first();
         DoublyLinkedList.Iterator e = m_stringList.end();
         int index = 0;

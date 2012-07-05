@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public final class ObjectDeclarationCommand implements Command
 {
-    public int GetCommandCode()
+    public byte GetCommandCode()
     {
         return Command.CMDCODE_DECLARE;
     }

@@ -1,11 +1,10 @@
 package com.spukmk2me.animation;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 
 public final class AssignCommand implements Command
 {
-    public int GetCommandCode()
+    public byte GetCommandCode()
     {
         return Command.CMDCODE_ASSIGN;
     }
@@ -30,15 +29,19 @@ public final class AssignCommand implements Command
     
     public String GetParamAsString()
 	{
-		return c_name + ' ' + c_address;
+        String addr = ( c_address == null )? "null" : c_address;
+
+		return c_name + ' ' + addr;
 	}
 	
     public void ReadParamFromString( String param )
 	{
-		c_name = param.substring( 0, param.indexOf( ' ' ) );
+        final String NULLSTRING = "null";
+        
+        c_name = param.substring( 0, param.indexOf( ' ' ) );
 		param = param.substring( param.indexOf( ' ' ) + 1 );
-		
-		c_address = param;
+
+        c_address = NULLSTRING.equals( param )? null : param;
 	}
     
     public String GetCommandLabel()
@@ -48,14 +51,15 @@ public final class AssignCommand implements Command
     
     public String GetDataStrings()
     {
+        if ( c_address == null )
+            return c_name;
+
         return c_name + ' ' + c_address;
     }
     
     private static final String CMDLABEL = "assign";
 	/* $endif$ */
 
-    public static final String NULL_ADDRESS = "null";
-    
     // See RepositionCommand for special names.
     public String c_name, c_address;
 }

@@ -133,7 +133,7 @@ public interface IVideoDriver
      *  @param x0 The absolute X coordinate of the origin.
      *  @param y0 The absolute Y coordinate of the origin.
      */
-    public void SetOrigin( short x0, short y0 );
+    public void SetOrigin( int x0, int y0 );
 
     /**
      *  Get the current absolute position of origin.
@@ -149,7 +149,7 @@ public interface IVideoDriver
      *  @param width
      *  @param height
      */
-    public void SetClipping( short x, short y, short width, short height );
+    public void SetClipping( int x, int y, int width, int height );
 
     /**
      *  Get the clipping area.
@@ -203,8 +203,8 @@ public interface IVideoDriver
      *  @return Created sub image.
      */
     public ISubImage CreateSubImage( IImageResource imgResource,
-        short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag, String proxyname );
+        int x, int y, int width, int height,
+        int rotationDegree, int flippingFlag, String proxyname );
     
     /**
      *  Create a sub image from file name.
@@ -232,7 +232,7 @@ public interface IVideoDriver
      *  @param proxynames Leave null if you don't plan on using ResourceSet.
      */
     public ISubImage[] CreateSubImages( IImageResource imgResource,
-        short width, short height, String[] proxynames );
+        int width, int height, String[] proxynames );
     
     public static final byte VIDEODRIVER_MIDP   = 1; //!< MIDP driver.
     public static final byte VIDEODRIVER_GLES   = 2; //!< OpenGL ES driver.
