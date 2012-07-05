@@ -65,10 +65,7 @@ public final class SceneManager
         }
 
         // Rendering initialisation
-        m_stack     = new ISceneNode[ DEFAULT_STACK_SIZE ];
-        m_finish    = new ISceneNode[ DEFAULT_STACK_SIZE ];
-        m_stackX    = new short[ DEFAULT_STACK_SIZE ];
-        m_stackY    = new short[ DEFAULT_STACK_SIZE ];
+        ChangeStackSize( DEFAULT_STACK_SIZE );
     }
 
     public void ChangeStackSize( int newStackSize )
@@ -84,7 +81,7 @@ public final class SceneManager
      */
     public void RenderAll()
     {
-        RenderSceneNode( m_rootNode, (short)0, (short)0, true );
+        RenderSceneNode( m_rootNode, 0, 0, true );
     }
 
     public IVideoDriver GetVideoDriver()
@@ -125,7 +122,7 @@ public final class SceneManager
      *  @param renderAtOrigin Set the raster point to the origin of the
      * device. Parameters x and y will be ignored if renderAtOrigin is true.
      */
-    public void RenderSceneNode( ISceneNode node, short x, short y,
+    public void RenderSceneNode( ISceneNode node, int x, int y,
         boolean renderAtOrigin )
     {
         /* $if SPUKMK2ME_DEBUG$ */
@@ -147,8 +144,8 @@ public final class SceneManager
         {
             int origin = m_vdriver.GetOrigin();
 
-            renderInfo.c_rasterX = (short)(origin >> 16);
-            renderInfo.c_rasterY = (short)(origin & 0x0000FFFF);
+            renderInfo.c_rasterX = (origin >> 16) & 0x0000FFFF;
+            renderInfo.c_rasterY = origin & 0x0000FFFF;
         }
         else
         {

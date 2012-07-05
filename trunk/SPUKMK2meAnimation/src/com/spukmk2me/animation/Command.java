@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public interface Command
 {
-    public int GetCommandCode();
+    public byte GetCommandCode();
     public Command CreateClone();
     public void Read( StringMappedDataInputStream dis ) throws IOException;
     
@@ -17,12 +17,12 @@ public interface Command
     /* $endif$ */
 
     // Default command codes
-    public static final int CMDCODE_REPOS           = 0;
-    public static final int CMDCODE_VISIBLE         = 1;
-    public static final int CMDCODE_ASSIGN          = 2;
-    public static final int CMDCODE_DELAY           = 3;
-    public static final int CMDCODE_DECLARE         = 4;
-    public static final int CMDCODE_ASSEMBLE        = 5;
-    public static final int CMDCODE_SHIFTEDRANGE    = 6;
-    public static final int CMDCODE_OBJECTREPOS     = 7;
+    public static final byte CMDCODE_REPOS          = 0;
+    public static final byte CMDCODE_VISIBLE        = 1;
+    public static final byte CMDCODE_ASSIGN         = 2;
+    public static final byte CMDCODE_DELAY          = 3;
+    public static final byte CMDCODE_DECLARE        = 4;
+    public static final byte CMDCODE_ASSEMBLE       = 5;
+    public static final byte CMDCODE_SHIFTEDRANGE   = 6;
+    public static final byte CMDCODE_OBJECTREPOS    = 7;
 }

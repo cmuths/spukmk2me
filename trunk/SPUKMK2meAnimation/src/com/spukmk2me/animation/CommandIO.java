@@ -15,6 +15,15 @@ import com.spukmk2me.DoublyLinkedList;
 import com.spukmk2me.debug.Logger;
 /* $endif$ */
 
+/**
+ *   \details WARNING:
+ *   This class only support loading/saving 16 types of command at max. With 8
+ *  default command types, that'll leave only 8 custom command types left. So
+ *  please be cautious with the number of command you use.
+ *   Custom command code must be non-negative number and smaller than 16 (so
+ *  command type can be encoded in 4 bits).
+ *   Number of commands can be saved is 65535 at max.
+ */
 public final class CommandIO
 {
     public CommandIO()
@@ -42,16 +51,38 @@ public final class CommandIO
         StringMappedDataInputStream dis =
             new StringMappedDataInputStream( is );
         Command cmd;
-        int nCmd, cmdCode;
+        byte[] cmdList;
+        int nCmd;
 
-        is.skip( MARKER.length() );
-        nCmd = dis.readInt();
+        nCmd = dis.readUnsignedShort();
+        
+        // Read command type list
+        {
+            int nBytes = nCmd / 2;
+            
+            if ( (nCmd & 1) != 0 )
+                ++nBytes;
+            
+            cmdList = new byte[ nBytes ];
+            dis.read( cmdList );
+        }
+        //
         
         dis.readStringMappingTable();
-
+        
+        int cmdCode;
+        int cmdIndex = 0;
+        boolean even = false;
+        
         for ( int i = 0; i != nCmd; ++i )
         {
-            cmdCode = dis.readInt();
+            if ( even )
+                cmdCode = cmdList[ cmdIndex++ ] & 0x0F;
+            else
+                cmdCode = (cmdList[ cmdIndex ] >> 4) & 0x0F;
+            
+            even = !even;
+            
             cmd = CreateCommand( cmdCode );
             cmd.Read( dis );
             cmds.push_back( cmd );
@@ -70,8 +101,43 @@ public final class CommandIO
             new StringMappedDataOutputStream( os );  
         Command cmd;
 
-        dos.write( MARKER.getBytes() );
-        dos.writeInt( commands.length() );
+        dos.writeShort( commands.length() );
+        
+        // Write command types list
+        {
+            int nBytes = commands.length() / 2;
+            
+            if ( (commands.length() & 1) != 0 )
+                ++nBytes;
+            
+            byte[] cmdCodeList = new byte[ nBytes ];
+            int index = 0, curByte = 0, type;
+            boolean even = false;
+            
+            for ( ; !i.equals( end ); i.fwrd() )
+            {
+                type = ((Command)i.data()).GetCommandCode() & 0x0F;
+                
+                if ( even )
+                {
+                    curByte |= type & 0x0F;
+                    cmdCodeList[ index++ ] = (byte)curByte;
+                }
+                else
+                    curByte = type << 4;
+                
+                even = !even;
+            }
+            
+            if ( even ) // Number of commands is an odd number
+                cmdCodeList[ index ] = (byte)curByte;
+            
+            dos.write( cmdCodeList, 0, nBytes );
+        }
+        // End writing command types list
+        
+        i = commands.first();
+        end = commands.end();
         
         for ( ; !i.equals( end ); i.fwrd() )
         {
@@ -81,13 +147,13 @@ public final class CommandIO
         
         dos.writeStringMappingTable();
         
+        // Write commands
         i = commands.first();
         end = commands.end();
 
         for ( ; !i.equals( end ); i.fwrd() )
         {
             cmd = (Command)i.data();
-            dos.writeInt( cmd.GetCommandCode() );
             cmd.Write( dos );
         }
     }
@@ -221,6 +287,5 @@ public final class CommandIO
         return null;
     }
     
-    private static final String MARKER = "SPUKMK2me Animation 0.1";
     private DoublyLinkedList m_prototypes;
 }

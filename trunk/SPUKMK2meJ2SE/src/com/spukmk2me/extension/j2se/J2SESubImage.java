@@ -13,8 +13,8 @@ import com.spukmk2me.video.IVideoDriver;
 final class J2SESubImage extends ISubImage
 {
     public J2SESubImage( J2SEImageResource imageResource,
-        short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag, String proxyname )
+        int x, int y, int width, int height,
+        int rotationDegree, int flippingFlag, String proxyname )
     {
         super( proxyname );
         CropImageFilter filter = new CropImageFilter( x, y, width, height );
@@ -78,8 +78,8 @@ final class J2SESubImage extends ISubImage
     public void Render( IVideoDriver driver )
     {
 		Graphics2D g = (Graphics2D)driver.GetProperty( J2SEVideoDriver.PROPERTY_GRAPHICS );
-		short x = driver.GetRenderInfo().c_rasterX;
-        short y = driver.GetRenderInfo().c_rasterY;
+		int x = driver.GetRenderInfo().c_rasterX;
+        int y = driver.GetRenderInfo().c_rasterY;
         AffineTransform transform = new AffineTransform(
             1.0f, 0.0f, 0.0f, 1.0f, x, y );
         
@@ -98,7 +98,7 @@ final class J2SESubImage extends ISubImage
     }
 
     public static J2SESubImage[] CreateSubImagesFromResource(
-        J2SEImageResource imageResource, short width, short height,
+        J2SEImageResource imageResource, int width, int height,
         String[] proxynames )
     {
         int nWidth  = imageResource.GetWidth() / width;

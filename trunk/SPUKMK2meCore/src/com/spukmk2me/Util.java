@@ -181,8 +181,8 @@ public final class Util
      *  @return true if two rectangle intersect
      */
     public static boolean RectIntersect(
-        short x1, short y1, short w1, short h1,
-        short x2, short y2, short w2, short h2 )
+        int x1, int y1, int w1, int h1,
+        int x2, int y2, int w2, int h2 )
     {
         return  (x1 < x2 + w2) && (y1 < y2 + h2) &&
                 (x2 < x1 + w1) && (y2 < y1 + h1);

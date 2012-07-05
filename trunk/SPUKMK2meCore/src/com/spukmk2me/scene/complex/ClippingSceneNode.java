@@ -58,12 +58,12 @@ public final class ClippingSceneNode extends ComplexSceneNode
             return 0;
         }
         
-        private void SetClipping( short x, short y, short width, short height )
+        private void SetClipping( int x, int y, int width, int height )
         {
-            m_x         = x;
-            m_y         = y;
-            m_width     = width;
-            m_height    = height;
+            m_x         = (short)x;
+            m_y         = (short)y;
+            m_width     = (short)width;
+            m_height    = (short)height;
         }
 
         private short m_x, m_y, m_width, m_height;
@@ -83,8 +83,8 @@ public final class ClippingSceneNode extends ComplexSceneNode
         long clippingArea = driver.GetClipping();
 
         RenderInfo rInfo = driver.GetRenderInfo();
-        short clipX, clipY, clipW, clipH;
-        short oldClipX, oldClipY, oldClipW, oldClipH;
+        int clipX, clipY, clipW, clipH;
+        int oldClipX, oldClipY, oldClipW, oldClipH;
 
         oldClipX = (short)(clippingArea >>> 48);
         oldClipY = (short)(clippingArea >> 32 & 0x000000000000FFFFL);
@@ -95,21 +95,16 @@ public final class ClippingSceneNode extends ComplexSceneNode
                 oldClipX, oldClipY, oldClipW, oldClipH,
                 rInfo.c_rasterX, rInfo.c_rasterY, m_width, m_height ) )
         {
-            clipX = (short)Math.max( rInfo.c_rasterX, oldClipX );
-            clipY = (short)Math.max( rInfo.c_rasterY, oldClipY );
-            clipW = (short)(Math.min(
-                rInfo.c_rasterX + m_width,
-                oldClipX + oldClipW ) - clipX);
-            clipH = (short)(Math.min(
-                rInfo.c_rasterY + m_height,
-                oldClipY + oldClipH ) - clipY);
+            clipX = Math.max( rInfo.c_rasterX, oldClipX );
+            clipY = Math.max( rInfo.c_rasterY, oldClipY );
+            clipW = Math.min( rInfo.c_rasterX + m_width, oldClipX + oldClipW ) - clipX;
+            clipH = Math.min( rInfo.c_rasterY + m_height, oldClipY + oldClipH ) - clipY;
         }
         else
             clipX = clipY = clipW = clipH = 0;
             
         driver.SetClipping( clipX, clipY, clipW, clipH );
-        m_unclippingNode.SetClipping(
-            oldClipX, oldClipY, oldClipW, oldClipH );
+        m_unclippingNode.SetClipping( oldClipX, oldClipY, oldClipW, oldClipH );
     }
     
     public short GetAABBX()

@@ -43,9 +43,7 @@ public final class DefaultCommandProcessor implements ICommandProcessor
                     
                     if ( info != null ) // Node was reversed
                     {
-                        short newX  = (short)(node.c_x + info.c_x - reposCmd.c_x );
-                        
-                        node.SetPosition( newX, reposCmd.c_y );
+                        node.SetPosition( node.c_x + info.c_x - reposCmd.c_x, reposCmd.c_y );
                         info.c_x = reposCmd.c_x;
                     }
                     else
@@ -72,7 +70,7 @@ public final class DefaultCommandProcessor implements ICommandProcessor
                     
                     node.Drop();
 
-                    if ( !assignCmd.c_address.equals( AssignCommand.NULL_ADDRESS ) )
+                    if ( assignCmd.c_address != null )
                     {
                         m_animation.GetNode( assignCmd.c_address ).
                             AddChild( node );

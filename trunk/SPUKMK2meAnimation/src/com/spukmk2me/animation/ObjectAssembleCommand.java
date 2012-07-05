@@ -11,7 +11,7 @@ public final class ObjectAssembleCommand implements Command
             ObjectNodeInfo.DEPEND_Z; 
     }
     
-    public int GetCommandCode()
+    public byte GetCommandCode()
     {
         return Command.CMDCODE_ASSEMBLE;
     }

@@ -70,7 +70,7 @@ public final class NullVideoDriver implements IVideoDriver
         return 0;
     }
 
-    public void SetOrigin( short x0, short y0 )
+    public void SetOrigin( int x0, int y0 )
     {
         m_x0 = x0;
         m_y0 = y0;
@@ -81,7 +81,7 @@ public final class NullVideoDriver implements IVideoDriver
         return (m_x0 << 16) | (m_y0 & 0xFFFF0000);
     }
 
-    public void SetClipping( short x, short y, short width, short height )
+    public void SetClipping( int x, int y, int width, int height )
     {
         m_clipX = x;
         m_clipY = y;
@@ -96,6 +96,8 @@ public final class NullVideoDriver implements IVideoDriver
                 ((long)m_clipW & 0x000000000000FFFF << 16) |
                 ((long)m_clipH & 0x000000000000FFFF);
     }
+    
+    public void DrawLine( int x1, int y1, int x2, int y2, int color ) {}
 
     public IImageResource CreateImageResource(
         InputStream inputStream, String proxyname )
@@ -112,8 +114,8 @@ public final class NullVideoDriver implements IVideoDriver
     }
     
     public ISubImage CreateSubImage( IImageResource imgResource,
-        short x, short y, short width, short height,
-        int rotationDegree, byte flippingFlag, String proxyname )
+        int x, int y, int width, int height,
+        int rotationDegree, int flippingFlag, String proxyname )
     {
         return null;
     }
@@ -125,12 +127,12 @@ public final class NullVideoDriver implements IVideoDriver
     }
     
     public ISubImage[] CreateSubImages( IImageResource imgResource,
-        short width, short height, String[] proxynames )
+        int width, int height, String[] proxynames )
     {
         return null;
     }
     
     private ICFontRenderer  m_fontRenderer;
     private RenderInfo      m_renderInfo;
-    private short           m_x0, m_y0, m_clipX, m_clipY, m_clipW, m_clipH;
+    private int             m_x0, m_y0, m_clipX, m_clipY, m_clipW, m_clipH;
 }

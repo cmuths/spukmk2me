@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public final class ObjectRepositionCommand implements Command
 {
-    public int GetCommandCode()
+    public byte GetCommandCode()
     {
         return Command.CMDCODE_OBJECTREPOS;
     }

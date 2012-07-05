@@ -35,6 +35,9 @@ public final class StringMappedDataInputStream extends DataInputStream
         else
             id = this.readInt();
         
+        if ( id == -1 )
+            return null;
+        
         return (String)m_stringList.get( id );
     }
     

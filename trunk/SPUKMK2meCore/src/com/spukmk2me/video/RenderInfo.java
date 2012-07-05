@@ -23,6 +23,5 @@ package com.spukmk2me.video;
  */
 public final class RenderInfo
 {
-    public short    c_rasterX, c_rasterY;
-    public int      c_passedTime;
+    public int c_rasterX, c_rasterY, c_passedTime;
 }
