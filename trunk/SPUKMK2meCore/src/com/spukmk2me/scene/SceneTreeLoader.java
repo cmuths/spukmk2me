@@ -106,13 +106,13 @@ public final class SceneTreeLoader
     {
         DataInputStream dis = new DataInputStream( is );
 
-        if ( !CheckHeader( dis ) )
-        {
+        //if ( !CheckHeader( dis ) )
+        //{
             /* $if SPUKMK2ME_DEBUG$ */
-            Logger.Trace( "Invalid file header" );
+        //    Logger.Trace( "Invalid file header" );
             /* $endif$ */
-            return false;
-        }
+        //    return false;
+        //}
         
         m_resourceSet.Load( is, producer );
         nodeProducer.UpdateResourceSet( m_resourceSet );
@@ -127,7 +127,7 @@ public final class SceneTreeLoader
         return m_resourceSet;
     }
 
-    private boolean CheckHeader( DataInputStream dis ) throws IOException
+    /*private boolean CheckHeader( DataInputStream dis ) throws IOException
     {
         char[] validationString = new char[ 24 ];
         
@@ -135,7 +135,7 @@ public final class SceneTreeLoader
             validationString[ i ] = (char)dis.readByte();
         
         return new String( validationString ).equals( VALID_STRING );
-    }
+    }*/
 
     private void LoadNodeNamesMappingTable( DataInputStream dis )
         throws IOException
@@ -310,7 +310,7 @@ public final class SceneTreeLoader
     
     
     private static final String ROOTNODE_NAME   = "root";
-    private static final String VALID_STRING    = "SPUKMK2me_SCENE-FILE_0.1";
+    //private static final String VALID_STRING    = "SPUKMK2me_SCENE-FILE_0.1";
 
     private int[]           m_exportedNodeIndexes;
     private String[]        m_exportedNodeNames;

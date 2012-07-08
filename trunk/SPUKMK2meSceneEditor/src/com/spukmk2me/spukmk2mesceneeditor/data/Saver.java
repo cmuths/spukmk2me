@@ -37,10 +37,10 @@ public final class Saver
         DefaultResourceExporter exporter = new DefaultResourceExporter(
             savePath, fsystem, resourceSet );
 
-        char[] header = HEADER_MARK.toCharArray();
+        //char[] header = HEADER_MARK.toCharArray();
 
-        for ( int i = 0; i != header.length; ++i )
-            dos.writeByte( header[ i ] );
+        //for ( int i = 0; i != header.length; ++i )
+        //    dos.writeByte( header[ i ] );
 
         resourceSet.Save( os, exporter );
         SaveTreeStruct( rootNode, resourceSet, dos );
@@ -469,5 +469,5 @@ public final class Saver
         }
     }
 
-    private static String HEADER_MARK = "SPUKMK2me_SCENE-FILE_0.1";
+    //private static String HEADER_MARK = "SPUKMK2me_SCENE-FILE_0.1";
 }
