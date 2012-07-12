@@ -22,7 +22,7 @@ public final class Entry
 
     public static void main( String[] args )
     {
-        convert();
+        //convert();
         
         java.awt.EventQueue.invokeLater(
             new Runnable()
