@@ -118,7 +118,7 @@ public final class BitmapFont extends ICFont
                 return true;
         }
 
-        return false;
+        return ch == '\n';
     }
 
     public int GetCharWidth( char ch )
@@ -130,7 +130,9 @@ public final class BitmapFont extends ICFont
             return -1;
         }
         /* $endif$ */
-
+        if ( ch == '\n' )
+            return 0;
+        
         return (( ch == ' ' )? m_space : m_charWidth[ GetIndex( ch ) ]) +
             m_additionalCharWidth;
     }
@@ -147,15 +149,18 @@ public final class BitmapFont extends ICFont
 
     public Object GetBitmapData( char ch )
     {
-        PreprocessCharacterData( GetIndex( ch ) );
-
-        if ( (m_style & STYLE_BOLD) == 0 )
-            ExportPlainCharacterData( GetIndex( ch ) );
-        else
-            ExportBoldCharacterData( GetIndex( ch ) );
-
-        if ( (m_style & STYLE_UNDERLINE) != 0 )
-            DrawUnderline( GetCharWidth( ch ) );
+        if ( ch != '\n' )
+        {
+            PreprocessCharacterData( GetIndex( ch ) );
+    
+            if ( (m_style & STYLE_BOLD) == 0 )
+                ExportPlainCharacterData( GetIndex( ch ) );
+            else
+                ExportBoldCharacterData( GetIndex( ch ) );
+    
+            if ( (m_style & STYLE_UNDERLINE) != 0 )
+                DrawUnderline( GetCharWidth( ch ) );
+        }
 
         return m_buffer;
     }

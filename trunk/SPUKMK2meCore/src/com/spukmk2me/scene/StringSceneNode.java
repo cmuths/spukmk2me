@@ -216,6 +216,7 @@ public final class StringSceneNode extends ISceneNode
             // space, but it can become endline character if the next word
             // doesn't fit the width.
             boolean hasAmbiguousSeparator = false;
+            boolean lastSeparatorWasNewLine = false;
             char    c = 0;
 
             m_renderedLength    = 0;
@@ -233,19 +234,21 @@ public final class StringSceneNode extends ISceneNode
                     if ( (c == ' ') || (c == '\n') )
                         break;
                 }
-
+                
+                if ( lastSeparatorWasNewLine )
+                    remainedWidth = -1;
+                
+                lastSeparatorWasNewLine = c == '\n';
+                
                 copyBorder = ( nextIndex == m_str.length )? nextIndex :
                     nextIndex - 1;
-
+                
                 //if ( nextIndex == m_str.length ) // Didn't find anything
                 //    nextIndex = strLength;
                 
-                if ( c == '\n' )
-                    remainedWidth = -1;
-                
                 nextWidth = m_font.GetStringWidth(
                     m_str, lastIndex, copyBorder - lastIndex );
-
+                
                 if ( remainedWidth < nextWidth )
                 {
                     //m_renderedString += "\n" +
