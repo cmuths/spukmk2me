@@ -30,7 +30,7 @@ import com.spukmk2me.debug.Logger;
 
 import com.spukmk2me.sound.ISound;
 
-public class MIDPSound extends ISound implements PlayerListener
+public class MIDPSound extends ISound// implements PlayerListener
 {
     MIDPSound( Player player, String proxyname )
     {
@@ -45,7 +45,7 @@ public class MIDPSound extends ISound implements PlayerListener
             try
             {
                 player.realize();
-                m_state = ISound.STATE_ASSOCIATED;
+                m_state = STATE_ASSOCIATED;
             } catch ( MediaException e ) {
                 /* $if SPUKMK2ME_DEBUG$ */
                 Logger.Trace( "MediaException" );
@@ -56,6 +56,7 @@ public class MIDPSound extends ISound implements PlayerListener
                 "javax.microedition.media.control.VolumeControl" );
             m_toneControl = (ToneControl)player.getControl(
                 "javax.microedition.media.control.ToneControl" );
+            //player.addPlayerListener( this );
         }
     }
     
@@ -94,7 +95,8 @@ public class MIDPSound extends ISound implements PlayerListener
                     if ( m_state == ISound.STATE_ASSOCIATED )
                     {
                         m_player.prefetch();
-                        m_state = ISound.STATE_STARTED_CACHING;
+                        m_state = ISound.STATE_CACHED;
+                        //m_state = ISound.STATE_STARTED_CACHING;
                     }
                     
                     break;
@@ -103,8 +105,10 @@ public class MIDPSound extends ISound implements PlayerListener
                     if ( (m_state == ISound.STATE_CACHED) ||
                          (m_state == ISound.STATE_PAUSED) )
                     {
+                        m_player.setLoopCount( m_nLoops );
                         m_player.start();
-                        m_state = ISound.STATE_STARTED_PLAYING;
+                        //m_state = ISound.STATE_STARTED_PLAYING;
+                        m_state = ISound.STATE_PLAYING;
                     }
                     
                     break;
@@ -113,7 +117,8 @@ public class MIDPSound extends ISound implements PlayerListener
                     if ( (m_state == ISound.STATE_PLAYING) )
                     {
                         m_player.stop();
-                        m_state = ISound.STATE_STARTED_PAUSING;
+                        //m_state = ISound.STATE_STARTED_PAUSING;
+                        m_state = ISound.STATE_PAUSED;
                     }
                     
                     break;
@@ -125,7 +130,7 @@ public class MIDPSound extends ISound implements PlayerListener
                          (m_state == ISound.STATE_PAUSED) )
                     {
                         m_player.close();
-                        m_state = ISound.STATE_STARTED_RELEASING;
+                        //m_state = ISound.STATE_STARTED_RELEASING;
                         // . . .
                         m_state = ISound.STATE_RELEASED;
                     }
@@ -142,8 +147,10 @@ public class MIDPSound extends ISound implements PlayerListener
         return 0;
     }
     
-    public void playerUpdate( Player player, String event, Object eventData )
+    /*public void playerUpdate( Player player, String event, Object eventData )
     {
+        System.out.println( event );
+            //m_state = ISound.STATE_ASSOCIATED;
         if ( event.equals( PlayerListener.STARTED ) )
             m_state = ISound.STATE_PLAYING;
         else if ( event.equals( "bufferingStarted" ) )
@@ -163,7 +170,7 @@ public class MIDPSound extends ISound implements PlayerListener
         }
         else if ( event.equals( PlayerListener.ERROR ) )
             Action( ISound.ACTION_RELEASE );
-    }    
+    }*/
 
     
     private Player          m_player;

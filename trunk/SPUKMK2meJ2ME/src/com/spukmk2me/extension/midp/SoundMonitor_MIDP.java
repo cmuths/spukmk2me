@@ -66,9 +66,9 @@ public final class SoundMonitor_MIDP implements ISoundMonitor
 
             if ( formatString != null )
             {
-                Player player = Manager.createPlayer( soundStream, formatString );
-                
-                return new MIDPSound( player, proxyname );
+                return new MIDPSound(
+                    Manager.createPlayer( soundStream, formatString ),
+                    proxyname );
             }
         } catch ( IOException e ) {
         	/* $if SPUKMK2ME_DEBUG$ */
