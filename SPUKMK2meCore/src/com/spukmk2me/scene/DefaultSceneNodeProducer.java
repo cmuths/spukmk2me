@@ -3,7 +3,9 @@ package com.spukmk2me.scene;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+/* $if SPUKMK2ME_DEBUG$ */
 import com.spukmk2me.debug.Logger;
+/* $endif$ */
 import com.spukmk2me.resource.IResource;
 import com.spukmk2me.resource.ResourceSet;
 import com.spukmk2me.scene.complex.ClippingSceneNode;
@@ -57,7 +59,7 @@ public final class DefaultSceneNodeProducer implements ISceneNodeProducer
                 return ConstructViewportSceneNode( dis );
                 
             case 7:
-                // $if SPUKMK2ME_DEBUG$ */
+                /* $if SPUKMK2ME_DEBUG$ */
                 Logger.Log( "Constructing LineSceneNode..." );
                 /* $endif$ */
                 return ConstructLineSceneNode( dis );

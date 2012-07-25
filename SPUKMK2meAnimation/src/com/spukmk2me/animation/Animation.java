@@ -3,9 +3,12 @@ package com.spukmk2me.animation;
 import java.io.IOException;
 import java.io.InputStream;
 
+/* $if DEBUG$ */
+import com.spukmk2me.debug.Logger;
+/* $endif$ */
+
 import com.spukmk2me.DoublyLinkedList;
 import com.spukmk2me.NamedList;
-import com.spukmk2me.debug.Logger;
 import com.spukmk2me.io.IFileSystem;
 import com.spukmk2me.video.IVideoDriver;
 import com.spukmk2me.sound.ISoundMonitor;
