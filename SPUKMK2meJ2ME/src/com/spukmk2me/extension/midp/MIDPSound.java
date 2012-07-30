@@ -19,15 +19,15 @@
 package com.spukmk2me.extension.midp;
 
 import javax.microedition.media.Player;
-import javax.microedition.media.PlayerListener;
 import javax.microedition.media.control.ToneControl;
 import javax.microedition.media.control.VolumeControl;
 import javax.microedition.media.MediaException;
 
+
 /* $if SPUKMK2ME_DEBUG$ */
 import com.spukmk2me.debug.Logger;
 /* $endif$ */
-
+import com.spukmk2me.Util;
 import com.spukmk2me.sound.ISound;
 
 public class MIDPSound extends ISound// implements PlayerListener
@@ -82,7 +82,15 @@ public class MIDPSound extends ISound// implements PlayerListener
 
     public void SetVolume( int volume )
     {
+        if ( volume > 0x00010000 )
+            volume = 0x00010000;
+        else if ( volume < 0 )
+            volume = 0;
+
         m_volume = volume;
+        
+        if ( m_volumeControl != null )
+            m_volumeControl.setLevel( Util.FPRound( m_volume * 100 ) );
     }
     
     public int Action( byte action )

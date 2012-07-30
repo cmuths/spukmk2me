@@ -112,11 +112,11 @@ public final class CommonInfoPanel extends JPanel
     {
         switch ( NodeTypeChecker.GetNodeType( node ) )
         {
-            case NodeTypeChecker.NT_IMAGE:
+            /*case NodeTypeChecker.NT_IMAGE:
                 if ( ((ImageSceneNode)node).GetImage() == null )
                     return false;
 
-                break;
+                break;*/
 
             case NodeTypeChecker.NT_STRING:
                 StringSceneNode.StringSceneNodeInfoData info =
